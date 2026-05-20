@@ -115,27 +115,26 @@ export default function Home() {
                     <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-pink-500/10 rounded-full blur-3xl animate-pulse" style={{animationDelay: '2s'}}></div>
                 </div>
 
-                <div className="relative max-w-7xl mx-auto px-4 py-12 md:py-20 text-center">
+                <div className="relative max-w-7xl mx-auto px-4 py-8 md:py-12 text-center">
                     {/* Logo */}
-                    <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md px-4 py-2 rounded-full text-white/90 text-sm font-medium mb-6 border border-white/10">
-                        <span className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span>
-                        Atualizado automaticamente a cada 6 horas
+                    <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md px-3 py-1.5 rounded-full text-white/90 text-xs font-medium mb-4 border border-white/10">
+                        <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse"></span>
+                        Atualizado a cada 6 horas
                     </div>
 
-                    <h1 className="text-3xl md:text-5xl lg:text-6xl font-black text-white leading-tight mb-4 tracking-tight">
-                        O Agregador de Imóveis
-                        <br />
+                    <h1 className="text-2xl md:text-4xl lg:text-5xl font-black text-white leading-tight mb-3 tracking-tight">
+                        Aluguel em conta
                         <span className="bg-gradient-to-r from-amber-300 via-yellow-200 to-amber-300 bg-clip-text text-transparent">
-                            Baratos do Rio de Janeiro
+                            {' '}no Rio de Janeiro
                         </span>
                     </h1>
 
-                    <p className="text-base md:text-lg text-indigo-200 max-w-2xl mx-auto mb-8 leading-relaxed">
-                        Varremos OLX, ZAP, VivaReal e outras fontes pra encontrar os melhores aluguéis até R$ 1.000. Chega de abrir 10 abas.
+                    <p className="text-sm md:text-base text-indigo-200 max-w-xl mx-auto mb-6 leading-relaxed">
+                        Reunimos anúncios de vários sites num só lugar. Aluguéis até R$ 1.000 no RJ inteiro.
                     </p>
 
                     {/* Search bar in hero */}
-                    <div className="max-w-xl mx-auto mb-10">
+                    <div className="max-w-lg mx-auto mb-6">
                         <div className="flex items-center bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl shadow-black/20 overflow-hidden border border-white/20">
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400 ml-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
