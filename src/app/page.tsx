@@ -315,34 +315,34 @@ export default function Home() {
                                     )}
                                     {/* Price badge */}
                                     <div className="absolute top-3 left-3 flex flex-col gap-1.5">
-                                        <div className="bg-white/95 backdrop-blur-md text-gray-900 font-bold px-3 py-1 rounded-full text-sm shadow-md w-max">
+                                        <div className="bg-white text-gray-900 font-bold px-3 py-1 rounded-full text-sm shadow-lg w-max">
                                             R$ {property.price.toFixed(0)}
                                         </div>
                                         {property.condominio > 0 && (
-                                            <div className="bg-black/50 backdrop-blur-md text-white/90 font-medium px-2 py-0.5 rounded-full text-[10px] shadow-sm w-max">
+                                            <div className="bg-gray-800 text-white font-medium px-2 py-0.5 rounded-full text-[10px] shadow-md w-max">
                                                 + Cond. R$ {property.condominio}
                                             </div>
                                         )}
                                     </div>
                                     {/* Right badges */}
                                     <div className="absolute top-3 right-3 flex flex-col items-end gap-1.5">
-                                        <div className={`${SOURCE_COLORS[property.source || 'olx'] || 'bg-gray-600'}/90 backdrop-blur-md text-white font-bold px-2 py-1 rounded-md text-[10px] shadow-sm tracking-wider uppercase`}>
+                                        <div className={`${SOURCE_COLORS[property.source || 'olx'] || 'bg-gray-600'} text-white font-bold px-2 py-1 rounded-md text-[10px] shadow-lg tracking-wider uppercase`}>
                                             {SOURCE_LABELS[property.source || 'olx'] || 'OLX'}
                                         </div>
                                         {property.zone !== 'Geral' && (
-                                            <div className="bg-black/60 backdrop-blur-md text-white font-medium px-2 py-0.5 rounded-md text-[10px] shadow-sm">
+                                            <div className="bg-gray-900 text-white font-medium px-2 py-0.5 rounded-md text-[10px] shadow-md">
                                                 {property.zone}
                                             </div>
                                         )}
                                     </div>
                                     {/* Direct owner badge */}
                                     {property.directOwner && (
-                                        <div className="absolute bottom-3 left-3 bg-emerald-500/90 backdrop-blur-md text-white font-semibold px-2 py-0.5 rounded-full text-[10px] shadow-sm">
+                                        <div className="absolute bottom-3 left-3 bg-emerald-600 text-white font-semibold px-2 py-0.5 rounded-full text-[10px] shadow-md">
                                             ✓ Direto c/ Dono
                                         </div>
                                     )}
                                     {/* Time badge */}
-                                    <div className="absolute bottom-3 right-3 bg-black/50 backdrop-blur-md text-white/80 font-medium px-2 py-0.5 rounded-full text-[10px]">
+                                    <div className="absolute bottom-3 right-3 bg-gray-900 text-white font-medium px-2 py-0.5 rounded-full text-[10px] shadow-md">
                                         {timeAgo(property.found_at)}
                                     </div>
                                 </div>
