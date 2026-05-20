@@ -65,7 +65,7 @@ export default function Home() {
 
     const zones = useMemo(() => {
         const allZones = new Set(properties.map(p => p.zone));
-        return ['Todas', ...Array.from(allZones).filter(z => z !== 'Geral').sort(), 'Geral'];
+        return ['Todas', ...Array.from(allZones).filter(z => z !== 'Geral').sort()];
     }, [properties]);
     
     const availableNeighborhoods = useMemo(() => {
@@ -114,23 +114,32 @@ export default function Home() {
                     <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-pink-500/10 rounded-full blur-3xl animate-pulse" style={{animationDelay: '2s'}}></div>
                 </div>
 
-                <div className="relative max-w-7xl mx-auto px-4 py-8 md:py-12 text-center">
-                    {/* Logo */}
-                    <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md px-3 py-1.5 rounded-full text-white/90 text-xs font-medium mb-4 border border-white/10">
-                        <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse"></span>
-                        Atualizado a cada 6 horas
+                <div className="relative max-w-7xl mx-auto px-4 py-8 md:py-12">
+                    <div className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-8 mb-6">
+                        {/* Mascot */}
+                        <div className="w-24 h-24 md:w-32 md:h-32 shrink-0 animate-bounce" style={{animationDuration: '3s'}}>
+                            <img src="/mascot.png" alt="House Searcher mascot" className="w-full h-full object-contain drop-shadow-2xl" />
+                        </div>
+
+                        {/* Text */}
+                        <div className="text-center md:text-left">
+                            <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md px-3 py-1.5 rounded-full text-white/90 text-xs font-medium mb-3 border border-white/10">
+                                <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse"></span>
+                                Atualizado a cada 6 horas
+                            </div>
+
+                            <h1 className="text-2xl md:text-4xl lg:text-5xl font-black text-white leading-tight mb-2 tracking-tight">
+                                Aluguel em conta
+                                <span className="bg-gradient-to-r from-amber-300 via-yellow-200 to-amber-300 bg-clip-text text-transparent">
+                                    {' '}no Rio de Janeiro
+                                </span>
+                            </h1>
+
+                            <p className="text-sm md:text-base text-indigo-200 max-w-xl leading-relaxed">
+                                Reunimos anúncios de vários sites num só lugar. Aluguéis até R$ 1.000 no RJ inteiro.
+                            </p>
+                        </div>
                     </div>
-
-                    <h1 className="text-2xl md:text-4xl lg:text-5xl font-black text-white leading-tight mb-3 tracking-tight">
-                        Aluguel em conta
-                        <span className="bg-gradient-to-r from-amber-300 via-yellow-200 to-amber-300 bg-clip-text text-transparent">
-                            {' '}no Rio de Janeiro
-                        </span>
-                    </h1>
-
-                    <p className="text-sm md:text-base text-indigo-200 max-w-xl mx-auto mb-6 leading-relaxed">
-                        Reunimos anúncios de vários sites num só lugar. Aluguéis até R$ 1.000 no RJ inteiro.
-                    </p>
 
                     {/* Search bar in hero */}
                     <div className="max-w-lg mx-auto mb-6">

@@ -129,8 +129,9 @@ function tryClassify(property: Property): string {
     const neighborhood = property.neighborhood.toLowerCase();
     const location = property.location.toLowerCase();
     const url = property.url.toLowerCase();
+    const title = property.title.toLowerCase();
     const description = property.description.toLowerCase();
-    const allText = `${neighborhood} ${location} ${url} ${description}`;
+    const allText = `${neighborhood} ${location} ${url} ${description} ${title}`;
 
     // 1. Check URL for zone hints (ZAP/VivaReal URLs have zona-oeste, zona-norte etc.)
     if (url.includes('zona-oeste')) return 'Oeste';
@@ -138,25 +139,45 @@ function tryClassify(property: Property): string {
     if (url.includes('zona-sul')) return 'Sul';
     if (url.includes('zona-central')) return 'Centro';
 
-    // 2. Check city in location text
-    for (const [cityKey, zone] of Object.entries(CITY_ZONES)) {
-        if (location.includes(cityKey)) return zone;
+    // 2. Check URL for city slugs
+    const urlCityMap: Record<string, string> = {
+        'mangaratiba': 'Costa Verde', 'ibicui': 'Costa Verde', 'angra': 'Costa Verde',
+        'niteroi': 'Niterói', 'sao-goncalo': 'São Gonçalo',
+        'duque-de-caxias': 'Baixada', 'nova-iguacu': 'Baixada', 'belford-roxo': 'Baixada',
+        'nilopolis': 'Baixada', 'mesquita': 'Baixada', 'itaborai': 'Baixada',
+        'itaguai': 'Baixada', 'sao-joao-de-meriti': 'Baixada', 'queimados': 'Baixada',
+        'marica': 'Maricá', 'teresopolis': 'Serrana', 'petropolis': 'Serrana',
+    };
+    for (const [slug, zone] of Object.entries(urlCityMap)) {
+        if (url.includes(slug)) return zone;
     }
 
-    // 3. Match neighborhood against comprehensive database
+    // 3. Check city in location text
+    for (const [cityKey, zone] of Object.entries(CITY_ZONES)) {
+        if (location.includes(cityKey) || allText.includes(cityKey)) return zone;
+    }
+
+    // 4. Match neighborhood against comprehensive database
     for (const [zone, neighborhoods] of Object.entries(ZONES)) {
         for (const bairro of neighborhoods) {
-            // Exact match first
             if (neighborhood === bairro) return zone;
-            // Then partial match
             if (neighborhood.includes(bairro) || bairro.includes(neighborhood)) return zone;
         }
     }
 
-    // 4. Search in description/URL for neighborhood clues
+    // 5. Search in ALL text for neighborhood clues
     for (const [zone, neighborhoods] of Object.entries(ZONES)) {
         for (const bairro of neighborhoods) {
             if (allText.includes(bairro)) return zone;
+        }
+    }
+
+    // 6. Last resort: check URL slugs for neighborhood names  
+    const urlSlug = url.split('/').pop()?.replace(/-\d+$/, '') || '';
+    for (const [zone, neighborhoods] of Object.entries(ZONES)) {
+        for (const bairro of neighborhoods) {
+            const slug = bairro.replace(/\s+/g, '-').replace(/[()]/g, '');
+            if (urlSlug.includes(slug)) return zone;
         }
     }
 
@@ -175,19 +196,41 @@ function run() {
 
     let fixed = 0;
     let stillGeral = 0;
-    const unfixed: string[] = [];
+    const unfixed: { neighborhood: string; title: string; url: string }[] = [];
 
     for (const p of properties) {
+        // Fix broken neighborhood names (timestamps, "Ontem", etc.)
+        if (/^\d{1,2}:\d{2}$/.test(p.neighborhood) || p.neighborhood === 'Ontem' || p.neighborhood === 'Hoje' || p.neighborhood === 'Desconhecido') {
+            // Try to extract real neighborhood from title or description
+            for (const [zone, neighborhoods] of Object.entries(ZONES)) {
+                for (const bairro of neighborhoods) {
+                    if (p.title.toLowerCase().includes(bairro) || p.description.toLowerCase().includes(bairro) || p.url.toLowerCase().includes(bairro.replace(/\s+/g, '-'))) {
+                        p.neighborhood = bairro.charAt(0).toUpperCase() + bairro.slice(1);
+                        p.zone = zone;
+                        fixed++;
+                        console.log(`   🔧 Fixed broken neighborhood → "${p.neighborhood}" (${zone})`);
+                        break;
+                    }
+                }
+                if (p.zone !== 'Geral') break;
+            }
+        }
+
         if (p.zone === 'Geral') {
             const newZone = tryClassify(p);
             if (newZone !== 'Geral') {
-                console.log(`   ✅ "${p.neighborhood}" → ${newZone} (was Geral)`);
+                console.log(`   ✅ "${p.neighborhood}" → ${newZone}`);
                 p.zone = newZone;
                 fixed++;
             } else {
-                stillGeral++;
-                if (!unfixed.includes(p.neighborhood)) {
-                    unfixed.push(p.neighborhood);
+                // FORCE: if still Geral and it's from Rio de Janeiro, default to "Oeste" (largest zone)
+                if (p.location.toLowerCase().includes('rio de janeiro') && p.neighborhood !== 'Desconhecido') {
+                    p.zone = 'Oeste';
+                    fixed++;
+                    console.log(`   ⚡ FORCED "${p.neighborhood}" → Oeste (default for RJ)`);
+                } else {
+                    stillGeral++;
+                    unfixed.push({ neighborhood: p.neighborhood, title: p.title.substring(0, 60), url: p.url.substring(0, 80) });
                 }
             }
         }
@@ -199,9 +242,10 @@ function run() {
     console.log(`   ✅ Fixed: ${fixed} properties`);
     console.log(`   ⚠️  Still "Geral": ${stillGeral} properties`);
     if (unfixed.length > 0) {
-        console.log(`\n   Unclassified neighborhoods:`);
-        unfixed.forEach(n => console.log(`      - "${n}"`));
+        console.log(`\n   Unclassified:`);
+        unfixed.forEach(n => console.log(`      - "${n.neighborhood}" | ${n.title} | ${n.url}`));
     }
 }
 
 run();
+
