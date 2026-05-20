@@ -4,6 +4,21 @@ Todas as mudanças relevantes do projeto House Searcher estão documentadas nest
 
 ---
 
+## [2.1.0] — 2026-05-20
+
+### ✨ Adicionado
+- **Scraper ZAP Imóveis**: Novo scraper que extrai listagens do ZAP via DOM parsing (+30 imóveis).
+- **Scraper VivaReal**: Mesmo engine do ZAP, adaptado para VivaReal (+30 imóveis).
+- **Script de enriquecimento** (`enrich.ts`): Pós-processamento que reclassifica imóveis "Geral" usando URL hints (zona-oeste, zona-norte), detecção de cidade e base de +200 bairros. Reduziu "Geral" de 50%+ para menos de 1%.
+- **Filtro de preço travado**: Máximo fixado em R$ 1.000 (min R$ 100, step R$ 50).
+
+### 🔧 Alterado
+- Hero section mais compacta (padding reduzido).
+- Texto atualizado de "Baratos" para "Aluguel em conta no Rio de Janeiro".
+- Total de imóveis: **299** (239 OLX + 30 ZAP + 30 VivaReal).
+
+---
+
 ## [2.0.0] — 2026-05-20
 
 ### ✨ Adicionado

@@ -58,7 +58,6 @@ export default function Home() {
     const [filterRooms, setFilterRooms] = useState<string>('any');
     const [filterDirectOwner, setFilterDirectOwner] = useState<boolean>(false);
     const [filterHasPhoto, setFilterHasPhoto] = useState<boolean>(false);
-    const [showFilters, setShowFilters] = useState<boolean>(false);
 
     useEffect(() => {
         setProperties(rawProperties as Property[]);
@@ -211,78 +210,57 @@ export default function Home() {
                             />
                         </div>
 
-                        {/* Toggle advanced filters */}
-                        <button 
-                            onClick={() => setShowFilters(!showFilters)}
-                            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all border ${showFilters ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'}`}
-                        >
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
-                            </svg>
-                            Filtros
-                        </button>
-                    </div>
-                </div>
-
-                {/* Advanced filters panel */}
-                {showFilters && (
-                    <div className="border-t border-gray-100 bg-gray-50">
-                        <div className="max-w-7xl mx-auto px-4 py-3 flex flex-wrap gap-3 items-center">
-                            {/* Rooms */}
-                            <div className="flex items-center gap-1.5">
-                                <span className="text-xs font-medium text-gray-500">Quartos:</span>
-                                <div className="flex bg-white rounded-full p-0.5 border border-gray-200">
-                                    {[{v: 'any', l: 'Todos'}, {v: '1', l: '1'}, {v: '2', l: '2'}, {v: '3', l: '3+'}].map(opt => (
-                                        <button
-                                            key={opt.v}
-                                            onClick={() => setFilterRooms(opt.v)}
-                                            className={`px-3 py-1 rounded-full text-xs font-medium transition-all ${filterRooms === opt.v ? 'bg-indigo-600 text-white' : 'text-gray-600 hover:bg-gray-100'}`}
-                                        >
-                                            {opt.l}
-                                        </button>
-                                    ))}
-                                </div>
-                            </div>
-
-                            {/* Direct owner */}
-                            <label className="flex items-center gap-1.5 cursor-pointer bg-white border border-gray-200 rounded-full px-3 py-1.5">
-                                <input 
-                                    type="checkbox" 
-                                    checked={filterDirectOwner} 
-                                    onChange={(e) => setFilterDirectOwner(e.target.checked)}
-                                    className="w-3.5 h-3.5 rounded accent-indigo-600"
-                                />
-                                <span className="text-xs font-medium text-gray-600">Direto c/ dono</span>
-                            </label>
-
-                            {/* Has photo */}
-                            <label className="flex items-center gap-1.5 cursor-pointer bg-white border border-gray-200 rounded-full px-3 py-1.5">
-                                <input 
-                                    type="checkbox" 
-                                    checked={filterHasPhoto} 
-                                    onChange={(e) => setFilterHasPhoto(e.target.checked)}
-                                    className="w-3.5 h-3.5 rounded accent-indigo-600"
-                                />
-                                <span className="text-xs font-medium text-gray-600">Com foto</span>
-                            </label>
-
-                            {/* Sort */}
-                            <div className="flex items-center gap-1.5">
-                                <span className="text-xs font-medium text-gray-500">Ordenar:</span>
-                                <select 
-                                    className="bg-white border border-gray-200 text-gray-700 text-xs rounded-full p-1.5 px-3 outline-none cursor-pointer"
-                                    value={sortBy}
-                                    onChange={(e) => setSortBy(e.target.value)}
-                                >
-                                    <option value="newest">Mais Recentes</option>
-                                    <option value="lowest">Menor Preço</option>
-                                    <option value="highest">Maior Preço</option>
-                                    <option value="biggest">Maior Área</option>
-                                </select>
+                        {/* Rooms */}
+                        <div className="flex items-center gap-1.5">
+                            <span className="text-xs font-medium text-gray-500">Quartos:</span>
+                            <div className="flex bg-white rounded-full p-0.5 border border-gray-200">
+                                {[{v: 'any', l: 'Todos'}, {v: '1', l: '1'}, {v: '2', l: '2'}, {v: '3', l: '3+'}].map(opt => (
+                                    <button
+                                        key={opt.v}
+                                        onClick={() => setFilterRooms(opt.v)}
+                                        className={`px-3 py-1 rounded-full text-xs font-medium transition-all ${filterRooms === opt.v ? 'bg-indigo-600 text-white' : 'text-gray-600 hover:bg-gray-100'}`}
+                                    >
+                                        {opt.l}
+                                    </button>
+                                ))}
                             </div>
                         </div>
+
+                        {/* Direct owner */}
+                        <label className="flex items-center gap-1.5 cursor-pointer bg-white border border-gray-200 rounded-full px-3 py-1.5">
+                            <input 
+                                type="checkbox" 
+                                checked={filterDirectOwner} 
+                                onChange={(e) => setFilterDirectOwner(e.target.checked)}
+                                className="w-3.5 h-3.5 rounded accent-indigo-600"
+                            />
+                            <span className="text-xs font-medium text-gray-600">Direto c/ dono</span>
+                        </label>
+
+                        {/* Has photo */}
+                        <label className="flex items-center gap-1.5 cursor-pointer bg-white border border-gray-200 rounded-full px-3 py-1.5">
+                            <input 
+                                type="checkbox" 
+                                checked={filterHasPhoto} 
+                                onChange={(e) => setFilterHasPhoto(e.target.checked)}
+                                className="w-3.5 h-3.5 rounded accent-indigo-600"
+                            />
+                            <span className="text-xs font-medium text-gray-600">Com foto</span>
+                        </label>
+
+                        {/* Sort */}
+                        <select 
+                            className="bg-white border border-gray-200 text-gray-700 text-xs font-medium rounded-full p-2 px-3 shadow-sm outline-none cursor-pointer"
+                            value={sortBy}
+                            onChange={(e) => setSortBy(e.target.value)}
+                        >
+                            <option value="newest">Mais Recentes</option>
+                            <option value="lowest">Menor Preço</option>
+                            <option value="highest">Maior Preço</option>
+                            <option value="biggest">Maior Área</option>
+                        </select>
                     </div>
-                )}
+                </div>
             </header>
 
             {/* ============= RESULTS ============= */}
