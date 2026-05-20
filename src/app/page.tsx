@@ -25,13 +25,13 @@ export default function Home() {
     
     // Filters
     const [selectedZone, setSelectedZone] = useState<string>('Todas');
-    const [selectedNeighborhood, setSelectedNeighborhood] = useState<string>('');
+    const [selectedNeighborhood, setSelectedNeighborhood] = useState<string>('Todos');
     const [maxPrice, setMaxPrice] = useState<number>(1000);
+    const [sortBy, setSortBy] = useState<string>('newest');
 
     useEffect(() => {
-        // Sort initially by newest
-        const sorted = [...(rawProperties as Property[])].sort((a, b) => new Date(b.found_at).getTime() - new Date(a.found_at).getTime());
-        setProperties(sorted);
+        // Removed the initial manual sort here, we will sort on render
+        setProperties(rawProperties as Property[]);
     }, []);
 
     const zones = ['Todas', 'Oeste', 'Norte', 'Sul', 'Centro', 'Geral'];
@@ -48,6 +48,10 @@ export default function Home() {
         if (selectedNeighborhood !== '' && selectedNeighborhood !== 'Todos' && p.neighborhood !== selectedNeighborhood) return false;
         if (p.price > maxPrice) return false;
         return true;
+    }).sort((a, b) => {
+        if (sortBy === 'lowest') return a.price - b.price;
+        if (sortBy === 'highest') return b.price - a.price;
+        return new Date(b.found_at).getTime() - new Date(a.found_at).getTime(); // newest
     });
 
     return (
@@ -113,6 +117,18 @@ export default function Home() {
                     <h2 className="text-lg md:text-xl font-bold text-gray-800">
                         {filteredProperties.length} imóveis encontrados
                     </h2>
+                    <div className="flex items-center gap-2">
+                        <label className="text-sm font-medium text-gray-500">Ordenar:</label>
+                        <select 
+                            className="bg-white border border-gray-200 text-gray-700 text-sm rounded-lg p-2 outline-none cursor-pointer"
+                            value={sortBy}
+                            onChange={(e) => setSortBy(e.target.value)}
+                        >
+                            <option value="newest">Mais Recentes</option>
+                            <option value="lowest">Menor Preço</option>
+                            <option value="highest">Maior Preço</option>
+                        </select>
+                    </div>
                 </div>
 
                 {filteredProperties.length === 0 ? (
