@@ -1,0 +1,38 @@
+name: House Searcher Scraper
+
+on:
+  schedule:
+    - cron: "0 */6 * * *" # Runs every 6 hours
+  workflow_dispatch: # Allows manual trigger
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        working-directory: ./scraper
+        run: npm ci || npm install
+
+      - name: Install Playwright Browsers
+        working-directory: ./scraper
+        run: npx playwright install chromium --with-deps
+
+      - name: Run Scraper
+        working-directory: ./scraper
+        run: npx tsx index.ts
+
+      - name: Commit and push changes
+        run: |
+          git config --global user.name "House Searcher Bot"
+          git config --global user.email "bot@housesearcher.com"
+          git add web/src/data/properties.json
+          git commit -m "Update properties [skip ci]" || echo "No changes to commit"
+          git push

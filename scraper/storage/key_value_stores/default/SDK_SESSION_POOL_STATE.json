@@ -1,0 +1,386 @@
+{
+  "usableSessionsCount": 2,
+  "retiredSessionsCount": 0,
+  "sessions": [
+    {
+      "id": "session_tiqXct09Z0",
+      "cookieJar": {
+        "version": "tough-cookie@6.0.1",
+        "storeType": "MemoryCookieStore",
+        "rejectPublicSuffixes": true,
+        "enableLooseMode": false,
+        "allowSpecialUseDomain": true,
+        "prefixSecurity": "silent",
+        "cookies": []
+      },
+      "userData": {},
+      "maxErrorScore": 3,
+      "errorScoreDecrement": 0.5,
+      "expiresAt": "2026-05-20T20:45:17.238Z",
+      "createdAt": "2026-05-20T19:55:17.238Z",
+      "usageCount": 0,
+      "maxUsageCount": 50,
+      "errorScore": 0
+    },
+    {
+      "id": "session_2bnuSE52JG",
+      "cookieJar": {
+        "version": "tough-cookie@6.0.1",
+        "storeType": "MemoryCookieStore",
+        "rejectPublicSuffixes": true,
+        "enableLooseMode": false,
+        "allowSpecialUseDomain": true,
+        "prefixSecurity": "silent",
+        "cookies": [
+          {
+            "key": "r_id",
+            "value": "06ab08eb-8350-466b-807d-815b91f8e1f3",
+            "expires": "2027-06-24T19:55:19.810Z",
+            "domain": "olx.com.br",
+            "path": "/",
+            "hostOnly": false,
+            "creation": "2026-05-20T19:55:28.958Z",
+            "lastAccessed": "2026-05-20T19:55:28.958Z"
+          },
+          {
+            "key": "TestAB_Groups",
+            "value": "lp265_enabled.payg-discount-re-julius_ml-ranges.tenerity_ckt.chk-px2_control.autos-prc2_control.aps-autos-fair-banner_enabled.aps-autos-fair-badge_enabled.ne-midiav2_A.sxp-hexa_enabled.rec-8584e_enabled.lp204_enabled.rec-fair_enabled.lp85_control.dpdFsWebMS_control.adview-ecg_enabled.lp202_enabled.lp206_enabled.new-price_enabled.ln-redchat_control.nutps_b.adv-lit4bo_enabled.bcnNewCard_enabled.lp199_enabled.ng-spam_A.bjTPZ-aps_enabled.sanityweb50_control.rp-bsc-off_enabled.topovip_enabled.switch-seg_control.imo-92fed3_enabled.rp-new-acc_enabled.bjTPZ-np-w_b.sa-md-aw_enabled.stempesp_enabled.palq-1528_enabled.sa-fgp-dlv_enabled.dpd-aiout_enabled.acc-wpp_enabled.lp203_enabled.ne-cache_A.imo-514362_enabled.sa-inf-ml_control.sxp-dedup_control.lp187_enabled.submit-bfr_enabled.sa-req-dlv_enabled.rec-f7f1ca_enabled",
+            "expires": "2026-05-20T20:25:19.811Z",
+            "domain": "olx.com.br",
+            "path": "/",
+            "hostOnly": false,
+            "creation": "2026-05-20T19:55:28.961Z",
+            "lastAccessed": "2026-05-20T19:55:28.961Z"
+          },
+          {
+            "key": "__cf_bm",
+            "value": "HVPwAK9rzk4ZzArkh9vVm_oK0OD42jmFrwvbB9WLcgg-1779306918.4689195-1.0.1.1-0WPCQ.YnsE4flJfRKzmllJqsjZHMZ3LiGIOB9HOMd7_7RRgl_HA4naF.zwYjr.n.1c5E_K2S2rFmfd6cmHm3Ro4s7ENEcFUtk43iZhzw2In.FaZp.uY2h.JHDLGW92kn",
+            "expires": "2026-05-20T20:25:18.486Z",
+            "domain": "olx.com.br",
+            "path": "/",
+            "secure": true,
+            "httpOnly": true,
+            "hostOnly": false,
+            "creation": "2026-05-20T19:55:28.962Z",
+            "lastAccessed": "2026-05-20T19:55:28.962Z"
+          },
+          {
+            "key": "_cfuvid",
+            "value": "iHQHmaPeJwgGYAXi2RmOoolESuIrmeqbkbHil0ZnGOo-1779306918.4689195-1.0.1.1-hXWJymdQXqGBpAPeMmcFmVQhTobw_z.JjGnhr2TZIw4",
+            "expires": "2026-05-20T20:45:28.956Z",
+            "domain": "olx.com.br",
+            "path": "/",
+            "secure": true,
+            "httpOnly": true,
+            "hostOnly": false,
+            "creation": "2026-05-20T19:55:28.962Z",
+            "lastAccessed": "2026-05-20T19:55:28.962Z"
+          },
+          {
+            "key": "nl_id",
+            "value": "a3a4c2f1-273b-4355-9971-a891584ec651",
+            "expires": "2027-06-24T19:55:20.091Z",
+            "domain": "olx.com.br",
+            "path": "/",
+            "hostOnly": false,
+            "creation": "2026-05-20T19:55:28.962Z",
+            "lastAccessed": "2026-05-20T19:55:28.962Z"
+          },
+          {
+            "key": "pbjs_sharedId",
+            "value": "fc648d9e-8a0c-4e7c-ba35-7a56b5941b8b",
+            "expires": "2026-06-19T19:55:19.000Z",
+            "domain": "olx.com.br",
+            "path": "/",
+            "hostOnly": false,
+            "creation": "2026-05-20T19:55:28.962Z",
+            "lastAccessed": "2026-05-20T19:55:28.962Z"
+          },
+          {
+            "key": "pbjs_sharedId_cst",
+            "value": "znv0HA%3D%3D",
+            "expires": "2026-06-19T19:55:19.000Z",
+            "domain": "olx.com.br",
+            "path": "/",
+            "hostOnly": false,
+            "creation": "2026-05-20T19:55:28.962Z",
+            "lastAccessed": "2026-05-20T19:55:28.962Z"
+          },
+          {
+            "key": "_lr_retry_request",
+            "value": "true",
+            "expires": "2026-05-20T20:55:19.000Z",
+            "domain": "www.olx.com.br",
+            "path": "/",
+            "hostOnly": true,
+            "creation": "2026-05-20T19:55:28.963Z",
+            "lastAccessed": "2026-05-20T19:55:28.963Z"
+          },
+          {
+            "key": "_lr_env_src_ats",
+            "value": "false",
+            "expires": "2026-06-19T19:55:19.000Z",
+            "domain": "www.olx.com.br",
+            "path": "/",
+            "hostOnly": true,
+            "creation": "2026-05-20T19:55:28.963Z",
+            "lastAccessed": "2026-05-20T19:55:28.963Z"
+          },
+          {
+            "key": "sf_utm_source",
+            "value": "direct",
+            "expires": "2026-08-18T19:55:21.000Z",
+            "domain": "olx.com.br",
+            "path": "/",
+            "hostOnly": false,
+            "creation": "2026-05-20T19:55:28.963Z",
+            "lastAccessed": "2026-05-20T19:55:28.963Z"
+          },
+          {
+            "key": "sf_utm_medium",
+            "value": "none",
+            "expires": "2026-08-18T19:55:21.000Z",
+            "domain": "olx.com.br",
+            "path": "/",
+            "hostOnly": false,
+            "creation": "2026-05-20T19:55:28.963Z",
+            "lastAccessed": "2026-05-20T19:55:28.963Z"
+          },
+          {
+            "key": "cto_bidid",
+            "value": "DJFP819TUVUyMXBOR0dsYWtjdWU3c001ZjgyU25Va2ZWa082aGVuU1RicFZ2bXpsQk0wYiUyRlU1djRiTzZaeWVtWmVGSERCNlFtN3NSS0NmWDZIWElmJTJGJTJGVkRCdyUzRCUzRA",
+            "expires": "2027-06-14T16:55:19.000Z",
+            "domain": "olx.com.br",
+            "path": "/",
+            "hostOnly": false,
+            "creation": "2026-05-20T19:55:28.963Z",
+            "lastAccessed": "2026-05-20T19:55:28.963Z"
+          },
+          {
+            "key": "__gads",
+            "value": "ID=bcdad706fb0d6ddd:T=1779306921:RT=1779306921:S=ALNI_MZxr39LNvG5e6eJp_ifpoVpsOyuEQ",
+            "expires": "2027-06-14T19:55:21.000Z",
+            "domain": "olx.com.br",
+            "path": "/",
+            "secure": true,
+            "hostOnly": false,
+            "creation": "2026-05-20T19:55:28.963Z",
+            "lastAccessed": "2026-05-20T19:55:28.963Z"
+          },
+          {
+            "key": "__gpi",
+            "value": "UID=000014345702e82c:T=1779306921:RT=1779306921:S=ALNI_MZb1118g1sTsrXYHNgmbsPuBT4W0A",
+            "expires": "2027-06-14T19:55:21.000Z",
+            "domain": "olx.com.br",
+            "path": "/",
+            "secure": true,
+            "hostOnly": false,
+            "creation": "2026-05-20T19:55:28.963Z",
+            "lastAccessed": "2026-05-20T19:55:28.963Z"
+          },
+          {
+            "key": "__eoi",
+            "value": "ID=00200e3efffa695b:T=1779306921:RT=1779306921:S=AA-AfjZaIf9VhP2SCfVtRZi1eO3Y",
+            "expires": "2026-11-16T19:55:21.000Z",
+            "domain": "olx.com.br",
+            "path": "/",
+            "secure": true,
+            "hostOnly": false,
+            "creation": "2026-05-20T19:55:28.963Z",
+            "lastAccessed": "2026-05-20T19:55:28.963Z"
+          },
+          {
+            "key": "_gcl_au",
+            "value": "1.1.623235779.1779306922",
+            "expires": "2026-08-18T19:55:21.000Z",
+            "domain": "olx.com.br",
+            "path": "/",
+            "hostOnly": false,
+            "creation": "2026-05-20T19:55:28.963Z",
+            "lastAccessed": "2026-05-20T19:55:28.963Z"
+          },
+          {
+            "key": "_ga",
+            "value": "GA1.1.15634681.1779306922",
+            "expires": "2027-06-24T19:55:21.677Z",
+            "domain": "olx.com.br",
+            "path": "/",
+            "hostOnly": false,
+            "creation": "2026-05-20T19:55:28.963Z",
+            "lastAccessed": "2026-05-20T19:55:28.963Z"
+          },
+          {
+            "key": "mf_b837e449-83ee-457f-9ef5-8f976953f2bc",
+            "value": "||1779306921823||0||||0|0|7.59093|0|",
+            "expires": "2026-05-20T20:45:28.956Z",
+            "domain": "olx.com.br",
+            "path": "/",
+            "hostOnly": false,
+            "creation": "2026-05-20T19:55:28.963Z",
+            "lastAccessed": "2026-05-20T19:55:28.963Z"
+          },
+          {
+            "key": "FCCDCF",
+            "value": "%5Bnull%2Cnull%2Cnull%2Cnull%2Cnull%2Cnull%2C%5B%5B32%2C%22%5B%5C%22f9030612-7c70-4706-8548-acacefb2fc6f%5C%22%2C%5B1779306920%2C513000000%5D%5D%22%5D%5D%5D",
+            "expires": "2027-06-14T19:55:22.000Z",
+            "domain": "olx.com.br",
+            "path": "/",
+            "hostOnly": false,
+            "creation": "2026-05-20T19:55:28.963Z",
+            "lastAccessed": "2026-05-20T19:55:28.963Z"
+          },
+          {
+            "key": "__rtbh.uid",
+            "value": "%7B%22eventType%22%3A%22uid%22%2C%22id%22%3A%22unknown%22%2C%22hash%22%3A%22wBiML0Lv0cEh18cEd5DU%22%2C%22expiryDate%22%3A%222027-05-20T19%3A55%3A22.569Z%22%7D",
+            "expires": "2027-05-20T19:55:22.000Z",
+            "domain": "www.olx.com.br",
+            "path": "/",
+            "secure": true,
+            "hostOnly": true,
+            "creation": "2026-05-20T19:55:28.963Z",
+            "lastAccessed": "2026-05-20T19:55:28.963Z"
+          },
+          {
+            "key": "__rtbh.lid",
+            "value": "%7B%22eventType%22%3A%22lid%22%2C%22id%22%3A%22X5OrLooS20puU8YzCelw%22%2C%22expiryDate%22%3A%222027-05-20T19%3A55%3A22.569Z%22%7D",
+            "expires": "2027-05-20T19:55:22.000Z",
+            "domain": "www.olx.com.br",
+            "path": "/",
+            "secure": true,
+            "hostOnly": true,
+            "creation": "2026-05-20T19:55:28.963Z",
+            "lastAccessed": "2026-05-20T19:55:28.963Z"
+          },
+          {
+            "key": "FCNEC",
+            "value": "%5B%5B%22AKsRol8eihOuRmtG4YspTBw-S2XJCUU_spF8EJkJQYMEKm19ythjmqi9Q_5XsRFeMMW_KeCmdQHwvKtY4juHWaBR02wbACQOWW_vJd_3QyrUOei6fQzd-1LsSBOpoM1PlLlactmlfbyoN4fNSVY9p41W8VRpdb4Zuw%3D%3D%22%5D%5D",
+            "expires": "2027-05-20T19:55:22.000Z",
+            "domain": "olx.com.br",
+            "path": "/",
+            "hostOnly": false,
+            "creation": "2026-05-20T19:55:28.963Z",
+            "lastAccessed": "2026-05-20T19:55:28.963Z"
+          },
+          {
+            "key": "__spdt",
+            "value": "59809425e65f4e68a6661a14598c0c67",
+            "expires": "2027-05-20T19:55:22.000Z",
+            "domain": "www.olx.com.br",
+            "path": "/",
+            "hostOnly": true,
+            "creation": "2026-05-20T19:55:28.963Z",
+            "lastAccessed": "2026-05-20T19:55:28.963Z"
+          },
+          {
+            "key": "_lr_geo_location_state",
+            "value": "RJ",
+            "expires": "2026-05-22T19:55:23.072Z",
+            "domain": "www.olx.com.br",
+            "path": "/",
+            "hostOnly": true,
+            "creation": "2026-05-20T19:55:28.963Z",
+            "lastAccessed": "2026-05-20T19:55:28.963Z"
+          },
+          {
+            "key": "_lr_geo_location",
+            "value": "BR",
+            "expires": "2026-05-22T19:55:23.073Z",
+            "domain": "www.olx.com.br",
+            "path": "/",
+            "hostOnly": true,
+            "creation": "2026-05-20T19:55:28.963Z",
+            "lastAccessed": "2026-05-20T19:55:28.963Z"
+          },
+          {
+            "key": "l_id",
+            "value": "42d03bf1-e0e5-40ac-864f-56d11b40f392",
+            "expires": "2027-06-24T19:55:23.124Z",
+            "domain": "olx.com.br",
+            "path": "/",
+            "hostOnly": false,
+            "creation": "2026-05-20T19:55:28.963Z",
+            "lastAccessed": "2026-05-20T19:55:28.963Z"
+          },
+          {
+            "key": "s_id",
+            "value": "0cd9f697-f8b0-4980-a8b9-53e9982638642026-05-20T19:55:22.582409Z",
+            "expires": "2026-05-20T20:25:23.124Z",
+            "domain": "olx.com.br",
+            "path": "/",
+            "hostOnly": false,
+            "creation": "2026-05-20T19:55:28.963Z",
+            "lastAccessed": "2026-05-20T19:55:28.963Z"
+          },
+          {
+            "key": "_fbp",
+            "value": "fb.2.1779306923158.955353234389770179",
+            "expires": "2026-08-18T19:55:23.000Z",
+            "domain": "olx.com.br",
+            "path": "/",
+            "hostOnly": false,
+            "creation": "2026-05-20T19:55:28.963Z",
+            "lastAccessed": "2026-05-20T19:55:28.963Z"
+          },
+          {
+            "key": "_ga_50C013M2CC",
+            "value": "GS2.1.s1779306921$o1$g1$t1779306923$j60$l0$h0",
+            "expires": "2027-06-24T19:55:23.862Z",
+            "domain": "olx.com.br",
+            "path": "/",
+            "hostOnly": false,
+            "creation": "2026-05-20T19:55:28.963Z",
+            "lastAccessed": "2026-05-20T19:55:28.963Z"
+          },
+          {
+            "key": "nvg83482",
+            "value": "1795f36172954153ab1b6c038010|0_141",
+            "expires": "2027-05-20T19:55:23.000Z",
+            "domain": "olx.com.br",
+            "path": "/",
+            "hostOnly": false,
+            "creation": "2026-05-20T19:55:28.963Z",
+            "lastAccessed": "2026-05-20T19:55:28.963Z"
+          },
+          {
+            "key": "cto_bundle",
+            "value": "rzHUn19IbTdSck9qdUx5R0djWHV6JTJGc1pJOVdWRTNoZEhqa2RBJTJCelR6R3lkWXlIVGRJNkUyNjNCeXpHaEQ0OFhOM0glMkZqMTdXT3FjWmx2eTBUUGVlQ0lreUJlTXFLVE9LeSUyQlZDV1VJMnNVU1FBSDl5dkRManVrd1B5MFclMkJSTEpNUTgwSmpKNUxmVTJ3RkE2WUFZcDBVQTg2M1p3JTNEJTNE",
+            "expires": "2027-06-14T19:55:24.000Z",
+            "domain": "olx.com.br",
+            "path": "/",
+            "hostOnly": false,
+            "creation": "2026-05-20T19:55:28.964Z",
+            "lastAccessed": "2026-05-20T19:55:28.964Z"
+          },
+          {
+            "key": "_lr_sampling_rate",
+            "value": "100",
+            "expires": "2026-05-27T19:55:25.000Z",
+            "domain": "www.olx.com.br",
+            "path": "/",
+            "hostOnly": true,
+            "creation": "2026-05-20T19:55:28.964Z",
+            "lastAccessed": "2026-05-20T19:55:28.964Z"
+          },
+          {
+            "key": "_dd_s",
+            "value": "rum=0&expire=1779307820743",
+            "expires": "2026-05-20T20:10:28.000Z",
+            "domain": "olx.com.br",
+            "path": "/",
+            "hostOnly": false,
+            "creation": "2026-05-20T19:55:28.965Z",
+            "lastAccessed": "2026-05-20T19:55:28.965Z"
+          }
+        ]
+      },
+      "userData": {},
+      "maxErrorScore": 3,
+      "errorScoreDecrement": 0.5,
+      "expiresAt": "2026-05-20T20:45:17.240Z",
+      "createdAt": "2026-05-20T19:55:17.240Z",
+      "usageCount": 1,
+      "maxUsageCount": 50,
+      "errorScore": 0
+    }
+  ]
+}
