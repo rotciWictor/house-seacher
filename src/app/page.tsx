@@ -167,99 +167,88 @@ export default function Home() {
 
             {/* ============= STICKY FILTERS BAR ============= */}
             <header className="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
-                {/* Zone pills */}
-                <div className="overflow-x-auto hide-scrollbar">
-                    <div className="max-w-7xl mx-auto px-4 py-3 flex gap-2 min-w-max items-center">
-                        <div className="flex bg-gray-100 rounded-full p-1">
-                            {zones.map(zone => (
-                                <button
-                                    key={zone}
-                                    onClick={() => { setSelectedZone(zone); setSelectedNeighborhood('Todos'); }}
-                                    className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${selectedZone === zone ? 'bg-indigo-600 text-white shadow-sm' : 'text-gray-600 hover:bg-gray-200'}`}
-                                >
-                                    {zone === 'Todas' ? '🏠 Tudo' : zone}
-                                </button>
-                            ))}
-                        </div>
-
-                        <div className="w-px h-6 bg-gray-300 mx-1"></div>
-
-                        {/* Neighborhood dropdown */}
-                        <select 
-                            className="bg-white border border-gray-200 text-gray-700 text-xs font-medium rounded-full p-2 px-3 shadow-sm outline-none cursor-pointer"
-                            value={selectedNeighborhood}
-                            onChange={(e) => setSelectedNeighborhood(e.target.value)}
-                        >
-                            <option value="Todos">Qualquer Bairro</option>
-                            {availableNeighborhoods.map(b => (
-                                <option key={b} value={b}>{b}</option>
-                            ))}
-                        </select>
-
-                        {/* Price */}
-                        <div className="flex items-center gap-1.5 bg-white border border-gray-200 rounded-full px-3 py-1.5 shadow-sm">
-                            <span className="text-xs font-medium text-gray-500">Até R$</span>
-                            <input 
-                                type="number" 
-                                value={maxPrice}
-                                onChange={(e) => setMaxPrice(Math.min(1000, Number(e.target.value)))}
-                                className="w-14 outline-none text-xs font-bold text-indigo-600 bg-transparent"
-                                step="50"
-                                min="100"
-                                max="1000"
-                            />
-                        </div>
-
-                        {/* Rooms */}
-                        <div className="flex items-center gap-1.5">
-                            <span className="text-xs font-medium text-gray-500">Quartos:</span>
-                            <div className="flex bg-white rounded-full p-0.5 border border-gray-200">
-                                {[{v: 'any', l: 'Todos'}, {v: '1', l: '1'}, {v: '2', l: '2'}, {v: '3', l: '3+'}].map(opt => (
-                                    <button
-                                        key={opt.v}
-                                        onClick={() => setFilterRooms(opt.v)}
-                                        className={`px-3 py-1 rounded-full text-xs font-medium transition-all ${filterRooms === opt.v ? 'bg-indigo-600 text-white' : 'text-gray-600 hover:bg-gray-100'}`}
-                                    >
-                                        {opt.l}
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
-
-                        {/* Direct owner */}
-                        <label className="flex items-center gap-1.5 cursor-pointer bg-white border border-gray-200 rounded-full px-3 py-1.5">
-                            <input 
-                                type="checkbox" 
-                                checked={filterDirectOwner} 
-                                onChange={(e) => setFilterDirectOwner(e.target.checked)}
-                                className="w-3.5 h-3.5 rounded accent-indigo-600"
-                            />
-                            <span className="text-xs font-medium text-gray-600">Direto c/ dono</span>
-                        </label>
-
-                        {/* Has photo */}
-                        <label className="flex items-center gap-1.5 cursor-pointer bg-white border border-gray-200 rounded-full px-3 py-1.5">
-                            <input 
-                                type="checkbox" 
-                                checked={filterHasPhoto} 
-                                onChange={(e) => setFilterHasPhoto(e.target.checked)}
-                                className="w-3.5 h-3.5 rounded accent-indigo-600"
-                            />
-                            <span className="text-xs font-medium text-gray-600">Com foto</span>
-                        </label>
-
-                        {/* Sort */}
-                        <select 
-                            className="bg-white border border-gray-200 text-gray-700 text-xs font-medium rounded-full p-2 px-3 shadow-sm outline-none cursor-pointer"
-                            value={sortBy}
-                            onChange={(e) => setSortBy(e.target.value)}
-                        >
-                            <option value="newest">Mais Recentes</option>
-                            <option value="lowest">Menor Preço</option>
-                            <option value="highest">Maior Preço</option>
-                            <option value="biggest">Maior Área</option>
-                        </select>
+                {/* Row 1: Zone pills — horizontal scroll */}
+                <div className="overflow-x-auto hide-scrollbar border-b border-gray-100">
+                    <div className="max-w-7xl mx-auto px-4 pt-2.5 pb-2 flex gap-1.5">
+                        {zones.map(zone => (
+                            <button
+                                key={zone}
+                                onClick={() => { setSelectedZone(zone); setSelectedNeighborhood('Todos'); }}
+                                className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all whitespace-nowrap ${selectedZone === zone ? 'bg-indigo-600 text-white shadow-sm' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+                            >
+                                {zone === 'Todas' ? '🏠 Todas' : zone}
+                            </button>
+                        ))}
                     </div>
+                </div>
+
+                {/* Row 2: All filters — wraps on mobile */}
+                <div className="max-w-7xl mx-auto px-4 py-2.5 flex flex-wrap gap-2 items-center">
+                    {/* Neighborhood */}
+                    <select 
+                        className="bg-gray-50 border border-gray-200 text-gray-700 text-xs font-medium rounded-lg py-2 px-3 outline-none cursor-pointer"
+                        value={selectedNeighborhood}
+                        onChange={(e) => setSelectedNeighborhood(e.target.value)}
+                    >
+                        <option value="Todos">📍 Bairro</option>
+                        {availableNeighborhoods.map(b => (
+                            <option key={b} value={b}>{b}</option>
+                        ))}
+                    </select>
+
+                    {/* Price */}
+                    <div className="flex items-center gap-1.5 bg-gray-50 border border-gray-200 rounded-lg px-3 py-1.5">
+                        <span className="text-xs font-medium text-gray-500">Até R$</span>
+                        <input 
+                            type="number" 
+                            value={maxPrice}
+                            onChange={(e) => setMaxPrice(Math.min(1000, Number(e.target.value)))}
+                            className="w-14 outline-none text-xs font-bold text-indigo-600 bg-transparent"
+                            step="50"
+                            min="100"
+                            max="1000"
+                        />
+                    </div>
+
+                    {/* Rooms */}
+                    <div className="flex bg-gray-50 rounded-lg p-0.5 border border-gray-200">
+                        {[{v: 'any', l: '🛏️ Todos'}, {v: '1', l: '1'}, {v: '2', l: '2'}, {v: '3', l: '3+'}].map(opt => (
+                            <button
+                                key={opt.v}
+                                onClick={() => setFilterRooms(opt.v)}
+                                className={`px-2.5 py-1.5 rounded-md text-xs font-medium transition-all ${filterRooms === opt.v ? 'bg-indigo-600 text-white shadow-sm' : 'text-gray-600 hover:bg-gray-200'}`}
+                            >
+                                {opt.l}
+                            </button>
+                        ))}
+                    </div>
+
+                    {/* Toggles */}
+                    <button 
+                        onClick={() => setFilterDirectOwner(!filterDirectOwner)}
+                        className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all border ${filterDirectOwner ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100'}`}
+                    >
+                        ✓ Dono direto
+                    </button>
+
+                    <button 
+                        onClick={() => setFilterHasPhoto(!filterHasPhoto)}
+                        className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all border ${filterHasPhoto ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100'}`}
+                    >
+                        📷 Com foto
+                    </button>
+
+                    {/* Sort — pushed right on desktop */}
+                    <select 
+                        className="bg-gray-50 border border-gray-200 text-gray-700 text-xs font-medium rounded-lg py-2 px-3 outline-none cursor-pointer md:ml-auto"
+                        value={sortBy}
+                        onChange={(e) => setSortBy(e.target.value)}
+                    >
+                        <option value="newest">⏱️ Recentes</option>
+                        <option value="lowest">💰 Menor Preço</option>
+                        <option value="highest">💰 Maior Preço</option>
+                        <option value="biggest">📐 Maior Área</option>
+                    </select>
                 </div>
             </header>
 
