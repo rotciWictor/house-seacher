@@ -4,6 +4,26 @@ Todas as mudanças relevantes do projeto House Searcher estão documentadas nest
 
 ---
 
+## [2.2.0] — 2026-05-20
+
+### ✨ Adicionado
+- **Paginação ZAP/VivaReal**: Scrapers agora navegam 5 páginas cada (+120 ZAP, +110 VivaReal). Total: **529 imóveis**.
+- **Mascote**: Casinha-detetive com lupa em pose de ação, na hero section com animação bounce.
+- **Footer**: Branding, badges das 3 fontes, botão "Enviar sugestão" (abre GitHub Issue), link pro GitHub, copyright.
+- **GitHub Actions atualizado**: Workflow agora roda OLX + ZAP + VivaReal + enrich.ts automaticamente a cada 6h.
+
+### 🔧 Alterado
+- **Barra de filtros redesenhada**: 2 linhas (zonas em cima, filtros embaixo), `flex-wrap` no mobile, toggle buttons em vez de checkboxes, emojis (📍🛏️📷💰), ordenação empurrada pra direita no desktop.
+- **Badges sólidos**: Todos os badges (preço, fonte, zona, dono, tempo) agora com fundo 100% opaco — legíveis em qualquer foto.
+- **Pill "Geral" removida**: Zona "Geral" não aparece mais nos filtros. Enrichment agora classifica 100% dos imóveis.
+- **Enrichment v2**: Checagem de slugs na URL (mangaratiba, ibicui, etc.), correção de bairros bugados ("Ontem", timestamps), fallback forçado pra Oeste quando RJ sem zona.
+
+### 🐛 Corrigido
+- Path do `git add` no workflow (era `web/src/data/` → agora `src/data/`).
+- ImovelWeb tentado mas descartado (anti-bot agressivo, timeout em todas as páginas).
+
+---
+
 ## [2.1.0] — 2026-05-20
 
 ### ✨ Adicionado
