@@ -157,39 +157,67 @@ export const metadata: Metadata = {
 };
 
 // JSON-LD Structured Data
-const jsonLd = {
-  "@context": "https://schema.org",
-  "@type": "WebApplication",
-  name: SITE_NAME,
-  url: SITE_URL,
-  description: DESCRIPTION,
-  applicationCategory: "RealEstateApplication",
-  operatingSystem: "Web",
-  offers: {
-    "@type": "Offer",
-    price: "0",
-    priceCurrency: "BRL",
+const jsonLd = [
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    name: SITE_NAME,
+    url: SITE_URL,
+    description: DESCRIPTION,
+    applicationCategory: "RealEstateApplication",
+    operatingSystem: "Web",
+    offers: {
+      "@type": "Offer",
+      price: "0",
+      priceCurrency: "BRL",
+    },
+    author: {
+      "@type": "Organization",
+      name: SITE_NAME,
+      url: SITE_URL,
+      logo: `${SITE_URL}/mascot.png`,
+    },
+    areaServed: {
+      "@type": "City",
+      name: "Rio de Janeiro",
+      "@id": "https://www.wikidata.org/wiki/Q8678",
+    },
+    inLanguage: "pt-BR",
+    image: `${SITE_URL}/og-image.png`,
+    screenshot: `${SITE_URL}/og-image.png`,
   },
-  author: {
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: SITE_NAME,
+    url: SITE_URL,
+    description: DESCRIPTION,
+    inLanguage: "pt-BR",
+    potentialAction: {
+      "@type": "SearchAction",
+      target: {
+        "@type": "EntryPoint",
+        urlTemplate: `${SITE_URL}/?q={search_term_string}`,
+      },
+      "query-input": "required name=search_term_string",
+    },
+  },
+  {
+    "@context": "https://schema.org",
     "@type": "Organization",
     name: SITE_NAME,
     url: SITE_URL,
+    logo: `${SITE_URL}/mascot.png`,
+    sameAs: [
+      "https://github.com/rotciWictor/house-seacher",
+    ],
+    contactPoint: {
+      "@type": "ContactPoint",
+      contactType: "customer support",
+      url: "https://github.com/rotciWictor/house-seacher/issues",
+    },
   },
-  aggregateRating: {
-    "@type": "AggregateRating",
-    ratingValue: "4.8",
-    ratingCount: "50",
-    bestRating: "5",
-  },
-  areaServed: {
-    "@type": "City",
-    name: "Rio de Janeiro",
-    "@id": "https://www.wikidata.org/wiki/Q8678",
-  },
-  inLanguage: "pt-BR",
-  image: `${SITE_URL}/og-image.png`,
-  screenshot: `${SITE_URL}/og-image.png`,
-};
+];
 
 export default function RootLayout({
   children,

@@ -388,8 +388,70 @@ export default function Home() {
                 )}
             </div>
             
+            {/* ============= ZONE GUIDE (SEO CONTENT) ============= */}
+            <section className="bg-white border-t border-gray-100">
+                <div className="max-w-7xl mx-auto px-4 py-10">
+                    <h2 className="text-xl font-bold text-gray-900 mb-6">Guia de Aluguéis por Região do Rio de Janeiro</h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {[
+                            { zone: 'Zona Oeste', emoji: '🌴', desc: 'A maior região do Rio, inclui Campo Grande, Bangu, Santa Cruz, Barra da Tijuca, Recreio e Jacarepaguá. Aluguéis mais acessíveis e bairros em expansão. Ideal para famílias buscando espaço.' },
+                            { zone: 'Zona Norte', emoji: '🏙️', desc: 'Tijuca, Méier, Madureira, Penha, Vila Isabel e Ilha do Governador. Região com melhor infraestrutura de transporte (metrô, trem). Bairros tradicionais com comércio forte.' },
+                            { zone: 'Zona Sul', emoji: '🏖️', desc: 'Copacabana, Ipanema, Leblon, Botafogo, Flamengo e Laranjeiras. A região mais valorizada do Rio, porém com opções de kitnets e quartos abaixo de R$ 1.000.' },
+                            { zone: 'Centro', emoji: '🏛️', desc: 'Centro histórico, Lapa, Santa Teresa, Cidade Nova e Gamboa. Muitas salas comerciais e apartamentos compactos com preços acessíveis e fácil acesso a transporte.' },
+                            { zone: 'Niterói', emoji: '⛴️', desc: 'Icaraí, Ingá, Santa Rosa, Fonseca e Itaipu. Cidade com vista para o Rio, barcas e ônibus integrados. Opções de aluguel mais em conta que a Zona Sul.' },
+                            { zone: 'Baixada Fluminense', emoji: '🚉', desc: 'Duque de Caxias, Nova Iguaçu, São João de Meriti, Belford Roxo e Nilópolis. Região metropolitana com os aluguéis mais baratos e acesso via trem e BRT.' },
+                        ].map(item => (
+                            <article key={item.zone} className="bg-gray-50 rounded-xl p-5 border border-gray-100">
+                                <h3 className="text-sm font-bold text-gray-900 mb-2">{item.emoji} Aluguel na {item.zone}</h3>
+                                <p className="text-xs text-gray-600 leading-relaxed">{item.desc}</p>
+                            </article>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            {/* ============= FAQ (SEO RICH SNIPPET) ============= */}
+            <section className="bg-gray-50 border-t border-gray-100">
+                <div className="max-w-7xl mx-auto px-4 py-10">
+                    <h2 className="text-xl font-bold text-gray-900 mb-6">Perguntas Frequentes</h2>
+                    <div className="space-y-4">
+                        {[
+                            { q: 'Como funciona o House Searcher?', a: 'Somos um agregador que coleta automaticamente anúncios de aluguel de sites como OLX, ZAP Imóveis e VivaReal. A cada 6 horas, nosso robô busca imóveis até R$ 1.000 no Rio de Janeiro e região metropolitana. Você encontra tudo num só lugar, sem precisar abrir 10 abas.' },
+                            { q: 'O House Searcher é gratuito?', a: 'Sim, 100% gratuito. Não cobramos nada. Não somos imobiliária e não intermediamos negócios. Apenas agregamos anúncios públicos de outros sites para facilitar sua busca.' },
+                            { q: 'Quais sites são pesquisados?', a: 'Atualmente coletamos anúncios de OLX, ZAP Imóveis e VivaReal. Estamos trabalhando para incluir mais fontes como QuintoAndar e ImovelWeb.' },
+                            { q: 'Com que frequência os anúncios são atualizados?', a: 'A cada 6 horas, automaticamente. Anúncios com mais de 3 dias são removidos para manter a base sempre fresca.' },
+                            { q: 'Posso encontrar imóveis acima de R$ 1.000?', a: 'Nosso foco é em aluguéis acessíveis até R$ 1.000. Filtramos apenas imóveis nessa faixa de preço para ajudar quem busca moradia em conta no Rio de Janeiro.' },
+                            { q: 'Quais regiões do Rio são cobertas?', a: 'Cobrimos todo o município do Rio de Janeiro (Zona Sul, Norte, Oeste e Centro) além de Niterói, São Gonçalo, Baixada Fluminense (Duque de Caxias, Nova Iguaçu, etc.), Maricá e região serrana.' },
+                        ].map((faq, i) => (
+                            <details key={i} className="bg-white rounded-xl border border-gray-200 overflow-hidden group">
+                                <summary className="px-5 py-4 cursor-pointer text-sm font-semibold text-gray-900 hover:bg-gray-50 transition-colors flex items-center justify-between">
+                                    {faq.q}
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-gray-400 shrink-0 group-open:rotate-180 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </summary>
+                                <p className="px-5 pb-4 text-xs text-gray-600 leading-relaxed">{faq.a}</p>
+                            </details>
+                        ))}
+                    </div>
+                </div>
+                {/* FAQ Schema JSON-LD */}
+                <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
+                    "@context": "https://schema.org",
+                    "@type": "FAQPage",
+                    "mainEntity": [
+                        { "@type": "Question", "name": "Como funciona o House Searcher?", "acceptedAnswer": { "@type": "Answer", "text": "Somos um agregador que coleta automaticamente anúncios de aluguel de sites como OLX, ZAP Imóveis e VivaReal. A cada 6 horas, nosso robô busca imóveis até R$ 1.000 no Rio de Janeiro e região metropolitana." }},
+                        { "@type": "Question", "name": "O House Searcher é gratuito?", "acceptedAnswer": { "@type": "Answer", "text": "Sim, 100% gratuito. Não cobramos nada. Não somos imobiliária e não intermediamos negócios." }},
+                        { "@type": "Question", "name": "Quais sites são pesquisados?", "acceptedAnswer": { "@type": "Answer", "text": "Atualmente coletamos anúncios de OLX, ZAP Imóveis e VivaReal. Estamos trabalhando para incluir mais fontes." }},
+                        { "@type": "Question", "name": "Com que frequência os anúncios são atualizados?", "acceptedAnswer": { "@type": "Answer", "text": "A cada 6 horas, automaticamente. Anúncios com mais de 3 dias são removidos." }},
+                        { "@type": "Question", "name": "Posso encontrar imóveis acima de R$ 1.000?", "acceptedAnswer": { "@type": "Answer", "text": "Nosso foco é em aluguéis acessíveis até R$ 1.000 no Rio de Janeiro." }},
+                        { "@type": "Question", "name": "Quais regiões do Rio são cobertas?", "acceptedAnswer": { "@type": "Answer", "text": "Cobrimos todo o município do Rio de Janeiro (Zona Sul, Norte, Oeste e Centro) além de Niterói, São Gonçalo, Baixada Fluminense, Maricá e região serrana." }},
+                    ]
+                }) }} />
+            </section>
+
             {/* ============= FOOTER ============= */}
-            <footer className="bg-gray-900 text-gray-400 mt-12 pb-24 md:pb-8">
+            <footer className="bg-gray-900 text-gray-400 pb-24 md:pb-8">
                 <div className="max-w-7xl mx-auto px-4 py-10">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                         {/* Brand */}
