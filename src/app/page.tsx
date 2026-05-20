@@ -153,14 +153,24 @@ export default function Home() {
                                             <span className="text-sm font-medium">Sem foto</span>
                                         </div>
                                     )}
-                                    <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-md text-gray-900 font-bold px-3 py-1 rounded-full text-sm shadow-sm">
-                                        R$ {property.price.toFixed(2)}
-                                    </div>
-                                    {property.zone !== 'Geral' && (
-                                        <div className="absolute top-3 right-3 bg-black/60 backdrop-blur-md text-white font-medium px-2 py-1 rounded-md text-xs shadow-sm">
-                                            Z. {property.zone}
+                                    <div className="absolute top-3 left-3 flex flex-col gap-2">
+                                        <div className="bg-white/90 backdrop-blur-md text-gray-900 font-bold px-3 py-1 rounded-full text-sm shadow-sm w-max">
+                                            R$ {property.price.toFixed(2)}
                                         </div>
-                                    )}
+                                    </div>
+                                    <div className="absolute top-3 right-3 flex flex-col items-end gap-2">
+                                        <div className="bg-[#6e0ad6]/90 backdrop-blur-md text-white font-bold px-2 py-1 rounded-md text-[10px] shadow-sm tracking-wider uppercase flex items-center gap-1">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-3 h-3">
+                                                <path fillRule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zM12.75 6a.75.75 0 00-1.5 0v6c0 .414.336.75.75.75h4.5a.75.75 0 000-1.5h-3.75V6z" clipRule="evenodd" />
+                                            </svg>
+                                            OLX
+                                        </div>
+                                        {property.zone !== 'Geral' && (
+                                            <div className="bg-black/60 backdrop-blur-md text-white font-medium px-2 py-1 rounded-md text-xs shadow-sm">
+                                                Z. {property.zone}
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
                                 
                                 {/* Content */}
