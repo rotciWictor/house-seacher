@@ -203,9 +203,11 @@ export default function Home() {
                             <input 
                                 type="number" 
                                 value={maxPrice}
-                                onChange={(e) => setMaxPrice(Number(e.target.value))}
+                                onChange={(e) => setMaxPrice(Math.min(1000, Number(e.target.value)))}
                                 className="w-14 outline-none text-xs font-bold text-indigo-600 bg-transparent"
                                 step="50"
+                                min="100"
+                                max="1000"
                             />
                         </div>
 

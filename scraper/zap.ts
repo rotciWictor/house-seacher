@@ -8,53 +8,21 @@ chromium.use(stealth());
 
 const dataPath = path.resolve('src/data/properties.json');
 
-function classifyByCity(text: string): string {
+function classifyZone(text: string): string {
     const lower = text.toLowerCase();
+    if (lower.includes('zona oeste')) return 'Oeste';
+    if (lower.includes('zona norte')) return 'Norte';
+    if (lower.includes('zona sul')) return 'Sul';
+    if (lower.includes('zona central') || lower.includes('centro')) return 'Centro';
     if (lower.includes('niterói')) return 'Niterói';
     if (lower.includes('são gonçalo')) return 'São Gonçalo';
-    if (lower.includes('duque de caxias') || lower.includes('nova iguaçu') || lower.includes('são joão de meriti') || lower.includes('belford roxo') || lower.includes('nilópolis') || lower.includes('mesquita') || lower.includes('itaboraí') || lower.includes('itaguaí') || lower.includes('magé') || lower.includes('queimados')) return 'Baixada';
+    if (lower.includes('duque de caxias') || lower.includes('nova iguaçu') || lower.includes('belford roxo') || lower.includes('nilópolis') || lower.includes('mesquita') || lower.includes('são joão de meriti') || lower.includes('itaguaí')) return 'Baixada';
     if (lower.includes('maricá')) return 'Maricá';
     if (lower.includes('teresópolis') || lower.includes('petrópolis')) return 'Serrana';
     return 'Geral';
 }
 
-interface ZapListing {
-    listing?: {
-        id?: string;
-        title?: string;
-        description?: string;
-        usableAreas?: number[];
-        bedrooms?: number[];
-        bathrooms?: number[];
-        parkingSpaces?: number[];
-        pricingInfos?: Array<{
-            businessType?: string;
-            monthlyRentalTotalPrice?: string;
-            price?: string;
-            monthlyCondoFee?: string;
-        }>;
-        address?: {
-            city?: string;
-            neighborhood?: string;
-            street?: string;
-            zipCode?: string;
-            point?: { lat?: number; lon?: number };
-        };
-        publicationType?: string;
-    };
-    medias?: Array<{
-        url?: string;
-        type?: string;
-    }>;
-    link?: {
-        href?: string;
-    };
-    account?: {
-        name?: string;
-    };
-}
-
-async function scrapeZAP(source: 'zap' | 'vivareal') {
+async function scrapeSource(source: 'zap' | 'vivareal') {
     const siteName = source === 'zap' ? 'ZAP Imóveis' : 'VivaReal';
     const baseUrl = source === 'zap'
         ? 'https://www.zapimoveis.com.br/aluguel/imoveis/rj+rio-de-janeiro/?precoMaximo=1000&transacao=aluguel'
@@ -66,16 +34,14 @@ async function scrapeZAP(source: 'zap' | 'vivareal') {
     try {
         if (fs.existsSync(dataPath)) {
             const rawData = fs.readFileSync(dataPath, 'utf-8');
-            if (rawData.trim() !== '') {
-                properties = JSON.parse(rawData);
-            }
+            if (rawData.trim() !== '') properties = JSON.parse(rawData);
         }
     } catch (e) {
         console.error('Could not read existing data.', e);
     }
 
     const existingIds = new Set(properties.map(p => p.id));
-
+    
     const browser = await chromium.launch({
         headless: true,
         args: ['--no-sandbox', '--disable-setuid-sandbox']
@@ -92,109 +58,121 @@ async function scrapeZAP(source: 'zap' | 'vivareal') {
 
     try {
         console.log(`📄 Navigating to ${baseUrl}...`);
-        await page.goto(baseUrl, { waitUntil: 'domcontentloaded', timeout: 45000 });
+        await page.goto(baseUrl, { waitUntil: 'networkidle', timeout: 60000 });
         await page.waitForTimeout(5000);
 
-        // Try to extract __NEXT_DATA__
-        const nextData = await page.evaluate(() => {
-            const el = document.getElementById('__NEXT_DATA__');
-            if (el) {
-                try { return JSON.parse(el.textContent || ''); } catch { return null; }
-            }
-            return null;
+        // Scroll to load lazy content
+        for (let i = 0; i < 3; i++) {
+            await page.evaluate(() => window.scrollBy(0, 1000));
+            await page.waitForTimeout(800);
+        }
+
+        // Extract card data from visible DOM
+        const cards = await page.evaluate(() => {
+            const links = Array.from(document.querySelectorAll('a[href*="/imovel/"]'));
+            return links.map(link => {
+                // Walk up to find the <li> card container
+                let card: HTMLElement | null = link as HTMLElement;
+                for (let i = 0; i < 10; i++) {
+                    if (card?.parentElement) card = card.parentElement;
+                    if (card?.tagName === 'LI') break;
+                }
+                
+                const text = card?.textContent || '';
+                const href = (link as HTMLAnchorElement).href;
+                
+                // Get images
+                const imgs = Array.from(card?.querySelectorAll('img') || []);
+                const imgSrc = imgs
+                    .map(i => i.src || i.getAttribute('data-src') || '')
+                    .find(s => s && !s.includes('data:image') && !s.includes('svg')) || '';
+
+                return { href, text, image: imgSrc };
+            });
         });
 
-        if (nextData) {
-            console.log(`   ✅ Found __NEXT_DATA__! Parsing listings...`);
-            
-            // Navigate through the data structure to find listings
-            let listings: ZapListing[] = [];
-            
-            try {
-                // Common paths in ZAP/VivaReal Next.js data
-                const pageProps = nextData?.props?.pageProps;
-                if (pageProps?.searchResult?.listings) {
-                    listings = pageProps.searchResult.listings;
-                } else if (pageProps?.initialProps?.searchResult?.listings) {
-                    listings = pageProps.initialProps.searchResult.listings;
-                } else if (pageProps?.data?.search?.result?.listings) {
-                    listings = pageProps.data.search.result.listings;
-                }
-            } catch (e) {
-                console.log(`   ⚠️ Could not find listings in __NEXT_DATA__ structure.`);
-                // Dump keys for debugging
-                const keys = Object.keys(nextData?.props?.pageProps || {});
-                console.log(`   Available keys: ${keys.join(', ')}`);
+        console.log(`   Found ${cards.length} property cards.`);
+
+        for (const card of cards) {
+            // Extract ID from URL
+            const idMatch = card.href.match(/id-(\d+)/);
+            if (!idMatch) continue;
+            const id = `${source}_${idMatch[1]}`;
+            if (existingIds.has(id)) continue;
+
+            // Parse price: "R$ 950/mês"
+            const priceMatch = card.text.match(/R\$\s*([\d.]+)\s*\/mês/i);
+            if (!priceMatch) continue;
+            const price = parseFloat(priceMatch[1].replace('.', ''));
+            if (price <= 0 || price > 1000) continue;
+
+            // Parse condomínio: "Cond. R$ 294"
+            const condoMatch = card.text.match(/Cond\.\s*R\$\s*([\d.]+)/i);
+            const condominio = condoMatch ? parseFloat(condoMatch[1].replace('.', '')) : 0;
+
+            // Parse area: "55 m²" or "Tamanho do imóvel 55 m²"
+            const areaMatch = card.text.match(/(\d+)\s*m²/);
+            const area = areaMatch ? parseInt(areaMatch[1]) : 0;
+
+            // Parse rooms: "Quantidade de quartos 2" or "2 quartos"
+            const roomsMatch = card.text.match(/(?:Quantidade de quartos|(\d+)\s*quartos?)/i);
+            const rooms = roomsMatch ? parseInt(roomsMatch[1] || card.text.match(/quartos?\s*(\d+)|(\d+)\s*quartos?/i)?.[1] || card.text.match(/Quantidade de quartos\s*(\d+)/)?.[1] || '1') : 1;
+
+            // Parse bathrooms
+            const bathMatch = card.text.match(/Quantidade de banheiros\s*(\d+)/i);
+            const bathrooms = bathMatch ? parseInt(bathMatch[1]) : 1;
+
+            // Parse neighborhood and city from text like "Realengo, Rio de Janeiro"
+            // The pattern is: "em\nNeighborhood, City"
+            const locMatch = card.text.match(/(?:em|emm)\s*([^,\n]+),\s*([^\n]+?)(?:Rua|Av\.|Estr|Tamanho)/i);
+            let neighborhood = 'Desconhecido';
+            let city = 'Rio de Janeiro';
+            if (locMatch) {
+                neighborhood = locMatch[1].trim();
+                city = locMatch[2].trim();
             }
 
-            console.log(`   Found ${listings.length} listings in JSON.`);
+            // Zone from URL (most reliable for ZAP)
+            const zone = classifyZone(card.href + ' ' + city + ' ' + neighborhood);
 
-            for (const item of listings) {
-                const listing = item.listing;
-                if (!listing) continue;
-
-                const id = `${source}_${listing.id || Math.random().toString(36).substring(7)}`;
-                if (existingIds.has(id)) continue;
-
-                // Get rental price
-                const pricingInfo = listing.pricingInfos?.find(p => p.businessType === 'RENTAL');
-                const priceStr = pricingInfo?.monthlyRentalTotalPrice || pricingInfo?.price || '0';
-                const price = parseFloat(priceStr);
-                if (price <= 0 || price > 1000) continue;
-
-                const condoStr = pricingInfo?.monthlyCondoFee || '0';
-                const condominio = parseFloat(condoStr) || 0;
-
-                const address = listing.address || {};
-                const neighborhood = address.neighborhood || 'Desconhecido';
-                const city = address.city || '';
-                const zone = classifyByCity(city + ' ' + neighborhood);
-
-                const image = item.medias?.[0]?.url || '';
-                const href = item.link?.href || '';
-                const fullUrl = href.startsWith('http') ? href : `https://www.${source === 'zap' ? 'zapimoveis.com.br' : 'vivareal.com.br'}${href}`;
-
-                const property: Property = {
-                    id,
-                    title: listing.title || listing.description?.substring(0, 80) || `Imóvel em ${neighborhood}`,
-                    price,
-                    condominio,
-                    url: fullUrl,
-                    image,
-                    rooms: listing.bedrooms?.[0] || 1,
-                    bathrooms: listing.bathrooms?.[0] || 1,
-                    area: listing.usableAreas?.[0] || 0,
-                    location: `${city}, ${neighborhood}`,
-                    neighborhood,
-                    zone,
-                    description: listing.description || '',
-                    source,
-                    directOwner: listing.publicationType === 'OWNER' || (item.account?.name || '').toLowerCase().includes('proprietário'),
-                    found_at: new Date().toISOString()
-                };
-
-                properties.push(property);
-                existingIds.add(id);
-                newCount++;
-                console.log(`   ✅ ${property.title.substring(0, 50)} — R$${property.price} — ${property.neighborhood} (${property.zone})`);
+            // Title from text
+            const titleMatch = card.text.match(/(?:Destaque|fotos)(.+?)(?:para alugar|em\s)/i);
+            let title = titleMatch ? titleMatch[1].trim() : '';
+            if (!title || title.length < 5) {
+                // Fallback: build from type + neighborhood
+                const typeMatch = card.text.match(/(Apartamento|Casa|Kitnet|Sobrado|Sala|Studio|Loft|Flat|Quitinete)[^\n]*/i);
+                title = typeMatch ? typeMatch[0].substring(0, 80) : `Imóvel em ${neighborhood}`;
             }
-        } else {
-            console.log(`   ⚠️ No __NEXT_DATA__ found. Cloudflare may have blocked us.`);
-            console.log(`   Trying fallback: scraping visible DOM...`);
-            
-            // Fallback: try to scrape visible content like we do with OLX
-            const pageTitle = await page.title();
-            console.log(`   Page title: ${pageTitle}`);
-            
-            if (pageTitle.toLowerCase().includes('challenge') || pageTitle.toLowerCase().includes('cloudflare')) {
-                console.log(`   ❌ Cloudflare challenge detected. ${siteName} blocked us.`);
-            }
+
+            const property: Property = {
+                id,
+                title,
+                price,
+                condominio,
+                url: card.href.split('?')[0], // Clean URL
+                image: card.image,
+                rooms,
+                bathrooms,
+                area,
+                location: `${city}, ${neighborhood}`,
+                neighborhood,
+                zone,
+                description: card.text.substring(0, 300),
+                source,
+                directOwner: false,
+                found_at: new Date().toISOString()
+            };
+
+            properties.push(property);
+            existingIds.add(id);
+            newCount++;
+            console.log(`   ✅ ${title.substring(0, 50)} — R$${price} — ${neighborhood} (${zone})`);
         }
-    } catch (e) {
-        console.log(`   ❌ Error scraping ${siteName}:`, e);
+
+    } catch (e: any) {
+        console.log(`   ❌ Error: ${e.message}`);
     }
 
-    // Save
     const dir = path.dirname(dataPath);
     if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
     fs.writeFileSync(dataPath, JSON.stringify(properties, null, 2));
@@ -202,8 +180,7 @@ async function scrapeZAP(source: 'zap' | 'vivareal') {
     await browser.close();
 }
 
-// Run both
 (async () => {
-    await scrapeZAP('zap');
-    await scrapeZAP('vivareal');
+    await scrapeSource('zap');
+    await scrapeSource('vivareal');
 })().catch(console.error);
