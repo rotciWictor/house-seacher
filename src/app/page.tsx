@@ -1,7 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import Image from 'next/image';
+import { useState, useEffect, useMemo } from 'react';
 import rawProperties from '../data/properties.json';
 
 interface Property {
@@ -13,12 +12,39 @@ interface Property {
     image: string;
     rooms: number;
     bathrooms: number;
+    area: number;
     location: string;
     neighborhood: string;
     zone: string;
     description: string;
+    source: string;
+    directOwner: boolean;
     found_at: string;
 }
+
+function timeAgo(dateStr: string): string {
+    const now = new Date();
+    const date = new Date(dateStr);
+    const diffMs = now.getTime() - date.getTime();
+    const diffMins = Math.floor(diffMs / 60000);
+    if (diffMins < 60) return `${diffMins}min atrás`;
+    const diffHours = Math.floor(diffMins / 60);
+    if (diffHours < 24) return `${diffHours}h atrás`;
+    const diffDays = Math.floor(diffHours / 24);
+    return `${diffDays}d atrás`;
+}
+
+const SOURCE_COLORS: Record<string, string> = {
+    olx: 'bg-[#6e0ad6]',
+    zap: 'bg-[#8229e5]',
+    vivareal: 'bg-[#ff5a00]',
+};
+
+const SOURCE_LABELS: Record<string, string> = {
+    olx: 'OLX',
+    zap: 'ZAP',
+    vivareal: 'VivaReal',
+};
 
 export default function Home() {
     const [properties, setProperties] = useState<Property[]>([]);
@@ -28,66 +54,141 @@ export default function Home() {
     const [selectedNeighborhood, setSelectedNeighborhood] = useState<string>('Todos');
     const [maxPrice, setMaxPrice] = useState<number>(1000);
     const [sortBy, setSortBy] = useState<string>('newest');
+    const [searchQuery, setSearchQuery] = useState<string>('');
+    const [filterRooms, setFilterRooms] = useState<string>('any');
+    const [filterDirectOwner, setFilterDirectOwner] = useState<boolean>(false);
+    const [filterHasPhoto, setFilterHasPhoto] = useState<boolean>(false);
+    const [showFilters, setShowFilters] = useState<boolean>(false);
 
     useEffect(() => {
-        // Removed the initial manual sort here, we will sort on render
         setProperties(rawProperties as Property[]);
     }, []);
 
-    const zones = ['Todas', 'Oeste', 'Norte', 'Sul', 'Centro', 'Geral'];
+    const zones = useMemo(() => {
+        const allZones = new Set(properties.map(p => p.zone));
+        return ['Todas', ...Array.from(allZones).filter(z => z !== 'Geral').sort(), 'Geral'];
+    }, [properties]);
     
-    // Get unique neighborhoods based on selected zone
-    const availableNeighborhoods = Array.from(new Set(
-        properties
-            .filter(p => selectedZone === 'Todas' || p.zone === selectedZone)
-            .map(p => p.neighborhood)
-    )).sort();
+    const availableNeighborhoods = useMemo(() => {
+        return Array.from(new Set(
+            properties
+                .filter(p => selectedZone === 'Todas' || p.zone === selectedZone)
+                .map(p => p.neighborhood)
+                .filter(n => n !== 'Desconhecido')
+        )).sort();
+    }, [properties, selectedZone]);
 
-    const filteredProperties = properties.filter(p => {
-        if (selectedZone !== 'Todas' && p.zone !== selectedZone) return false;
-        if (selectedNeighborhood !== '' && selectedNeighborhood !== 'Todos' && p.neighborhood !== selectedNeighborhood) return false;
-        if (p.price > maxPrice) return false;
-        return true;
-    }).sort((a, b) => {
-        if (sortBy === 'lowest') return a.price - b.price;
-        if (sortBy === 'highest') return b.price - a.price;
-        return new Date(b.found_at).getTime() - new Date(a.found_at).getTime(); // newest
-    });
+    const filteredProperties = useMemo(() => {
+        return properties.filter(p => {
+            if (selectedZone !== 'Todas' && p.zone !== selectedZone) return false;
+            if (selectedNeighborhood !== '' && selectedNeighborhood !== 'Todos' && p.neighborhood !== selectedNeighborhood) return false;
+            if (p.price > maxPrice) return false;
+            if (searchQuery && !p.title.toLowerCase().includes(searchQuery.toLowerCase()) && !p.neighborhood.toLowerCase().includes(searchQuery.toLowerCase()) && !p.description.toLowerCase().includes(searchQuery.toLowerCase())) return false;
+            if (filterRooms !== 'any' && p.rooms !== parseInt(filterRooms)) return false;
+            if (filterDirectOwner && !p.directOwner) return false;
+            if (filterHasPhoto && !p.image) return false;
+            return true;
+        }).sort((a, b) => {
+            if (sortBy === 'lowest') return a.price - b.price;
+            if (sortBy === 'highest') return b.price - a.price;
+            if (sortBy === 'biggest') return (b.area || 0) - (a.area || 0);
+            return new Date(b.found_at).getTime() - new Date(a.found_at).getTime();
+        });
+    }, [properties, selectedZone, selectedNeighborhood, maxPrice, sortBy, searchQuery, filterRooms, filterDirectOwner, filterHasPhoto]);
+
+    const stats = useMemo(() => ({
+        total: properties.length,
+        zones: new Set(properties.map(p => p.zone)).size,
+        neighborhoods: new Set(properties.map(p => p.neighborhood)).size,
+        sources: new Set(properties.map(p => p.source || 'olx')).size,
+        avgPrice: properties.length > 0 ? Math.round(properties.reduce((s, p) => s + p.price, 0) / properties.length) : 0,
+    }), [properties]);
 
     return (
-        <main className="min-h-screen bg-gray-50 text-gray-900 font-sans pb-24 md:pb-10 selection:bg-indigo-500 selection:text-white">
-            {/* Header Mobile / Desktop */}
-            <header className="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
-                <div className="max-w-7xl mx-auto px-4 py-4 flex flex-col md:flex-row justify-between md:items-center gap-4">
-                    <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center shadow-lg shadow-indigo-600/20">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+        <main className="min-h-screen bg-gray-50 text-gray-900 font-sans selection:bg-indigo-500 selection:text-white">
+            {/* ============= HERO SECTION ============= */}
+            <section className="relative overflow-hidden bg-gradient-to-br from-indigo-700 via-purple-700 to-indigo-900">
+                {/* Animated background blobs */}
+                <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                    <div className="absolute -top-40 -left-40 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl animate-pulse"></div>
+                    <div className="absolute -bottom-40 -right-40 w-96 h-96 bg-indigo-400/20 rounded-full blur-3xl animate-pulse" style={{animationDelay: '1s'}}></div>
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-pink-500/10 rounded-full blur-3xl animate-pulse" style={{animationDelay: '2s'}}></div>
+                </div>
+
+                <div className="relative max-w-7xl mx-auto px-4 py-12 md:py-20 text-center">
+                    {/* Logo */}
+                    <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md px-4 py-2 rounded-full text-white/90 text-sm font-medium mb-6 border border-white/10">
+                        <span className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span>
+                        Atualizado automaticamente a cada 6 horas
+                    </div>
+
+                    <h1 className="text-3xl md:text-5xl lg:text-6xl font-black text-white leading-tight mb-4 tracking-tight">
+                        O Agregador de Imóveis
+                        <br />
+                        <span className="bg-gradient-to-r from-amber-300 via-yellow-200 to-amber-300 bg-clip-text text-transparent">
+                            Baratos do Rio de Janeiro
+                        </span>
+                    </h1>
+
+                    <p className="text-base md:text-lg text-indigo-200 max-w-2xl mx-auto mb-8 leading-relaxed">
+                        Varremos OLX, ZAP, VivaReal e outras fontes pra encontrar os melhores aluguéis até R$ 1.000. Chega de abrir 10 abas.
+                    </p>
+
+                    {/* Search bar in hero */}
+                    <div className="max-w-xl mx-auto mb-10">
+                        <div className="flex items-center bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl shadow-black/20 overflow-hidden border border-white/20">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400 ml-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                             </svg>
+                            <input
+                                type="text"
+                                placeholder="Buscar por bairro, título ou palavra-chave..."
+                                className="w-full px-4 py-4 text-gray-800 bg-transparent outline-none text-base"
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                            />
                         </div>
-                        <h1 className="text-xl md:text-2xl font-bold tracking-tight text-gray-900">House<span className="text-indigo-600">Searcher</span></h1>
+                    </div>
+
+                    {/* Stats counters */}
+                    <div className="flex flex-wrap justify-center gap-6 md:gap-10">
+                        {[
+                            { value: stats.total, label: 'Imóveis' },
+                            { value: stats.neighborhoods, label: 'Bairros' },
+                            { value: stats.zones, label: 'Regiões' },
+                            { value: `R$ ${stats.avgPrice}`, label: 'Preço Médio' },
+                        ].map((stat, i) => (
+                            <div key={i} className="text-center">
+                                <div className="text-2xl md:text-3xl font-black text-white">{stat.value}</div>
+                                <div className="text-xs md:text-sm text-indigo-300 font-medium">{stat.label}</div>
+                            </div>
+                        ))}
                     </div>
                 </div>
-                
-                {/* Filters Section (Scrollable horizontally on mobile) */}
-                <div className="bg-gray-50 border-t border-gray-200 overflow-x-auto hide-scrollbar">
-                    <div className="max-w-7xl mx-auto px-4 py-3 flex gap-3 min-w-max items-center">
-                        <div className="flex bg-white rounded-full p-1 border border-gray-200 shadow-sm">
+            </section>
+
+            {/* ============= STICKY FILTERS BAR ============= */}
+            <header className="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
+                {/* Zone pills */}
+                <div className="overflow-x-auto hide-scrollbar">
+                    <div className="max-w-7xl mx-auto px-4 py-3 flex gap-2 min-w-max items-center">
+                        <div className="flex bg-gray-100 rounded-full p-1">
                             {zones.map(zone => (
                                 <button
                                     key={zone}
                                     onClick={() => { setSelectedZone(zone); setSelectedNeighborhood('Todos'); }}
-                                    className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${selectedZone === zone ? 'bg-indigo-600 text-white shadow-sm' : 'text-gray-600 hover:bg-gray-100'}`}
+                                    className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${selectedZone === zone ? 'bg-indigo-600 text-white shadow-sm' : 'text-gray-600 hover:bg-gray-200'}`}
                                 >
-                                    {zone === 'Todas' ? 'Tudo' : `Zona ${zone}`}
+                                    {zone === 'Todas' ? '🏠 Tudo' : zone}
                                 </button>
                             ))}
                         </div>
 
-                        <div className="w-px h-8 bg-gray-300 mx-2 hidden md:block"></div>
+                        <div className="w-px h-6 bg-gray-300 mx-1"></div>
 
+                        {/* Neighborhood dropdown */}
                         <select 
-                            className="bg-white border border-gray-200 text-gray-700 text-sm rounded-full focus:ring-indigo-500 focus:border-indigo-500 block p-2 px-4 shadow-sm outline-none appearance-none cursor-pointer pr-8 bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%236B7280%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E')] bg-[length:12px_auto] bg-no-repeat bg-[position:right_12px_center]"
+                            className="bg-white border border-gray-200 text-gray-700 text-xs font-medium rounded-full p-2 px-3 shadow-sm outline-none cursor-pointer"
                             value={selectedNeighborhood}
                             onChange={(e) => setSelectedNeighborhood(e.target.value)}
                         >
@@ -97,37 +198,100 @@ export default function Home() {
                             ))}
                         </select>
 
-                        <div className="flex items-center gap-2 bg-white border border-gray-200 rounded-full px-4 py-1.5 shadow-sm">
-                            <span className="text-sm font-medium text-gray-600">Até R$</span>
+                        {/* Price */}
+                        <div className="flex items-center gap-1.5 bg-white border border-gray-200 rounded-full px-3 py-1.5 shadow-sm">
+                            <span className="text-xs font-medium text-gray-500">Até R$</span>
                             <input 
                                 type="number" 
                                 value={maxPrice}
                                 onChange={(e) => setMaxPrice(Number(e.target.value))}
-                                className="w-16 outline-none text-sm font-bold text-indigo-600 bg-transparent"
+                                className="w-14 outline-none text-xs font-bold text-indigo-600 bg-transparent"
                                 step="50"
                             />
                         </div>
+
+                        {/* Toggle advanced filters */}
+                        <button 
+                            onClick={() => setShowFilters(!showFilters)}
+                            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all border ${showFilters ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'}`}
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+                            </svg>
+                            Filtros
+                        </button>
                     </div>
                 </div>
+
+                {/* Advanced filters panel */}
+                {showFilters && (
+                    <div className="border-t border-gray-100 bg-gray-50">
+                        <div className="max-w-7xl mx-auto px-4 py-3 flex flex-wrap gap-3 items-center">
+                            {/* Rooms */}
+                            <div className="flex items-center gap-1.5">
+                                <span className="text-xs font-medium text-gray-500">Quartos:</span>
+                                <div className="flex bg-white rounded-full p-0.5 border border-gray-200">
+                                    {[{v: 'any', l: 'Todos'}, {v: '1', l: '1'}, {v: '2', l: '2'}, {v: '3', l: '3+'}].map(opt => (
+                                        <button
+                                            key={opt.v}
+                                            onClick={() => setFilterRooms(opt.v)}
+                                            className={`px-3 py-1 rounded-full text-xs font-medium transition-all ${filterRooms === opt.v ? 'bg-indigo-600 text-white' : 'text-gray-600 hover:bg-gray-100'}`}
+                                        >
+                                            {opt.l}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* Direct owner */}
+                            <label className="flex items-center gap-1.5 cursor-pointer bg-white border border-gray-200 rounded-full px-3 py-1.5">
+                                <input 
+                                    type="checkbox" 
+                                    checked={filterDirectOwner} 
+                                    onChange={(e) => setFilterDirectOwner(e.target.checked)}
+                                    className="w-3.5 h-3.5 rounded accent-indigo-600"
+                                />
+                                <span className="text-xs font-medium text-gray-600">Direto c/ dono</span>
+                            </label>
+
+                            {/* Has photo */}
+                            <label className="flex items-center gap-1.5 cursor-pointer bg-white border border-gray-200 rounded-full px-3 py-1.5">
+                                <input 
+                                    type="checkbox" 
+                                    checked={filterHasPhoto} 
+                                    onChange={(e) => setFilterHasPhoto(e.target.checked)}
+                                    className="w-3.5 h-3.5 rounded accent-indigo-600"
+                                />
+                                <span className="text-xs font-medium text-gray-600">Com foto</span>
+                            </label>
+
+                            {/* Sort */}
+                            <div className="flex items-center gap-1.5">
+                                <span className="text-xs font-medium text-gray-500">Ordenar:</span>
+                                <select 
+                                    className="bg-white border border-gray-200 text-gray-700 text-xs rounded-full p-1.5 px-3 outline-none cursor-pointer"
+                                    value={sortBy}
+                                    onChange={(e) => setSortBy(e.target.value)}
+                                >
+                                    <option value="newest">Mais Recentes</option>
+                                    <option value="lowest">Menor Preço</option>
+                                    <option value="highest">Maior Preço</option>
+                                    <option value="biggest">Maior Área</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                )}
             </header>
 
-            {/* Main Content */}
+            {/* ============= RESULTS ============= */}
             <div className="max-w-7xl mx-auto px-4 py-6 md:py-8">
-                <div className="mb-6 flex justify-between items-center">
-                    <h2 className="text-lg md:text-xl font-bold text-gray-800">
+                <div className="mb-5 flex justify-between items-center">
+                    <h2 className="text-base md:text-lg font-bold text-gray-800">
                         {filteredProperties.length} imóveis encontrados
                     </h2>
-                    <div className="flex items-center gap-2">
-                        <label className="text-sm font-medium text-gray-500">Ordenar:</label>
-                        <select 
-                            className="bg-white border border-gray-200 text-gray-700 text-sm rounded-lg p-2 outline-none cursor-pointer"
-                            value={sortBy}
-                            onChange={(e) => setSortBy(e.target.value)}
-                        >
-                            <option value="newest">Mais Recentes</option>
-                            <option value="lowest">Menor Preço</option>
-                            <option value="highest">Maior Preço</option>
-                        </select>
+                    <div className="text-xs text-gray-400 font-medium">
+                        Última atualização: {properties.length > 0 ? timeAgo(properties[0]?.found_at) : '—'}
                     </div>
                 </div>
 
@@ -140,11 +304,11 @@ export default function Home() {
                         </div>
                         <h2 className="text-xl font-bold text-gray-900 mb-2">Poxa, nenhum imóvel encontrado</h2>
                         <p className="text-gray-500 max-w-sm px-4">
-                            Tente ajustar os filtros, aumentar o preço ou mudar a zona para ver mais opções.
+                            Tente ajustar os filtros, aumentar o preço ou mudar a zona.
                         </p>
                     </div>
                 ) : (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
                         {filteredProperties.map((property) => (
                             <a 
                                 href={property.url} 
@@ -153,8 +317,8 @@ export default function Home() {
                                 key={property.id} 
                                 className="group flex flex-col bg-white rounded-2xl overflow-hidden border border-gray-200 hover:border-indigo-300 hover:shadow-xl hover:shadow-indigo-500/10 hover:-translate-y-1 transition-all duration-300"
                             >
-                                {/* Image Container */}
-                                <div className="relative h-56 w-full bg-gray-100 overflow-hidden">
+                                {/* Image */}
+                                <div className="relative h-52 w-full bg-gray-100 overflow-hidden">
                                     {property.image ? (
                                         <img 
                                             src={`/api/img?url=${encodeURIComponent(property.image)}`} 
@@ -170,46 +334,72 @@ export default function Home() {
                                             <span className="text-sm font-medium">Sem foto</span>
                                         </div>
                                     )}
-                                    <div className="absolute top-3 left-3 flex flex-col gap-2">
-                                        <div className="bg-white/90 backdrop-blur-md text-gray-900 font-bold px-3 py-1 rounded-full text-sm shadow-sm w-max">
-                                            R$ {property.price.toFixed(2)}
+                                    {/* Price badge */}
+                                    <div className="absolute top-3 left-3 flex flex-col gap-1.5">
+                                        <div className="bg-white/95 backdrop-blur-md text-gray-900 font-bold px-3 py-1 rounded-full text-sm shadow-md w-max">
+                                            R$ {property.price.toFixed(0)}
                                         </div>
-                                    </div>
-                                    <div className="absolute top-3 right-3 flex flex-col items-end gap-2">
-                                        <div className="bg-[#6e0ad6]/90 backdrop-blur-md text-white font-bold px-2 py-1 rounded-md text-[10px] shadow-sm tracking-wider uppercase flex items-center gap-1">
-                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-3 h-3">
-                                                <path fillRule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zM12.75 6a.75.75 0 00-1.5 0v6c0 .414.336.75.75.75h4.5a.75.75 0 000-1.5h-3.75V6z" clipRule="evenodd" />
-                                            </svg>
-                                            OLX
-                                        </div>
-                                        {property.zone !== 'Geral' && (
-                                            <div className="bg-black/60 backdrop-blur-md text-white font-medium px-2 py-1 rounded-md text-xs shadow-sm">
-                                                Z. {property.zone}
+                                        {property.condominio > 0 && (
+                                            <div className="bg-black/50 backdrop-blur-md text-white/90 font-medium px-2 py-0.5 rounded-full text-[10px] shadow-sm w-max">
+                                                + Cond. R$ {property.condominio}
                                             </div>
                                         )}
+                                    </div>
+                                    {/* Right badges */}
+                                    <div className="absolute top-3 right-3 flex flex-col items-end gap-1.5">
+                                        <div className={`${SOURCE_COLORS[property.source || 'olx'] || 'bg-gray-600'}/90 backdrop-blur-md text-white font-bold px-2 py-1 rounded-md text-[10px] shadow-sm tracking-wider uppercase`}>
+                                            {SOURCE_LABELS[property.source || 'olx'] || 'OLX'}
+                                        </div>
+                                        {property.zone !== 'Geral' && (
+                                            <div className="bg-black/60 backdrop-blur-md text-white font-medium px-2 py-0.5 rounded-md text-[10px] shadow-sm">
+                                                {property.zone}
+                                            </div>
+                                        )}
+                                    </div>
+                                    {/* Direct owner badge */}
+                                    {property.directOwner && (
+                                        <div className="absolute bottom-3 left-3 bg-emerald-500/90 backdrop-blur-md text-white font-semibold px-2 py-0.5 rounded-full text-[10px] shadow-sm">
+                                            ✓ Direto c/ Dono
+                                        </div>
+                                    )}
+                                    {/* Time badge */}
+                                    <div className="absolute bottom-3 right-3 bg-black/50 backdrop-blur-md text-white/80 font-medium px-2 py-0.5 rounded-full text-[10px]">
+                                        {timeAgo(property.found_at)}
                                     </div>
                                 </div>
                                 
                                 {/* Content */}
-                                <div className="p-5 flex flex-col flex-grow">
-                                    <h3 className="text-base font-semibold text-gray-900 mb-1 line-clamp-2 leading-tight group-hover:text-indigo-600 transition-colors">
+                                <div className="p-4 flex flex-col flex-grow">
+                                    <h3 className="text-sm font-semibold text-gray-900 mb-1 line-clamp-2 leading-snug group-hover:text-indigo-600 transition-colors">
                                         {property.title}
                                     </h3>
                                     
-                                    <p className="text-gray-500 text-sm mb-4 line-clamp-2 mt-1">
+                                    <p className="text-gray-500 text-xs mb-3 flex items-center gap-1">
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                        </svg>
                                         {property.neighborhood}
                                     </p>
 
-                                    <div className="mt-auto pt-4 border-t border-gray-100 flex items-center justify-between text-gray-600 text-sm font-medium">
-                                        <div className="flex items-center gap-1.5 bg-gray-50 px-2 py-1 rounded-md">
-                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                                            </svg>
-                                            <span>{property.rooms} {property.rooms === 1 ? 'qto' : 'qtos'}</span>
+                                    {/* Info pills */}
+                                    <div className="mt-auto pt-3 border-t border-gray-100 flex items-center gap-2 flex-wrap">
+                                        <div className="flex items-center gap-1 bg-gray-50 px-2 py-1 rounded-md text-[11px] font-medium text-gray-600">
+                                            <span>🛏️</span> {property.rooms} {property.rooms === 1 ? 'qto' : 'qtos'}
                                         </div>
-                                        <div className="flex items-center gap-1 text-indigo-600">
-                                            <span>Ver mais</span>
-                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        {property.bathrooms > 0 && (
+                                            <div className="flex items-center gap-1 bg-gray-50 px-2 py-1 rounded-md text-[11px] font-medium text-gray-600">
+                                                <span>🚿</span> {property.bathrooms} ban
+                                            </div>
+                                        )}
+                                        {property.area > 0 && (
+                                            <div className="flex items-center gap-1 bg-gray-50 px-2 py-1 rounded-md text-[11px] font-medium text-gray-600">
+                                                <span>📐</span> {property.area}m²
+                                            </div>
+                                        )}
+                                        <div className="ml-auto flex items-center gap-1 text-indigo-600 text-xs font-medium">
+                                            <span>Ver</span>
+                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                                             </svg>
                                         </div>
@@ -221,9 +411,10 @@ export default function Home() {
                 )}
             </div>
             
-            {/* Mobile Bottom Navigation Bar / Floating Action */}
-            <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-gray-900 text-white px-6 py-3 rounded-full shadow-2xl flex items-center gap-2 md:hidden z-50 whitespace-nowrap">
-                <span className="font-medium text-sm">{filteredProperties.length} imóveis na lista</span>
+            {/* Mobile floating bar */}
+            <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-gray-900/95 backdrop-blur-md text-white px-5 py-2.5 rounded-full shadow-2xl flex items-center gap-2 md:hidden z-50 whitespace-nowrap border border-gray-700">
+                <span className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span>
+                <span className="font-medium text-sm">{filteredProperties.length} imóveis</span>
             </div>
         </main>
     );
