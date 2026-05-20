@@ -157,8 +157,9 @@ export default function Home() {
                                 <div className="relative h-56 w-full bg-gray-100 overflow-hidden">
                                     {property.image ? (
                                         <img 
-                                            src={property.image} 
+                                            src={`/api/img?url=${encodeURIComponent(property.image)}`} 
                                             alt={property.title}
+                                            loading="lazy"
                                             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                                         />
                                     ) : (
