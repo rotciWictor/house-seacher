@@ -1,0 +1,12 @@
+# House Searcher — Robots.txt
+User-agent: *
+Allow: /
+
+Sitemap: https://house-seacher.vcampos.dev/sitemap.xml
+
+# Crawl-delay for politeness
+User-agent: Googlebot
+Crawl-delay: 1
+
+User-agent: Bingbot
+Crawl-delay: 2
