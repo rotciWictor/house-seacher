@@ -128,11 +128,10 @@ export const metadata: Metadata = {
   // Manifest
   manifest: "/manifest.json",
 
-  // Verification (add your IDs when you have them)
-  // verification: {
-  //   google: "your-google-site-verification-code",
-  //   yandex: "your-yandex-verification",
-  // },
+  // Verification
+  verification: {
+    google: "z929shW7isyFEUtspTbMmOeUNU3Dj7lszfEWV24T2kU",
+  },
 
   // App links
   appleWebApp: {
