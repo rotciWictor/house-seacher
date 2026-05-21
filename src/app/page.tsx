@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
-import rawProperties from '../data/properties.json';
+import { supabase } from '../lib/supabase';
 
 interface Property {
     id: string;
@@ -52,6 +52,7 @@ const SOURCE_LABELS: Record<string, string> = {
 
 export default function Home() {
     const [properties, setProperties] = useState<Property[]>([]);
+    const [loading, setLoading] = useState(true);
     
     // Filters
     const [selectedZone, setSelectedZone] = useState<string>('Todas');
@@ -64,7 +65,27 @@ export default function Home() {
     const [filterHasPhoto, setFilterHasPhoto] = useState<boolean>(false);
 
     useEffect(() => {
-        setProperties(rawProperties as Property[]);
+        async function fetchProperties() {
+            setLoading(true);
+            const { data, error } = await supabase
+                .from('properties')
+                .select('*')
+                .order('found_at', { ascending: false });
+            
+            if (data) {
+                // Map the directowner column back to directOwner for the frontend
+                const mappedData = data.map(p => ({
+                    ...p,
+                    directOwner: p.directowner
+                }));
+                setProperties(mappedData as Property[]);
+            }
+            if (error) {
+                console.error('Error fetching properties from Supabase:', error);
+            }
+            setLoading(false);
+        }
+        fetchProperties();
     }, []);
 
     const zones = useMemo(() => {

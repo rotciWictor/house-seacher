@@ -9,6 +9,8 @@ Todas as mudanças relevantes do projeto House Searcher estão documentadas nest
 ### 🚀 Marco: 1.168 imóveis de 4 fontes
 
 ### ✨ Adicionado
+- **Scraper Mercado Livre** (`mercadolivre.ts`): Criado robô usando Playwright após constatar bloqueio irrevogável na API Oficial.
+- **Banco de Dados Supabase**: Instalado `@supabase/supabase-js` e gerado schema SQL para iniciar migração do `properties.json` para PostgreSQL.
 - **Paginação 10 páginas em todos os scrapers**: OLX (+236), ZAP (+172), VivaReal (+230). Total saltou de 529 para **1.168 imóveis**.
 - **Scraper Chaves na Mão** (`chavesnamao.ts`): Nova fonte usando `cheerio` (HTTP puro, sem browser). Leve e rápido, mas poucos imóveis abaixo de R$ 1.000 neste portal.
 - **Google Search Console verificado**: Arquivo `googled24240b989fe27bd.html` adicionado ao `/public`. Sitemap submetido.

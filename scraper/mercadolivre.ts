@@ -1,20 +1,20 @@
+import { chromium } from 'playwright-extra';
+import stealth from 'puppeteer-extra-plugin-stealth';
 import fs from 'fs';
 import path from 'path';
 import type { Property } from './index';
 
-const dataPath = path.resolve('src/data/properties.json');
+chromium.use(stealth());
 
-// Mercado Livre OAuth Credentials
-const ML_APP_ID = process.env.ML_APP_ID || '712797680476379';
-const ML_SECRET = process.env.ML_SECRET || 'NpBOTRf0OWlamDcIKYqDDc8uaP3o6Fdx';
+const dataPath = path.resolve('src/data/properties.json');
+const MAX_PAGES = 5; // Mercado Livre has fewer cheap properties usually
+const BASE_URL = 'https://lista.mercadolivre.com.br/imoveis/aluguel/rio-de-janeiro/rio-de-janeiro/_PriceRange_0-1000_NoIndex_True';
 
 function classifyZone(text: string): string {
     const lower = text.toLowerCase();
     if (lower.includes('niterói') || lower.includes('niteroi')) return 'Niterói';
     if (lower.includes('são gonçalo') || lower.includes('sao goncalo')) return 'São Gonçalo';
     if (lower.includes('duque de caxias') || lower.includes('nova iguaçu') || lower.includes('belford roxo') || lower.includes('nilópolis') || lower.includes('mesquita') || lower.includes('são joão de meriti')) return 'Baixada';
-    if (lower.includes('maricá')) return 'Maricá';
-    if (lower.includes('petrópolis') || lower.includes('teresópolis')) return 'Serrana';
 
     const oeste = ['campo grande','santa cruz','bangu','realengo','padre miguel','senador camará','cosmos','inhoaíba','paciência','sepetiba','guaratiba','vargem grande','vargem pequena','recreio','barra da tijuca','jacarepaguá','taquara','tanque','pechincha','anil','curicica','freguesia','praça seca','vila valqueire','deodoro','santíssimo','barra olímpica'];
     const norte = ['méier','madureira','cascadura','quintino','piedade','pilares','engenho de dentro','engenho novo','todos os santos','cachambi','tijuca','andaraí','grajaú','maracanã','vila isabel','irajá','vicente de carvalho','vila da penha','penha','penha circular','olaria','ramos','bonsucesso','são cristóvão','ilha do governador','parada de lucas','vigário geral','cordovil','brás de pina','marechal hermes','bento ribeiro','osvaldo cruz','guadalupe','costa barros','pavuna','anchieta','ricardo de albuquerque','cavalcanti','rocha miranda','lins de vasconcelos','campinho','del castilho','inhaúma','centro','estácio','rio comprido','santa teresa','lapa','glória'];
@@ -26,44 +26,13 @@ function classifyZone(text: string): string {
     return 'Geral';
 }
 
-async function getAccessToken(): Promise<string> {
-    console.log('🔑 Getting ML access token via Client Credentials...');
-    const res = await fetch('https://api.mercadolibre.com/oauth/token', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'Accept': 'application/json' },
-        body: new URLSearchParams({
-            grant_type: 'client_credentials',
-            client_id: ML_APP_ID,
-            client_secret: ML_SECRET,
-        }),
-    });
-
-    const data = await res.json();
-    if (!data.access_token) {
-        console.error('❌ Failed to get token:', data);
-        throw new Error('Could not get ML access token');
-    }
-    console.log(`   ✅ Token obtained (expires in ${data.expires_in}s)\n`);
-    return data.access_token;
-}
-
-async function searchML(token: string, offset: number = 0): Promise<any> {
-    // MLB1459 = Imóveis category
-    // state TUxCUFJJT085N2E4 = Rio de Janeiro
-    const url = `https://api.mercadolibre.com/sites/MLB/search?category=MLB1459&state=TUxCUFJJT085N2E4&price=*-1000&offset=${offset}&limit=50&sort=date_desc`;
-
-    const res = await fetch(url, {
-        headers: {
-            'Authorization': `Bearer ${token}`,
-            'Accept': 'application/json',
-        }
-    });
-
-    return res.json();
+function extractNumber(text: string, pattern: RegExp): number {
+    const match = text.match(pattern);
+    return match ? parseInt(match[1].replace(/[^\d]/g, ''), 10) : 0;
 }
 
 async function scrapeML() {
-    console.log('🔍 Starting Mercado Livre Imóveis scraper...\n');
+    console.log(`🔍 Starting Mercado Livre scraper (${MAX_PAGES} pages)...\\n`);
 
     let properties: Property[] = [];
     try {
@@ -72,116 +41,135 @@ async function scrapeML() {
             if (raw.trim()) properties = JSON.parse(raw);
         }
     } catch (e) {
-        console.error('Could not read existing data.', e);
+        console.error('Could not read existing data, starting fresh.', e);
     }
 
-    // Remove old ML listings (older than 3 days)
     const threeDaysAgo = new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString();
     properties = properties.filter(p => p.source !== 'mercadolivre' || p.found_at > threeDaysAgo);
-
     const existingIds = new Set(properties.map(p => p.id));
-
-    let token: string;
-    try {
-        token = await getAccessToken();
-    } catch (e) {
-        console.error('❌ Cannot proceed without token.');
-        return;
-    }
-
     let totalNew = 0;
-    const MAX_PAGES = 10;
 
-    for (let page = 0; page < MAX_PAGES; page++) {
-        const offset = page * 50;
-        console.log(`   📄 Page ${page + 1}/${MAX_PAGES} (offset=${offset})...`);
+    const browser = await chromium.launch({ headless: true });
+    const context = await browser.newContext();
+    const page = await context.newPage();
+
+    let currentUrl = BASE_URL;
+
+    for (let p = 1; p <= MAX_PAGES; p++) {
+        console.log(`   📄 Page ${p}/${MAX_PAGES}: ${currentUrl}`);
 
         try {
-            const data = await searchML(token, offset);
+            await page.goto(currentUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
+            
+            // Wait for cards to appear
+            await page.waitForSelector('.ui-search-layout__item', { timeout: 10000 }).catch(() => {});
 
-            if (data.error) {
-                console.log(`   ❌ API error: ${data.message || data.error}`);
-                break;
-            }
-
-            const results = data.results || [];
-            if (results.length === 0) {
-                console.log(`   ⚠️ No more results.`);
-                break;
-            }
+            const cards = await page.$$('.ui-search-layout__item');
+            console.log(`   Found ${cards.length} cards.`);
+            
+            if (cards.length === 0) break;
 
             let pageNew = 0;
 
-            for (const item of results) {
-                const id = `ml-${item.id}`;
-                if (existingIds.has(id)) continue;
+            for (const card of cards) {
+                try {
+                    const linkEl = await card.$('.ui-search-link');
+                    if (!linkEl) continue;
+                    
+                    const url = await linkEl.getAttribute('href') || '';
+                    if (!url) continue;
 
-                const price = item.price || 0;
-                if (price <= 0 || price > 1000) continue;
+                    // ML ids are like MLB1234567. We can extract from URL.
+                    const idMatch = url.match(/MLB-?(\d+)/i);
+                    if (!idMatch) continue;
+                    const id = `ml-${idMatch[1]}`;
+                    
+                    if (existingIds.has(id)) continue;
 
-                // Extract attributes
-                const attrs = item.attributes || [];
-                const getAttr = (id: string): string => {
-                    const a = attrs.find((a: any) => a.id === id);
-                    return a?.value_name || '';
-                };
+                    // Title
+                    const titleEl = await card.$('.ui-search-item__title');
+                    const title = titleEl ? await titleEl.innerText() : 'Imóvel no Mercado Livre';
 
-                const rooms = parseInt(getAttr('BEDROOMS') || '0', 10) || 0;
-                const bathrooms = parseInt(getAttr('FULL_BATHROOMS') || '0', 10) || 0;
-                const area = parseInt(getAttr('COVERED_AREA')?.replace(/[^\d]/g, '') || getAttr('TOTAL_AREA')?.replace(/[^\d]/g, '') || '0', 10) || 0;
+                    // Price
+                    const priceEl = await card.$('.andes-money-amount__fraction');
+                    const priceText = priceEl ? await priceEl.innerText() : '0';
+                    const price = parseInt(priceText.replace(/\\./g, ''), 10);
+                    
+                    if (price <= 0 || price > 1000) continue;
 
-                // Location
-                const loc = item.location || {};
-                const neighborhood = loc.neighborhood?.name || '';
-                const city = loc.city?.name || '';
-                const state = loc.state?.name || '';
-                const locationStr = [neighborhood, city].filter(Boolean).join(', ');
+                    // Attributes (m², quartos)
+                    const attrEls = await card.$$('.ui-search-item__attributes li');
+                    let area = 0;
+                    let rooms = 0;
+                    for (const attr of attrEls) {
+                        const text = await attr.innerText();
+                        if (text.includes('m²')) area = parseInt(text.replace(/[^\d]/g, ''), 10);
+                        if (text.includes('quarto')) rooms = parseInt(text.replace(/[^\d]/g, ''), 10);
+                    }
 
-                // Image
-                const image = item.thumbnail?.replace('http://', 'https://') || '';
+                    // Location
+                    const locEl = await card.$('.ui-search-item__location');
+                    const location = locEl ? await locEl.innerText() : 'Rio de Janeiro';
+                    const neighborhood = location.split(',')[0].trim();
+                    const zone = classifyZone(location);
 
-                // Zone
-                const zone = classifyZone(locationStr);
+                    // Image
+                    const imgEl = await card.$('img.ui-search-result-image__image');
+                    const image = imgEl ? (await imgEl.getAttribute('src') || await imgEl.getAttribute('data-src') || '') : '';
 
-                const property: Property = {
-                    id,
-                    title: item.title || '',
-                    price,
-                    condominio: 0,
-                    url: item.permalink || `https://www.mercadolivre.com.br/p/${item.id}`,
-                    image,
-                    rooms,
-                    bathrooms,
-                    area,
-                    location: locationStr,
-                    neighborhood,
-                    zone,
-                    description: '',
-                    source: 'mercadolivre',
-                    directOwner: false,
-                    found_at: new Date().toISOString(),
-                };
-
-                properties.push(property);
-                existingIds.add(id);
-                pageNew++;
+                    properties.push({
+                        id,
+                        title,
+                        price,
+                        condominio: 0,
+                        url: url.split('#')[0],
+                        image,
+                        rooms,
+                        bathrooms: 0,
+                        area,
+                        location,
+                        neighborhood,
+                        zone,
+                        description: '',
+                        source: 'mercadolivre',
+                        directOwner: false,
+                        found_at: new Date().toISOString()
+                    });
+                    
+                    existingIds.add(id);
+                    pageNew++;
+                } catch (e) {
+                    // skip card
+                }
             }
-
-            console.log(`   ✅ +${pageNew} new (${results.length} returned, total available: ${data.paging?.total || '?'})`);
+            
+            console.log(`   ✅ +${pageNew} new properties from page ${p}.`);
             totalNew += pageNew;
 
-            // Small delay to respect rate limits
-            await new Promise(r => setTimeout(r, 300));
+            // Pagination
+            const nextBtn = await page.$('a.andes-pagination__link.ui-search-link[title="Seguinte"]');
+            if (nextBtn) {
+                const nextUrl = await nextBtn.getAttribute('href');
+                if (nextUrl) {
+                    currentUrl = nextUrl;
+                    await page.waitForTimeout(2000);
+                } else {
+                    break;
+                }
+            } else {
+                break;
+            }
 
         } catch (e: any) {
-            console.log(`   ❌ Page ${page + 1} error: ${e.message}`);
+            console.log(`   ❌ Page error: ${e.message}`);
             break;
         }
     }
 
-    // Save
+    await browser.close();
+    
     fs.writeFileSync(dataPath, JSON.stringify(properties, null, 2), 'utf-8');
-    console.log(`\n🏁 Finished Mercado Livre. Added ${totalNew} new. Total: ${properties.length}\n`);
+    console.log(`\\n🏁 Finished Mercado Livre. Added ${totalNew} new. Total: ${properties.length}\\n`);
 }
 
 scrapeML();
