@@ -8,7 +8,7 @@ on:
 jobs:
   scrape:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 25
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -19,24 +19,25 @@ jobs:
           node-version: '20'
 
       - name: Install dependencies
-        working-directory: ./scraper
         run: npm ci || npm install
 
       - name: Install Playwright Browsers
-        working-directory: ./scraper
         run: npx playwright install chromium --with-deps
 
       - name: Run OLX Scraper
-        working-directory: ./scraper
-        run: npx tsx index.ts
+        run: npx tsx scraper/index.ts
 
       - name: Run ZAP + VivaReal Scraper
-        working-directory: ./scraper
-        run: npx tsx zap.ts
+        run: npx tsx scraper/zap.ts
+
+      - name: Run Mercado Livre Scraper
+        run: npx tsx scraper/mercadolivre.ts
+
+      - name: Run Chaves na Mão Scraper
+        run: npx tsx scraper/chavesnamao.ts
 
       - name: Run Zone Enrichment
-        working-directory: ./scraper
-        run: npx tsx enrich.ts
+        run: npx tsx scraper/enrich.ts
 
       - name: Commit and push changes
         run: |
