@@ -1,69 +1,142 @@
-# 🏠 House Searcher (Agregador de Imóveis - RJ)
+# 🏠 House Searcher — Oráculo de Viabilidade Urbana (RJ)
 
-Um agregador inteligente de imóveis para aluguel no Rio de Janeiro. O sistema busca imóveis de até R$ 1.000 (com 1 a 2 quartos) em plataformas como a OLX e os categoriza de forma automatizada por Bairros e Zonas (Sul, Norte, Oeste, Centro), oferecendo uma interface moderna e "Mobile First".
+[![Deploy](https://img.shields.io/badge/Deploy-Vercel-black?logo=vercel)](https://house-seacher.vcampos.dev/)
+[![Imóveis](https://img.shields.io/badge/Imóveis-1.168+-green)](#)
+[![Fontes](https://img.shields.io/badge/Fontes-4-blue)](#)
+[![Custo](https://img.shields.io/badge/Custo-R$0-brightgreen)](#)
 
-Site em produção: [https://house-seacher.vcampos.dev/](https://house-seacher.vcampos.dev/)
+Um **agregador inteligente de imóveis para aluguel de baixa renda no Rio de Janeiro** (até R$ 1.000). O sistema varre automaticamente 4 plataformas a cada 6 horas, classifica por zona/bairro, e oferece uma interface moderna mobile-first.
 
----
+**Mais que um classificado**: estamos construindo um motor de inteligência urbana que cruza dados de segurança pública, transporte, comércio local e infraestrutura para ajudar quem mais precisa a tomar decisões informadas.
 
-## 🚀 Tecnologias Utilizadas
-
-- **Frontend:** [Next.js 14+](https://nextjs.org/) (React)
-- **Estilização:** [Tailwind CSS](https://tailwindcss.com/)
-- **Scraper (Coleta de Dados):** [Playwright](https://playwright.dev/) + TypeScript
-- **Automação:** [GitHub Actions](https://github.com/features/actions) (Cron job automatizado)
-- **Hospedagem:** [Vercel](https://vercel.com/) (Frontend) e GitHub (Armazenamento estático de dados via JSON)
+🌐 **Site em produção**: [https://house-seacher.vcampos.dev/](https://house-seacher.vcampos.dev/)
 
 ---
 
-## ⚙️ Como a Arquitetura Funciona?
+## 🚀 Tecnologias
 
-Para manter o projeto com **custo zero** de hospedagem e alta performance, a aplicação segue um fluxo inovador:
-1. Um **Robô Scraper** roda na nuvem a cada 6 horas (agendado via GitHub Actions).
-2. O Scraper simula a navegação na OLX utilizando técnicas *stealth* (anti-bot) para extrair os anúncios recentes e fotos em alta resolução.
-3. O script cruza os dados, extrai preços, deduz em qual Zona do Rio de Janeiro a propriedade está, e formata tudo em um arquivo `properties.json`.
-4. O próprio GitHub Actions faz o `commit` do banco de dados atualizado para o repositório.
-5. O commit engatilha a Vercel, que constrói a aplicação Next.js utilizando o arquivo JSON como banco de dados estático, exibindo os resultados rapidamente na web.
-
-> **Aviso para Inteligências Artificiais:** Se você é uma IA modificando este código, por favor, leia primeiramente as restrições documentadas em [`AI_README.md`](./AI_README.md).
+| Camada | Tecnologia |
+|--------|-----------|
+| **Frontend** | [Next.js 16](https://nextjs.org/) (React 19) |
+| **Estilização** | [Tailwind CSS 4](https://tailwindcss.com/) |
+| **Scraping** | [Playwright](https://playwright.dev/) + stealth + [Cheerio](https://cheerio.js.org/) |
+| **Automação** | [GitHub Actions](https://github.com/features/actions) (cron a cada 6h) |
+| **Hospedagem** | [Vercel](https://vercel.com/) (frontend) + GitHub (dados estáticos via JSON) |
+| **SEO** | JSON-LD (Schema.org), OG Tags, Sitemap dinâmico, PWA Manifest |
 
 ---
 
-## 💻 Rodando o Projeto Localmente
+## ⚙️ Arquitetura (Custo Zero)
+
+```
+┌─────────────┐    ┌─────────────┐    ┌─────────────┐    ┌─────────────┐
+│   OLX (10p) │    │  ZAP (10p)  │    │VivaReal(10p)│    │ Chaves(10p) │
+└──────┬──────┘    └──────┬──────┘    └──────┬──────┘    └──────┬──────┘
+       │                  │                  │                  │
+       └──────────┬───────┴──────────┬───────┘                  │
+                  ▼                  ▼                           ▼
+          ┌───────────────────────────────────────────────────────┐
+          │              Enrichment Engine (enrich.ts)            │
+          │   Classifica zonas, corrige bairros, limpa dados      │
+          └───────────────────────┬───────────────────────────────┘
+                                  ▼
+                    ┌─────────────────────────┐
+                    │   properties.json (1168) │
+                    │   Commitado no GitHub    │
+                    └────────────┬────────────┘
+                                 ▼
+                    ┌─────────────────────────┐
+                    │   Vercel (Next.js SSG)   │
+                    │   CDN global + cache     │
+                    └─────────────────────────┘
+```
+
+1. **GitHub Actions** roda os scrapers a cada 6h (ou manualmente)
+2. Os scrapers simulam navegação real com técnicas anti-bot (stealth)
+3. O `enrich.ts` classifica zonas do RJ usando base de +200 bairros
+4. O JSON é commitado → Vercel faz deploy automático → site atualizado
+
+---
+
+## 📊 Fontes de Dados
+
+| Fonte | Método | Páginas | Status |
+|-------|--------|---------|--------|
+| **OLX** | Playwright + stealth | 10 | ✅ Ativo |
+| **ZAP Imóveis** | Playwright + stealth | 10 | ✅ Ativo |
+| **VivaReal** | Playwright + stealth | 10 | ✅ Ativo |
+| **Chaves na Mão** | Cheerio (HTTP puro) | 10 | ✅ Ativo |
+| **Mercado Livre** | API oficial (OAuth) | — | 🔜 Pendente |
+| **Telegram** | Pyrogram/Telethon | — | 🔜 Planejado |
+
+---
+
+## ✨ Features Atuais
+
+- 🔍 **Busca por texto** — filtra por título, bairro ou descrição
+- 📍 **Filtro por zona** — Oeste, Norte, Sul, Centro, Niterói, São Gonçalo, Baixada
+- 🏘️ **Filtro por bairro** — dropdown dinâmico baseado na zona selecionada
+- 💰 **Filtro de preço** — slider com range R$ 100 – R$ 1.000
+- 🛏️ **Filtro de quartos** — 1, 2, 3+ quartos
+- 👤 **Direto c/ Dono** — mostra só anúncios sem corretor
+- 📷 **Com foto** — esconde anúncios sem imagem
+- 📱 **Design mobile-first** — otimizado para celulares
+- 🏷️ **Badges inteligentes** — fonte, zona, preço, tempo relativo
+- 📈 **SEO completo** — Schema.org, OG Tags, sitemap, PWA
+
+---
+
+## 🗺️ Roadmap v3.0 — Oráculo de Viabilidade Urbana
+
+O objetivo final é que cada imóvel tenha um **dossiê completo** antes do locatário sair de casa:
+
+| Feature | Fonte de Dados | Status |
+|---------|---------------|--------|
+| 🗺️ Mapa interativo com marcadores | Leaflet + OpenStreetMap | 🔜 |
+| 📍 Geocodificação automática | Nominatim (cache Supabase) | 🔜 |
+| 🛡️ Score de Risco Criminal | ISP Dados RJ + Fogo Cruzado API | 🔜 |
+| 🚶 Score de Caminhabilidade | Overpass API (mercados, metrô, farmácias) | 🔜 |
+| 🔇 Score de Tranquilidade | Overpass API (bares, boates, vias expressas) | 🔜 |
+| 💸 Custo Total de Moradia (CTM) | Data.Rio (GTFS/SPPO) | 🔜 |
+| 🚨 Alerta de Golpe | Desvio padrão preço/m² + image hashing | 🔜 |
+| 📱 Alertas via WhatsApp | WhatsApp Cloud API (grátis) | 🔜 |
+| 🏫 Qualidade escolar próxima | INEP/QEdu (índice IDEB) | 🔜 |
+| 🚰 Degradação urbana | Data.Rio (chamados 1746) | 🔜 |
+
+---
+
+## 💻 Rodando Localmente
 
 ### Pré-requisitos
-- Node.js versão 18 ou superior.
+- Node.js 18+
+- Playwright instalado (`npx playwright install chromium`)
 
-### Passo 1: Iniciar o Frontend
-Na raiz do projeto, instale as dependências e rode o Next.js:
-
+### Frontend
 ```bash
 npm install
 npm run dev
 ```
-O site estará disponível em `http://localhost:3000`.
+O site estará em `http://localhost:3000`.
 
-### Passo 2: Rodar o Robô Scraper (Opcional)
-Se você deseja atualizar o banco de dados manualmente baixando novos dados:
-
+### Scrapers (atualizar dados)
 ```bash
-cd scraper
-npm install
-npx tsx index.ts
+# OLX (10 páginas, ~5 min)
+npx tsx scraper/index.ts
+
+# ZAP + VivaReal (10 páginas cada, ~5 min)
+npx tsx scraper/zap.ts
+
+# Chaves na Mão (10 páginas, ~15 seg)
+npx tsx scraper/chavesnamao.ts
+
+# Reclassificar zonas
+npx tsx scraper/enrich.ts
 ```
-Isso atualizará o arquivo em `src/data/properties.json`. Após a execução, o site local já terá os novos dados ao recarregar a página.
-
----
-
-## ✨ Features
-
-- **Busca por Localização:** Filtre por Zonas Inteiras (Ex: Zona Oeste, Zona Sul) ou digite um bairro específico na barra de buscas.
-- **Filtro de Preço:** Configure o limite exato de aluguel que você pode pagar usando o slider interativo.
-- **Badge de Fonte:** Todo card sinaliza a plataforma de origem do anúncio (Agregador).
-- **Design Adaptativo:** Criado com foco na tela de celulares para facilitar a navegação em qualquer lugar.
 
 ---
 
 ## 📄 Licença
 
-Este projeto é open-source. Sinta-se à vontade para fazer um fork, abrir issues ou submeter Pull Requests!
+Open-source. Fork, issues e PRs são bem-vindos!
+
+> **Para IAs**: Leia [`AI_README.md`](./AI_README.md) antes de modificar o código.

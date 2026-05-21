@@ -4,7 +4,38 @@ Todas as mudanças relevantes do projeto House Searcher estão documentadas nest
 
 ---
 
-## [2.2.0] — 2026-05-20
+## [3.0.0] — 2026-05-20
+
+### 🚀 Marco: 1.168 imóveis de 4 fontes
+
+### ✨ Adicionado
+- **Paginação 10 páginas em todos os scrapers**: OLX (+236), ZAP (+172), VivaReal (+230). Total saltou de 529 para **1.168 imóveis**.
+- **Scraper Chaves na Mão** (`chavesnamao.ts`): Nova fonte usando `cheerio` (HTTP puro, sem browser). Leve e rápido, mas poucos imóveis abaixo de R$ 1.000 neste portal.
+- **Google Search Console verificado**: Arquivo `googled24240b989fe27bd.html` adicionado ao `/public`. Sitemap submetido.
+- **OG Image para redes sociais**: Imagem de compartilhamento `og-image.png` para Facebook/Twitter/WhatsApp.
+- **PWA Manifest** (`manifest.json`): Site instalável como app no celular.
+- **robots.txt**: Configurado com referência ao sitemap.
+- **Sitemap dinâmico** (`sitemap.ts`): Gerado automaticamente pelo Next.js.
+- **SEO nuclear**: Structured Data (JSON-LD) com FAQPage e WebSite/SearchAction, canonical URL, theme-color, apple-touch-icon.
+- **Mascote em pose de ação**: Casinha-detetive correndo com lupa (substitui versão estática).
+
+### 📋 Roadmap v3.0 (Oráculo de Viabilidade Urbana)
+- Migração para **Supabase** (PostgreSQL gratuito) para suportar dados geoespaciais.
+- **Geocodificação** via Nominatim/OpenStreetMap com cache no banco.
+- **Score de Risco** criminal por imóvel (ISP Dados + Fogo Cruzado API).
+- **Score de Caminhabilidade**: Padarias, mercados, metrô, farmácias via Overpass API.
+- **Score de Tranquilidade**: Bares, boates, indústrias e vias expressas mapeados.
+- **Custo Total de Moradia** (CTM): Aluguel + condomínio + transporte integrado.
+- **Motor Anti-Fraude**: Detecção de preço/m² anômalo e fotos clonadas.
+- **Alertas via WhatsApp** (Cloud API grátis, 1.000 msgs/mês).
+- **Mercado Livre API**: Consumo oficial via OAuth (pendente criação do App pelo usuário).
+
+### 🐛 Corrigido
+- Enrichment reclassificou 89 imóveis adicionais, restando apenas **1** como "Geral".
+
+---
+
+
 
 ### ✨ Adicionado
 - **Paginação ZAP/VivaReal**: Scrapers agora navegam 5 páginas cada (+120 ZAP, +110 VivaReal). Total: **529 imóveis**.
