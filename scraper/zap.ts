@@ -7,7 +7,7 @@ import type { Property } from './index';
 chromium.use(stealth());
 
 const dataPath = path.resolve('src/data/properties.json');
-const MAX_PAGES = 5;
+const MAX_PAGES = 10;
 
 function classifyZone(text: string): string {
     const lower = text.toLowerCase();

@@ -191,7 +191,7 @@ async function scrapeOLX() {
 
     const page = await context.newPage();
 
-    const maxPages = 5;
+    const maxPages = 10;
     let newCount = 0;
 
     for (let pageNum = 1; pageNum <= maxPages; pageNum++) {
