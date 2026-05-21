@@ -35,15 +35,19 @@ function timeAgo(dateStr: string): string {
 }
 
 const SOURCE_COLORS: Record<string, string> = {
-    olx: 'bg-[#6e0ad6]',
-    zap: 'bg-[#8229e5]',
-    vivareal: 'bg-[#ff5a00]',
+    olx: 'bg-[#6e0ad6] text-white',
+    zap: 'bg-[#8229e5] text-white',
+    vivareal: 'bg-[#ff5a00] text-white',
+    chavesnamao: 'bg-[#007bbf] text-white',
+    mercadolivre: 'bg-[#ffe600] text-black',
 };
 
 const SOURCE_LABELS: Record<string, string> = {
     olx: 'OLX',
     zap: 'ZAP',
     vivareal: 'VivaReal',
+    chavesnamao: 'Chaves na Mão',
+    mercadolivre: 'Mercado Livre',
 };
 
 export default function Home() {
@@ -324,7 +328,7 @@ export default function Home() {
                                     </div>
                                     {/* Right badges */}
                                     <div className="absolute top-3 right-3 flex flex-col items-end gap-1.5">
-                                        <div className={`${SOURCE_COLORS[property.source || 'olx'] || 'bg-gray-600'} text-white font-bold px-2 py-1 rounded-md text-[10px] shadow-lg tracking-wider uppercase`}>
+                                        <div className={`${SOURCE_COLORS[property.source || 'olx'] || 'bg-gray-600 text-white'} font-bold px-2 py-1 rounded-md text-[10px] shadow-lg tracking-wider uppercase`}>
                                             {SOURCE_LABELS[property.source || 'olx'] || 'OLX'}
                                         </div>
                                         {property.zone !== 'Geral' && (
