@@ -56,7 +56,8 @@ export default function Home() {
     
     // Filters
     const [selectedZone, setSelectedZone] = useState<string>('Todas');
-    const [selectedNeighborhood, setSelectedNeighborhood] = useState<string>('Todos');
+    const [selectedNeighborhoods, setSelectedNeighborhoods] = useState<string[]>([]);
+    const [selectedSources, setSelectedSources] = useState<string[]>([]);
     const [maxPrice, setMaxPrice] = useState<number>(1000);
     const [sortBy, setSortBy] = useState<string>('newest');
     const [searchQuery, setSearchQuery] = useState<string>('');
@@ -105,7 +106,8 @@ export default function Home() {
     const filteredProperties = useMemo(() => {
         return properties.filter(p => {
             if (selectedZone !== 'Todas' && p.zone !== selectedZone) return false;
-            if (selectedNeighborhood !== '' && selectedNeighborhood !== 'Todos' && p.neighborhood !== selectedNeighborhood) return false;
+            if (selectedNeighborhoods.length > 0 && !selectedNeighborhoods.includes(p.neighborhood)) return false;
+            if (selectedSources.length > 0 && !selectedSources.includes(p.source || 'olx')) return false;
             if (p.price > maxPrice) return false;
             if (searchQuery && !p.title.toLowerCase().includes(searchQuery.toLowerCase()) && !p.neighborhood.toLowerCase().includes(searchQuery.toLowerCase()) && !p.description.toLowerCase().includes(searchQuery.toLowerCase())) return false;
             if (filterRooms !== 'any' && p.rooms !== parseInt(filterRooms)) return false;
@@ -118,7 +120,7 @@ export default function Home() {
             if (sortBy === 'biggest') return (b.area || 0) - (a.area || 0);
             return new Date(b.found_at).getTime() - new Date(a.found_at).getTime();
         });
-    }, [properties, selectedZone, selectedNeighborhood, maxPrice, sortBy, searchQuery, filterRooms, filterDirectOwner, filterHasPhoto]);
+    }, [properties, selectedZone, selectedNeighborhoods, selectedSources, maxPrice, sortBy, searchQuery, filterRooms, filterDirectOwner, filterHasPhoto]);
 
     const stats = useMemo(() => ({
         total: properties.length,
@@ -207,7 +209,7 @@ export default function Home() {
                         {zones.map(zone => (
                             <button
                                 key={zone}
-                                onClick={() => { setSelectedZone(zone); setSelectedNeighborhood('Todos'); }}
+                                onClick={() => { setSelectedZone(zone); setSelectedNeighborhoods([]); }}
                                 className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all whitespace-nowrap ${selectedZone === zone ? 'bg-indigo-600 text-white shadow-sm' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
                             >
                                 {zone === 'Todas' ? '🏠 Todas' : zone}
@@ -219,16 +221,41 @@ export default function Home() {
                 {/* Row 2: All filters — wraps on mobile */}
                 <div className="max-w-7xl mx-auto px-4 py-2.5 flex flex-wrap gap-2 items-center">
                     {/* Neighborhood */}
-                    <select 
-                        className="bg-gray-50 border border-gray-200 text-gray-700 text-xs font-medium rounded-lg py-2 px-3 outline-none cursor-pointer"
-                        value={selectedNeighborhood}
-                        onChange={(e) => setSelectedNeighborhood(e.target.value)}
-                    >
-                        <option value="Todos">📍 Bairro</option>
-                        {availableNeighborhoods.map(b => (
-                            <option key={b} value={b}>{b}</option>
-                        ))}
-                    </select>
+                    {/* Sites/Sources */}
+                    <details className="relative group">
+                        <summary className="list-none bg-gray-50 border border-gray-200 text-gray-700 text-xs font-medium rounded-lg py-2 px-3 outline-none cursor-pointer flex items-center gap-1">
+                            🌐 Sites {selectedSources.length > 0 && `(${selectedSources.length})`}
+                        </summary>
+                        <div className="absolute top-full mt-1 left-0 bg-white border border-gray-200 shadow-xl rounded-lg p-2 z-50 min-w-40 max-h-60 overflow-y-auto">
+                            {Object.entries(SOURCE_LABELS).map(([key, label]) => (
+                                <label key={key} className="flex items-center gap-2 px-2 py-1.5 hover:bg-gray-50 rounded cursor-pointer text-xs">
+                                    <input type="checkbox" checked={selectedSources.includes(key)} onChange={(e) => {
+                                        if (e.target.checked) setSelectedSources([...selectedSources, key]);
+                                        else setSelectedSources(selectedSources.filter(s => s !== key));
+                                    }} className="accent-indigo-600" />
+                                    {label}
+                                </label>
+                            ))}
+                        </div>
+                    </details>
+
+                    {/* Neighborhood Filter */}
+                    <details className="relative group">
+                        <summary className="list-none bg-gray-50 border border-gray-200 text-gray-700 text-xs font-medium rounded-lg py-2 px-3 outline-none cursor-pointer flex items-center gap-1">
+                            📍 Bairros {selectedNeighborhoods.length > 0 && `(${selectedNeighborhoods.length})`}
+                        </summary>
+                        <div className="absolute top-full mt-1 left-0 bg-white border border-gray-200 shadow-xl rounded-lg p-2 z-50 min-w-48 max-h-64 overflow-y-auto">
+                            {availableNeighborhoods.map(b => (
+                                <label key={b} className="flex items-center gap-2 px-2 py-1.5 hover:bg-gray-50 rounded cursor-pointer text-xs">
+                                    <input type="checkbox" checked={selectedNeighborhoods.includes(b)} onChange={(e) => {
+                                        if (e.target.checked) setSelectedNeighborhoods([...selectedNeighborhoods, b]);
+                                        else setSelectedNeighborhoods(selectedNeighborhoods.filter(n => n !== b));
+                                    }} className="accent-indigo-600" />
+                                    {b}
+                                </label>
+                            ))}
+                        </div>
+                    </details>
 
                     {/* Price */}
                     <div className="flex items-center gap-1.5 bg-gray-50 border border-gray-200 rounded-lg px-3 py-1.5">
