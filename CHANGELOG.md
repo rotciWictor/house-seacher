@@ -4,6 +4,12 @@ Todas as mudanças relevantes do projeto House Searcher estão documentadas nest
 
 ---
 
+## [3.3.1] — 2026-05-22
+
+### 🐛 Corrigido
+- **Colisão Geográfica do "Centro"**: Cidades da Baixada Fluminense (ex: Nilópolis, Duque de Caxias, Nova Iguaçu) e Leste Fluminense (ex: Niterói, São Gonçalo) que contivessem o bairro "Centro" estavam sendo indevidamente classificadas como o Centro do Rio de Janeiro (`Zona Central`). A taxonomia dos scrapers e do normalizador foi reordenada para priorizar a triagem por município.
+- **Limpeza do Banco de Dados**: Criado e executado o script `fix_centro_bug.ts` para varrer o Supabase e retificar as classificações corrompidas de imóveis antigos.
+
 ## [3.3.0] — 2026-05-22
 
 ### ✨ Adicionado
