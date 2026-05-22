@@ -46,7 +46,15 @@ function parseCard(card: { href: string; text: string; image: string }, source: 
     // Rooms
     const roomsQty = card.text.match(/Quantidade de quartos\s*(\d+)/i);
     const roomsAlt = card.text.match(/(\d+)\s*quartos?/i);
-    const rooms = roomsQty ? parseInt(roomsQty[1]) : roomsAlt ? parseInt(roomsAlt[1]) : 0;
+    let rooms = roomsQty ? parseInt(roomsQty[1]) : roomsAlt ? parseInt(roomsAlt[1]) : 0;
+    
+    // Title (needs to be extracted before we can check if it's a kitnet)
+    const typeMatch = card.text.match(/(Apartamento|Casa|Kitnet|Sobrado|Sala|Conjunto|Studio|Loft|Flat|Quitinete|Ponto comercial|Galpão|Prédio)[^\n]*/i);
+    const title = typeMatch ? typeMatch[0].substring(0, 80).trim() : `Imóvel em ${card.href.match(/id-(\d+)/)?.[1] || 'Desconhecido'}`;
+
+    if (rooms === 0 && /(Kitnet|Studio|Loft|Flat|Quitinete|Conjugado)/i.test(title)) {
+        rooms = 1;
+    }
 
     // Bathrooms
     const bathQty = card.text.match(/Quantidade de banheiros\s*(\d+)/i);
@@ -62,10 +70,6 @@ function parseCard(card: { href: string; text: string; image: string }, source: 
     }
 
     const zone = classifyZone(card.href + ' ' + city + ' ' + neighborhood);
-
-    // Title
-    const typeMatch = card.text.match(/(Apartamento|Casa|Kitnet|Sobrado|Sala|Conjunto|Studio|Loft|Flat|Quitinete|Ponto comercial|Galpão|Prédio)[^\n]*/i);
-    const title = typeMatch ? typeMatch[0].substring(0, 80).trim() : `Imóvel em ${neighborhood}`;
 
     return {
         id,

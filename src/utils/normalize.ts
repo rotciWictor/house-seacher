@@ -10,8 +10,13 @@ export function isCommercial(title: string, description: string): boolean {
         'garagem', 'vaga', 'vaga de garagem', 'estacionamento', 'box de garagem'
     ];
 
+    // Se o título começar com Sala ou Conjunto (padrão ZAP/VivaReal para imóveis comerciais)
+    if (/^(sala\b|conjunto\b|lote\b|terreno\b|prédio\b|galpão\b|loja\b)/i.test(title.trim())) {
+        return true;
+    }
+
     // Se o título tiver explicitamente "apartamento" ou "casa", damos um peso maior residencial
-    const isExplicitlyResidential = /\b(apartamento|apt|apto|casa|kitnet|conjugado)\b/.test(text);
+    const isExplicitlyResidential = /\b(apartamento|apt|apto|casa|kitnet|quitinete|conjugado|loft|studio|flat)\b/.test(text);
 
     for (const kw of commercialKeywords) {
         if (text.includes(kw)) {
