@@ -18,6 +18,7 @@ Todas as mudanças relevantes do projeto House Searcher estão documentadas nest
 
 ### 🐛 Corrigido
 - **Filtro Anti-Carros no Mercado Livre**: O scraper estava puxando anúncios patrocinados de carros e óleo de motor porque o ML exibe de tudo. Foi criada uma trava de domínio forçando apenas URLs `imovel.mercadolivre.com.br`.
+- **Anúncios Fantasmas e Vercel Build**: Removidos permanentemente do Supabase (com permissão `SERVICE_ROLE`) 41 anúncios fantasmas (carros do ML e lixos do ZAP) que continuavam aparecendo mesmo após os filtros de extração serem corrigidos. Também foram deletados scripts de debug que estavam quebrando o *Build* de produção na Vercel.
 - **Lixo nos Bairros (Ruas do ML)**: O filtro de lixo não estava pegando alguns "bairros" porque o Mercado Livre estava enviando o nome da *Rua* em vez do bairro. Corrigido para passar a string completa ao classificador, eliminando falsos bairros como "Almirante Tamandaré 50".
 - **Paginação Presa nos Filtros**: Corrigido um bug onde clicar no "Favoritos" ou em outro filtro em uma página avançada resultava em uma tela vazia (porque ele tentava exibir a página 3 de um resultado de 1 página).
 - **Filtro de Lixo nos Bairros**: Nomes de bairros bizarros vindos do Mercado Livre e Chaves na Mão ("aciSala/Conjunto para alugar", "15 de mai", etc.) foram extirpados. Criamos um filtro em `normalize.ts` que ignora strings > 25 chars, e palavras como "LTDA", "Imóveis", "alugar", renomeando-os para "Desconhecido" (que é oculto na UI).
