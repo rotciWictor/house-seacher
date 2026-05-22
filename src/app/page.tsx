@@ -68,6 +68,7 @@ export default function Home() {
     const [filterFavorites, setFilterFavorites] = useState<boolean>(false);
 
     // Pagination & Favorites
+    const [cookieAccepted, setCookieAccepted] = useState(true);
     const [favorites, setFavorites] = useState<Set<string>>(new Set());
     const [currentPage, setCurrentPage] = useState(1);
     const ITEMS_PER_PAGE = 30;
@@ -111,7 +112,12 @@ export default function Home() {
             }
             setLoading(false);
         }
+        
         fetchProperties();
+        
+        if (!localStorage.getItem('hs_cookie_accepted')) {
+            setCookieAccepted(false);
+        }
     }, []);
 
     // Fechar <details> (menus dropdown) ao clicar fora
@@ -191,6 +197,11 @@ export default function Home() {
         return filteredProperties.slice(start, start + ITEMS_PER_PAGE);
     }, [filteredProperties, currentPage]);
     
+    // Reset page to 1 when any filter changes
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [selectedZone, selectedNeighborhoods, selectedSources, maxPrice, sortBy, searchQuery, filterRooms, filterDirectOwner, filterHasPhoto, filterFavorites]);
+
     const totalPages = Math.ceil(filteredProperties.length / ITEMS_PER_PAGE);
 
     return (
@@ -710,6 +721,23 @@ export default function Home() {
                 <span className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span>
                 <span className="font-medium text-sm">{filteredProperties.length} imóveis</span>
             </div>
+            {/* Cookie Banner */}
+            {!cookieAccepted && (
+                <div className="fixed bottom-0 left-0 right-0 bg-gray-900 text-white p-4 z-[100] flex flex-col md:flex-row items-center justify-between gap-4 shadow-[0_-10px_40px_rgba(0,0,0,0.3)] border-t border-gray-700 animate-in slide-in-from-bottom-10">
+                    <div className="text-sm text-center md:text-left">
+                        🍪 Utilizamos cookies e armazenamento local para salvar seus <b>Favoritos</b>. Não rastreamos nem vendemos seus dados.
+                    </div>
+                    <button 
+                        onClick={() => {
+                            localStorage.setItem('hs_cookie_accepted', 'true');
+                            setCookieAccepted(true);
+                        }}
+                        className="bg-indigo-500 hover:bg-indigo-600 px-6 py-2 rounded-lg font-bold text-sm whitespace-nowrap transition-colors w-full md:w-auto"
+                    >
+                        Entendi e Aceito
+                    </button>
+                </div>
+            )}
         </main>
     );
 }
