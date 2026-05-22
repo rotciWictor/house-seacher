@@ -114,6 +114,20 @@ export default function Home() {
         fetchProperties();
     }, []);
 
+    // Fechar <details> (menus dropdown) ao clicar fora
+    useEffect(() => {
+        const handleClickOutside = (e: MouseEvent) => {
+            const details = document.querySelectorAll('details[open]');
+            details.forEach(d => {
+                if (!d.contains(e.target as Node)) {
+                    d.removeAttribute('open');
+                }
+            });
+        };
+        document.addEventListener('click', handleClickOutside);
+        return () => document.removeEventListener('click', handleClickOutside);
+    }, []);
+
     const zones = useMemo(() => {
         const allZones = new Set(properties.map(p => p.zone));
         return ['Todas', ...Array.from(allZones).filter(z => z !== 'Geral').sort()];
@@ -147,7 +161,7 @@ export default function Home() {
             if (sortBy === 'biggest') return (b.area || 0) - (a.area || 0);
             return new Date(b.found_at).getTime() - new Date(a.found_at).getTime();
         });
-    }, [properties, selectedZone, selectedNeighborhoods, selectedSources, maxPrice, sortBy, searchQuery, filterRooms, filterDirectOwner, filterHasPhoto]);
+    }, [properties, selectedZone, selectedNeighborhoods, selectedSources, maxPrice, sortBy, searchQuery, filterRooms, filterDirectOwner, filterHasPhoto, filterFavorites, favorites]);
 
     const stats = useMemo(() => ({
         total: properties.length,
