@@ -28,7 +28,7 @@ Um **agregador inteligente de imóveis para aluguel de baixa renda no Rio de Jan
 
 ## ⚙️ Arquitetura (Custo Zero)
 
-```
+```text
 ┌─────────────┐    ┌─────────────┐    ┌─────────────┐    ┌─────────────┐
 │   OLX (10p) │    │  ZAP (10p)  │    │VivaReal(10p)│    │ Chaves(10p) │
 └──────┬──────┘    └──────┬──────┘    └──────┬──────┘    └──────┬──────┘
@@ -36,25 +36,26 @@ Um **agregador inteligente de imóveis para aluguel de baixa renda no Rio de Jan
        └──────────┬───────┴──────────┬───────┘                  │
                   ▼                  ▼                           ▼
           ┌───────────────────────────────────────────────────────┐
-          │              Enrichment Engine (enrich.ts)            │
-          │   Classifica zonas, corrige bairros, limpa dados      │
+          │         Normalizer Engine (saveProperties.ts)         │
+          │   Classifica zonas, limpa dados, fuzzy matching       │
           └───────────────────────┬───────────────────────────────┘
                                   ▼
                     ┌─────────────────────────┐
-                    │   properties.json (1168) │
-                    │   Commitado no GitHub    │
+                    │   Supabase (PostgreSQL)  │
+                    │   Banco de Dados na Nuvem│
                     └────────────┬────────────┘
                                  ▼
                     ┌─────────────────────────┐
-                    │   Vercel (Next.js SSG)   │
-                    │   CDN global + cache     │
+                    │   Vercel (Next.js App)   │
+                    │   React 19 + Tailwind 4  │
                     └─────────────────────────┘
 ```
 
-1. **GitHub Actions** roda os scrapers a cada 6h (ou manualmente)
-2. Os scrapers simulam navegação real com técnicas anti-bot (stealth)
-3. O `enrich.ts` classifica zonas do RJ usando base de +200 bairros
-4. O JSON é commitado → Vercel faz deploy automático → site atualizado
+1. **GitHub Actions** roda os scrapers a cada 6h (ou manualmente).
+2. Os scrapers (Playwright/Cheerio) extraem dados brutos das plataformas.
+3. O pipeline de Normalização (`saveProperties.ts` e `normalize.ts`) limpa strings sujas, aplica Fuzzy Matching para corrigir erros dos corretores e filtra lixo (Comercial/Temporada).
+4. Os dados limpos são salvos via API no banco **Supabase (PostgreSQL)**.
+5. O frontend (Vercel) consome os dados do Supabase para exibir aos usuários.
 
 ---
 
