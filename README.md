@@ -84,7 +84,6 @@ Um **agregador inteligente de imóveis para aluguel de baixa renda no Rio de Jan
 - 📱 **Design mobile-first** — otimizado para celulares
 - 🏷️ **Badges inteligentes** — fonte, zona, preço, tempo relativo
 - 🛡️ **Fuzzy Matching & Limpeza Defensiva** — corrige erros de digitação de corretores e classifica os bairros com precisão via `fastest-levenshtein`
-- 📈 **SEO completo** — Schema.org, OG Tags, sitemap, PWA
 
 ---
 
