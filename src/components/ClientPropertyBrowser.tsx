@@ -159,7 +159,13 @@ export function ClientPropertyBrowser({ initialZone, initialNeighborhood }: Clie
             if (selectedSources.length > 0 && !selectedSources.includes(p.source || 'olx')) return false;
             if (p.price > maxPrice) return false;
             if (searchQuery && !p.title.toLowerCase().includes(searchQuery.toLowerCase()) && !p.neighborhood.toLowerCase().includes(searchQuery.toLowerCase()) && !p.description.toLowerCase().includes(searchQuery.toLowerCase())) return false;
-            if (filterRooms !== 'any' && p.rooms !== parseInt(filterRooms)) return false;
+            
+            if (filterRooms !== 'any') {
+                const r = parseInt(filterRooms);
+                if (r === 3 && p.rooms < 3) return false;
+                else if (r !== 3 && p.rooms !== r) return false;
+            }
+            
             if (filterDirectOwner && !p.directOwner) return false;
             if (filterHasPhoto && !p.image) return false;
             if (filterFavorites && !favorites.has(p.id)) return false;

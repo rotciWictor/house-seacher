@@ -128,9 +128,14 @@ function isTimestamp(text: string): boolean {
 // EXTRACT MORE DATA FROM TEXT
 // ============================================================
 
-function extractRooms(text: string): number {
+function extractRooms(text: string, title: string): number {
     const match = text.match(/(\d+)\s*(?:quarto|dormitório|cômodo|comodo)/i);
-    return match ? parseInt(match[1]) : 1;
+    if (match) return parseInt(match[1]);
+    
+    // Se for kitnet, loft, studio e não mencionar quartos, define como 0 (botão Kitnet na UI)
+    if (/(kitnet|quitinete|studio|loft|flat|conjugado)/i.test(title)) return 0;
+    
+    return 1;
 }
 
 function extractBathrooms(text: string): number {
@@ -310,7 +315,7 @@ async function scrapeOLX() {
                     condominio: extractCondominio(item.textContent),
                     url: item.url,
                     image: item.image,
-                    rooms: extractRooms(item.textContent),
+                    rooms: extractRooms(item.textContent, title),
                     bathrooms: extractBathrooms(item.textContent),
                     area: extractArea(item.textContent),
                     location: item.locationText || 'Rio de Janeiro, RJ',

@@ -107,8 +107,8 @@ export function FilterBar(props: FilterBarProps) {
                 </div>
 
                 {/* Quartos */}
-                <div className="flex bg-gray-100 rounded-lg p-1 border border-gray-200">
-                    {[{v: 'any', l: '🛏️ Todos'}, {v: '1', l: '1'}, {v: '2', l: '2'}, {v: '3', l: '3+'}].map(opt => (
+                <div className="flex bg-gray-100 rounded-lg p-1 border border-gray-200 overflow-x-auto hide-scrollbar">
+                    {[{v: 'any', l: '🛏️ Todos'}, {v: '0', l: 'Kitnet'}, {v: '1', l: '1'}, {v: '2', l: '2'}, {v: '3', l: '3+'}].map(opt => (
                         <button
                             key={opt.v}
                             onClick={() => props.setFilterRooms(opt.v)}
