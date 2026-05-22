@@ -4,6 +4,23 @@ Todas as mudanças relevantes do projeto House Searcher estão documentadas nest
 
 ---
 
+## [3.1.0] — 2026-05-21
+
+### 🚀 Novidades e Correções
+
+### ✨ Adicionado
+- **Nova Zona Sudoeste (AP4)**: Bairros como Barra da Tijuca, Recreio, Jacarepaguá, Anil, Camorim, etc., foram separados da Zona Oeste e agrupados como "Zona Sudoeste" para facilitar a busca.
+- **Filtro de Favoritos**: Funcionalidade ativada e corrigida no UI. Agora é possível filtrar para visualizar apenas os imóveis favoritados localmente (`localStorage`).
+- **Fechamento Automático de Menus**: Os menus suspensos de "Sites" e "Bairros" agora fecham magicamente ao clicar em qualquer lugar fora deles (Click Outside Handler adicionado).
+- **Hard Reset Integrado**: Migração total e limpa para o Supabase. O cache antigo local foi apagado para forçar a busca 100% fresca de imóveis.
+
+### 🐛 Corrigido
+- **Filtro de Lixo nos Bairros**: Nomes de bairros bizarros vindos do Mercado Livre e Chaves na Mão ("aciSala/Conjunto para alugar", "15 de mai", etc.) foram extirpados. Criamos um filtro em `normalize.ts` que ignora strings > 25 chars, e palavras como "LTDA", "Imóveis", "alugar", renomeando-os para "Desconhecido" (que é oculto na UI).
+- **Retry Automático nos Scrapers (GitHub Actions)**: Se ocorrer um erro de rede temporário (ex: `ENOTFOUND` com Supabase), o scraper tenta novamente até 3 vezes antes de falhar, evitando que o fluxo quebre atoa.
+- **Alertas de Falha Crítica**: Adicionada uma etapa (`gh issue create`) no GitHub Actions para gerar uma Issue alertando o dono do repositório em caso de falha persistente nos scrapers.
+- **Sync ML e Chaves na Mão**: Foi corrigido o bug onde ML e Chaves na Mão exibiam "0 imóveis" por causa de deduplicação agressiva em relação ao arquivo antigo local. Os imóveis antigos foram todos submetidos ao banco com sucesso, permitindo rastrear o real progresso de imóveis baratos nesses portais.
+
+---
 ## [3.0.0] — 2026-05-20
 
 ### 🚀 Marco: 1.168 imóveis de 4 fontes
