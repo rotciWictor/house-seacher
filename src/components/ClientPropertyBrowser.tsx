@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { supabase } from '../lib/supabase';
-import { isCommercial } from '../utils/normalize';
+import { isCommercial, isSeasonal } from '../utils/normalize';
 import { Property } from '../types/property';
 import { timeAgo } from '../utils/format';
 import { PropertyCard } from './PropertyCard';
@@ -75,7 +75,7 @@ export function ClientPropertyBrowser({ initialZone, initialNeighborhood }: Clie
                         ...p,
                         directOwner: p.directowner
                     }))
-                    .filter(p => !isCommercial(p.title, p.description));
+                    .filter(p => !isCommercial(p.title, p.description) && !isSeasonal(p.title, p.description));
                 
                 setProperties(mappedData as Property[]);
                 

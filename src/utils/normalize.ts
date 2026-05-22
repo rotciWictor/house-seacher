@@ -33,6 +33,28 @@ export function isCommercial(title: string, description: string): boolean {
     return false;
 }
 
+export function isSeasonal(title: string, description: string): boolean {
+    const text = (title + ' ' + description).toLowerCase();
+    
+    // Palavras fortes que indicam aluguel por temporada ou curto prazo
+    const seasonalKeywords = [
+        'temporada', 'diária', 'diaria', 'réveillon', 'reveillon', 'carnaval',
+        'airbnb', 'hospedagem', 'pacote de', 'por dia', 'fim de ano',
+        'hostel', 'pousada', 'hotel'
+    ];
+
+    // Se o título indicar explicitamente diária ou temporada
+    if (/\b(?:dia|diária|diaria|temporada)\b/i.test(title)) return true;
+
+    for (const kw of seasonalKeywords) {
+        if (text.includes(kw)) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 import bairrosData from '../data/bairros_rj.json';
 
 // Ordena os bairros do maior pro menor pra evitar que "Botafogo" dê match antes de "Botafogo" (não tem sobreposição aqui, mas ex: "Vargem Pequena" antes de "Vargem")
