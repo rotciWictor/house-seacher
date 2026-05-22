@@ -11,14 +11,19 @@ Todas as mudanças relevantes do projeto House Searcher estão documentadas nest
 ### ✨ Adicionado
 - **Nova Zona Sudoeste (AP4)**: Bairros como Barra da Tijuca, Recreio, Jacarepaguá, Anil, Camorim, etc., foram separados da Zona Oeste e agrupados como "Zona Sudoeste" para facilitar a busca.
 - **Filtro de Favoritos**: Funcionalidade ativada e corrigida no UI. Agora é possível filtrar para visualizar apenas os imóveis favoritados localmente (`localStorage`).
+- **Aviso de Cookies (LGPD)**: Adicionado um banner flutuante informando o uso de cookies/localStorage para salvar favoritos e filtros.
 - **Fechamento Automático de Menus**: Os menus suspensos de "Sites" e "Bairros" agora fecham magicamente ao clicar em qualquer lugar fora deles (Click Outside Handler adicionado).
 - **Hard Reset Integrado**: Migração total e limpa para o Supabase. O cache antigo local foi apagado para forçar a busca 100% fresca de imóveis.
+- **Expansão Chaves na Mão**: Limite de busca ampliado de 15 para 40 páginas para resgatar o máximo de imóveis residenciais.
 
 ### 🐛 Corrigido
+- **Filtro Anti-Carros no Mercado Livre**: O scraper estava puxando anúncios patrocinados de carros e óleo de motor porque o ML exibe de tudo. Foi criada uma trava de domínio forçando apenas URLs `imovel.mercadolivre.com.br`.
+- **Lixo nos Bairros (Ruas do ML)**: O filtro de lixo não estava pegando alguns "bairros" porque o Mercado Livre estava enviando o nome da *Rua* em vez do bairro. Corrigido para passar a string completa ao classificador, eliminando falsos bairros como "Almirante Tamandaré 50".
+- **Paginação Presa nos Filtros**: Corrigido um bug onde clicar no "Favoritos" ou em outro filtro em uma página avançada resultava em uma tela vazia (porque ele tentava exibir a página 3 de um resultado de 1 página).
 - **Filtro de Lixo nos Bairros**: Nomes de bairros bizarros vindos do Mercado Livre e Chaves na Mão ("aciSala/Conjunto para alugar", "15 de mai", etc.) foram extirpados. Criamos um filtro em `normalize.ts` que ignora strings > 25 chars, e palavras como "LTDA", "Imóveis", "alugar", renomeando-os para "Desconhecido" (que é oculto na UI).
 - **Retry Automático nos Scrapers (GitHub Actions)**: Se ocorrer um erro de rede temporário (ex: `ENOTFOUND` com Supabase), o scraper tenta novamente até 3 vezes antes de falhar, evitando que o fluxo quebre atoa.
 - **Alertas de Falha Crítica**: Adicionada uma etapa (`gh issue create`) no GitHub Actions para gerar uma Issue alertando o dono do repositório em caso de falha persistente nos scrapers.
-- **Sync ML e Chaves na Mão**: Foi corrigido o bug onde ML e Chaves na Mão exibiam "0 imóveis" por causa de deduplicação agressiva em relação ao arquivo antigo local. Os imóveis antigos foram todos submetidos ao banco com sucesso, permitindo rastrear o real progresso de imóveis baratos nesses portais.
+- **Sync ML e Chaves na Mão**: Foi corrigido o bug onde ML e Chaves na Mão exibiam "0 imóveis" por causa da mudança drástica no HTML do ML (agora usando classes `.poly-component`). O scraper foi 100% reescrito.
 
 ---
 ## [3.0.0] — 2026-05-20
