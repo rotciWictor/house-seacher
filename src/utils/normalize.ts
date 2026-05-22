@@ -1,12 +1,13 @@
 export function isCommercial(title: string, description: string): boolean {
     const text = (title + ' ' + description).toLowerCase();
     
-    // Palavras fortes que indicam imóvel comercial
+    // Palavras fortes que indicam imóvel comercial ou garagem/vaga
     const commercialKeywords = [
         'loja', 'sala comercial', 'galpão', 'galpao', 'consultório', 'consultorio',
         'prédio comercial', 'predio comercial', 'laje corporativa', 'coworking',
         'ponto comercial', 'box comercial', 'depósito', 'deposito', 'armazém',
-        'armazem', 'terreno comercial', 'sobreloja', 'escritório', 'escritorio'
+        'armazem', 'terreno comercial', 'sobreloja', 'escritório', 'escritorio',
+        'garagem', 'vaga', 'vaga de garagem', 'estacionamento', 'box de garagem'
     ];
 
     // Se o título tiver explicitamente "apartamento" ou "casa", damos um peso maior residencial
