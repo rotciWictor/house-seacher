@@ -9,6 +9,16 @@ interface PageProps {
 
 const capitalize = (s: string) => s.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
 
+const WIKIDATA_ZONES: Record<string, string> = {
+    'Zona Sul': 'https://www.wikidata.org/wiki/Q3304526',
+    'Zona Norte': 'https://www.wikidata.org/wiki/Q11026042',
+    'Zona Oeste': 'https://www.wikidata.org/wiki/Q8073841',
+    'Centro': 'https://www.wikidata.org/wiki/Q3311100',
+    'Niterói': 'https://www.wikidata.org/wiki/Q178761',
+    'São Gonçalo': 'https://www.wikidata.org/wiki/Q332219',
+    'Baixada': 'https://www.wikidata.org/wiki/Q2879893',
+};
+
 export const dynamicParams = true; // ISR fallback para rotas não listadas
 
 export async function generateStaticParams() {
@@ -61,13 +71,35 @@ export default function AluguelDynamicPage({ params }: PageProps) {
     const initialZone = slug[0];
     const initialNeighborhood = slug[1];
 
-    // The script for JSON-LD could also be generated here dynamically
-    const jsonLd = {
+    const zoneName = initialZone ? capitalize(initialZone) : '';
+    const neighborhoodName = initialNeighborhood ? capitalize(initialNeighborhood) : '';
+
+    const jsonLd: any = {
         '@context': 'https://schema.org',
-        '@type': 'WebPage',
+        '@type': 'CollectionPage',
         name: params.slug ? `Aluguel em ${capitalize(params.slug.join(', '))}` : 'Aluguel no Rio de Janeiro',
-        description: 'Buscador de imóveis baratos',
+        description: 'Buscador e Agregador de imóveis de baixo custo.',
+        url: `https://house-seacher.vcampos.dev/aluguel/${slug.join('/')}`,
+        provider: {
+            '@type': 'Organization',
+            name: 'House Searcher',
+            url: 'https://house-seacher.vcampos.dev'
+        },
+        about: {
+            '@type': 'Place',
+            name: neighborhoodName || zoneName || 'Rio de Janeiro',
+            address: {
+                '@type': 'PostalAddress',
+                addressLocality: neighborhoodName || zoneName || 'Rio de Janeiro',
+                addressRegion: 'RJ',
+                addressCountry: 'BR'
+            }
+        }
     };
+
+    if (zoneName && WIKIDATA_ZONES[zoneName]) {
+        jsonLd.about.sameAs = WIKIDATA_ZONES[zoneName];
+    }
 
     return (
         <>
