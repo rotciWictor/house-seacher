@@ -5,7 +5,7 @@ import type { Property } from './index';
 import { saveProperties } from './saveProperties';
 
 const dataPath = path.resolve('src/data/properties.json');
-const MAX_PAGES = 15;
+const MAX_PAGES = 40;
 const BASE_URL = 'https://www.chavesnamao.com.br/imoveis-para-alugar/rj-rio-de-janeiro/?valormax=1000';
 
 function classifyZone(text: string): string {

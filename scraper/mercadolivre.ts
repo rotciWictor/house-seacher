@@ -80,6 +80,11 @@ async function scrapeML() {
                     
                     const url = await linkEl.getAttribute('href') || '';
                     if (!url) continue;
+                    
+                    if (!url.includes('imovel.mercadolivre.com.br')) {
+                        console.log('Skipped non-real estate:', url);
+                        continue;
+                    }
 
                     // ML ids are like MLB1234567. We can extract from URL.
                     const idMatch = url.match(/MLB-?(\d+)/i);
