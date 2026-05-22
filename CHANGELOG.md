@@ -4,6 +4,25 @@ Todas as mudanças relevantes do projeto House Searcher estão documentadas nest
 
 ---
 
+## [3.3.0] — 2026-05-22
+
+### ✨ Adicionado
+- **Filtro Nativo de Kitnets**: Kitnets, Studios e Lofts agora possuem um botão de filtro exclusivo ("Kitnet") que mapeia propriedades cadastradas com "0 quartos", evitando que se percam no filtro genérico de 1 quarto.
+- **Filtro Anti-Temporada (`isSeasonal`)**: Novo classificador inteligente que bloqueia aluguéis de curto prazo (Airbnb, Diária, Réveillon, Carnaval, etc.), protegendo o foco na moradia de longo prazo.
+
+### 🎨 UI & UX (Refinamentos)
+- **Restauração de Estilos "Pastel"**: Os botões de toggle (Dono Direto, Com Foto, Favoritos, Limpar) tiveram seus estilos elegantes e suaves restaurados, desfazendo a padronização bruta imposta pela componentização genérica anterior.
+- **PropertyCard Mais Leve**: Substituídas as sombras e bordas duras ("boxy") dos cards e dos "slots" do Oráculo por fundos translúcidos (`slate-50/50`) e degradês de imagem mais suaves, conferindo um aspecto "Apple/Airbnb-like".
+
+### 🐛 Corrigido
+- **A Morte Silenciosa dos Scrapers**: Corrigido um erro crítico no GitHub Actions (`scraper.yml`) onde as dependências da pasta `scraper/` (como o `playwright-extra`) não eram instaladas, fazendo com que o robô falhasse repetidamente. O script agora roda `npm install` no diretório correto.
+- **Build da Vercel Quebrado**: O processo de *build* do Next.js na Vercel estava quebrando ao tentar validar as tipagens TypeScript dentro da pasta do scraper (onde removemos a dependência do SQLite). Adicionado `"exclude": ["scraper"]` no `tsconfig.json` para blindar a Vercel.
+- **Vazamento de Imóveis Comerciais**: Aprimorado o detector `isCommercial` para identificar "Salas" e "Conjuntos" vazios que o VivaReal marcava com 0 quartos, protegendo ao mesmo tempo Kitnets residenciais.
+- **Discrepância no Totalizador**: O número "Total de Imóveis" no Hero Banner estava incluindo lixo comercial não-visível. Agora os dados são pré-filtrados assim que chegam do Supabase, garantindo que a UI mostre a quantidade exata.
+- **Filtro de "3+ Quartos"**: Corrigido bug lógico onde o botão `3+` filtrava apenas imóveis com *exatamente* 3 quartos, ignorando imóveis maiores.
+
+---
+
 ## [3.2.0] — 2026-05-22
 
 ### 🏗️ Arquitetura e UI (Fase 1: Oráculo de Viabilidade)
