@@ -197,7 +197,7 @@ async function scrapeOLX() {
 
     const page = await context.newPage();
 
-    const maxPages = 15;
+    const maxPages = 20;
     let newCount = 0;
     const newPropertiesForSupabase: Property[] = [];
 

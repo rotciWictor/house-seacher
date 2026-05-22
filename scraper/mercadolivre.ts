@@ -7,7 +7,7 @@ import { saveProperties } from './saveProperties';
 
 chromium.use(stealth());
 
-const MAX_PAGES = 15;
+const MAX_PAGES = 20;
 const BASE_URL = 'https://lista.mercadolivre.com.br/imoveis/aluguel/rio-de-janeiro/rio-de-janeiro/_PriceRange_0-1000_NoIndex_True';
 
 function classifyZone(text: string): string {

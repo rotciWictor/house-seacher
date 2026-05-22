@@ -63,11 +63,11 @@ Um **agregador inteligente de imóveis para aluguel de baixa renda no Rio de Jan
 
 | Fonte | Método | Páginas | Status |
 |-------|--------|---------|--------|
-| **OLX** | Playwright + stealth | 10 | ✅ Ativo |
-| **ZAP Imóveis** | Playwright + stealth | 10 | ✅ Ativo |
-| **VivaReal** | Playwright + stealth | 10 | ✅ Ativo |
-| **Chaves na Mão** | Cheerio (HTTP puro) | 10 | ✅ Ativo |
-| **Mercado Livre** | Playwright + stealth | 5 | ✅ Ativo |
+| **OLX** | Playwright + stealth | 20 | ✅ Ativo |
+| **ZAP Imóveis** | Playwright + stealth | 20 | ✅ Ativo |
+| **VivaReal** | Playwright + stealth | 20 | ✅ Ativo |
+| **Chaves na Mão** | Cheerio (HTTP puro) | 40 | ✅ Ativo |
+| **Mercado Livre** | Playwright + stealth | 20 | ✅ Ativo |
 | **Telegram** | Pyrogram/Telethon | — | 🔜 Planejado |
 
 ---

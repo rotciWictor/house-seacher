@@ -6,7 +6,7 @@ import { saveProperties } from './saveProperties';
 
 chromium.use(stealth());
 
-const MAX_PAGES = 15;
+const MAX_PAGES = 20;
 
 function classifyZone(text: string): string {
     const lower = text.toLowerCase();
