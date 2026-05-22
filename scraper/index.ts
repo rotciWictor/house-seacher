@@ -63,7 +63,7 @@ function classifyByCity(locationText: string): string | null {
 
 // STEP 2: Classify by NEIGHBORHOOD name (for Rio de Janeiro city)
 const ZONES: Record<string, string[]> = {
-    'Oeste': [
+    'Zona Oeste': [
         'bangu', 'campo grande', 'santa cruz', 'barra da tijuca', 'barra', 'recreio',
         'jacarepaguá', 'taquara', 'anil', 'curicica', 'pechincha', 'praça seca',
         'realengo', 'padre miguel', 'magalhães bastos', 'sulacap',
@@ -75,7 +75,7 @@ const ZONES: Record<string, string[]> = {
         'senador vasconcelos', 'inhoaíba', 'augusto vasconcelos',
         'freguesia (jacarepaguá)', 'rio das pedras', 'cidade de deus',
     ],
-    'Norte': [
+    'Zona Norte': [
         'tijuca', 'méier', 'madureira', 'penha', 'bonsucesso', 'vila isabel',
         'grajaú', 'maracanã', 'são cristóvão', 'irajá', 'pavuna', 'cascadura',
         'engenho novo', 'engenho de dentro', 'engenho da rainha',
@@ -95,7 +95,7 @@ const ZONES: Record<string, string[]> = {
         'benfica', 'manguinhos', 'bonsucesso', 'cordovil', 'parada de lucas',
         'jardim américa', 'vista alegre', 'vila da penha',
     ],
-    'Sul': [
+    'Zona Sul': [
         'copacabana', 'ipanema', 'leblon', 'botafogo', 'flamengo', 'catete',
         'laranjeiras', 'glória', 'leme', 'gávea', 'jardim botânico',
         'humaitá', 'urca', 'cosme velho', 'lagoa', 'vidigal', 'rocinha',

@@ -21,9 +21,9 @@ function classifyZone(text: string): string {
     const norte = ['méier','madureira','cascadura','quintino','piedade','pilares','engenho de dentro','engenho novo','todos os santos','cachambi','tijuca','andaraí','grajaú','maracanã','vila isabel','irajá','vicente de carvalho','vila da penha','penha','penha circular','olaria','ramos','bonsucesso','são cristóvão','ilha do governador','parada de lucas','vigário geral','cordovil','brás de pina','marechal hermes','bento ribeiro','osvaldo cruz','guadalupe','costa barros','pavuna','anchieta','ricardo de albuquerque','cavalcanti','rocha miranda','lins de vasconcelos','campinho','del castilho','inhaúma','centro','estácio','rio comprido','santa teresa','lapa','glória'];
     const sul = ['copacabana','ipanema','leblon','botafogo','flamengo','laranjeiras','cosme velho','humaitá','urca','leme','gávea','jardim botânico','lagoa','são conrado','catete'];
 
-    for (const b of oeste) if (lower.includes(b)) return 'Oeste';
-    for (const b of norte) if (lower.includes(b)) return 'Norte';
-    for (const b of sul) if (lower.includes(b)) return 'Sul';
+    for (const b of oeste) if (lower.includes(b)) return 'Zona Oeste';
+    for (const b of norte) if (lower.includes(b)) return 'Zona Norte';
+    for (const b of sul) if (lower.includes(b)) return 'Zona Sul';
     return 'Geral';
 }
 

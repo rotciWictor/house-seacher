@@ -9,7 +9,7 @@ const dataPath = path.resolve('src/data/properties.json');
 // ============================================================
 
 const ZONES: Record<string, string[]> = {
-    'Oeste': [
+    'Zona Oeste': [
         'bangu', 'campo grande', 'santa cruz', 'barra da tijuca', 'barra', 'recreio',
         'recreio dos bandeirantes', 'jacarepaguá', 'taquara', 'anil', 'curicica',
         'pechincha', 'praça seca', 'realengo', 'padre miguel', 'magalhães bastos',
@@ -21,7 +21,7 @@ const ZONES: Record<string, string[]> = {
         'augusto vasconcelos', 'freguesia (jacarepaguá)', 'rio das pedras',
         'cidade de deus', 'frederico', 'jabour', 'mato alto',
     ],
-    'Norte': [
+    'Zona Norte': [
         'tijuca', 'méier', 'madureira', 'penha', 'bonsucesso', 'vila isabel',
         'grajaú', 'maracanã', 'são cristóvão', 'irajá', 'pavuna', 'cascadura',
         'engenho novo', 'engenho de dentro', 'engenho da rainha',
@@ -44,7 +44,7 @@ const ZONES: Record<string, string[]> = {
         'engenheiro leal', 'turiaçu', 'magalhães bastos', 'colégio',
         'jardim sulacap', 'vila militar', 'deodoro', 'marechal hermes',
     ],
-    'Sul': [
+    'Zona Sul': [
         'copacabana', 'ipanema', 'leblon', 'botafogo', 'flamengo', 'catete',
         'laranjeiras', 'glória', 'leme', 'gávea', 'jardim botânico',
         'humaitá', 'urca', 'cosme velho', 'lagoa', 'vidigal', 'rocinha',
@@ -134,9 +134,9 @@ function tryClassify(property: Property): string {
     const allText = `${neighborhood} ${location} ${url} ${description} ${title}`;
 
     // 1. Check URL for zone hints (ZAP/VivaReal URLs have zona-oeste, zona-norte etc.)
-    if (url.includes('zona-oeste')) return 'Oeste';
-    if (url.includes('zona-norte')) return 'Norte';
-    if (url.includes('zona-sul')) return 'Sul';
+    if (url.includes('zona-oeste')) return 'Zona Oeste';
+    if (url.includes('zona-norte')) return 'Zona Norte';
+    if (url.includes('zona-sul')) return 'Zona Sul';
     if (url.includes('zona-central')) return 'Centro';
 
     // 2. Check URL for city slugs

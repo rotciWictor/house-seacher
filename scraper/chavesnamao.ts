@@ -22,9 +22,9 @@ function classifyZone(text: string): string {
     const norte = ['méier','madureira','cascadura','quintino','piedade','pilares','abolição','encantado','engenho de dentro','engenho novo','riachuelo','sampaio','todos os santos','cachambi','rocha','são francisco xavier','tijuca','andaraí','grajaú','maracanã','vila isabel','alto da boa vista','irajá','colégio','vicente de carvalho','vaz lobo','vila da penha','vila kosmos','penha','penha circular','olaria','ramos','bonsucesso','manguinhos','benfica','são cristóvão','higienópolis','caju','paquetá','ilha do governador','cocotá','praia da bandeira','ribeira','zumbi','tauá','bancários','cacuia','pitangueiras','jardim guanabara','cidade universitária','moneró','portuguesa','galeão','parada de lucas','vigário geral','cordovil','brás de pina','jardim américa','penha circular','honório gurgel','marechal hermes','bento ribeiro','osvaldo cruz','guadalupe','costa barros','barros filho','acari','parque colúmbia','coelho neto','pavuna','anchieta','ricardo de albuquerque','parque anchieta','cavalcanti','engenheiro leal','turiaçu','rocha miranda','lins de vasconcelos','engenho da rainha','tomás coelho','campinho','maria da graça','del castilho','inhaúma','higienópolis','jacaré','jacarezinho','mangueira','são carlos','estácio','catumbi','cidade nova','rio comprido','santa teresa','lapa','glória','centro'];
     const sul = ['copacabana','ipanema','leblon','botafogo','flamengo','laranjeiras','cosme velho','humaitá','urca','leme','gávea','jardim botânico','lagoa','são conrado','vidigal','rocinha','catete','consolação'];
 
-    for (const b of oeste) if (lower.includes(b)) return 'Oeste';
-    for (const b of norte) if (lower.includes(b)) return 'Norte';
-    for (const b of sul) if (lower.includes(b)) return 'Sul';
+    for (const b of oeste) if (lower.includes(b)) return 'Zona Oeste';
+    for (const b of norte) if (lower.includes(b)) return 'Zona Norte';
+    for (const b of sul) if (lower.includes(b)) return 'Zona Sul';
     return 'Geral';
 }
 
