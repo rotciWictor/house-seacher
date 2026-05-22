@@ -48,8 +48,7 @@ jobs:
         run: |
           git config --global user.name "House Searcher Bot"
           git config --global user.email "bot@housesearcher.com"
-          git add src/data/properties.json
-          git commit -m "🏠 Update properties [skip ci]" || echo "No changes to commit"
+          git commit -m "Auto-update properties (Supabase sync) [skip ci]" || echo "No changes to commit"
           git push
 
       - name: Create Alert Issue on Failure

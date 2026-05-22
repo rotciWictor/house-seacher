@@ -1,13 +1,11 @@
+import { supabase } from '../src/lib/supabase';
 import { chromium } from 'playwright-extra';
 import stealth from 'puppeteer-extra-plugin-stealth';
-import fs from 'fs';
-import path from 'path';
 import type { Property } from './index';
 import { saveProperties } from './saveProperties';
 
 chromium.use(stealth());
 
-const dataPath = path.resolve('src/data/properties.json');
 const MAX_PAGES = 15;
 
 function classifyZone(text: string): string {
@@ -93,18 +91,9 @@ async function scrapeSource(source: 'zap' | 'vivareal') {
     const siteName = source === 'zap' ? 'ZAP Imóveis' : 'VivaReal';
     console.log(`\n🔍 Starting ${siteName} scraper (${MAX_PAGES} pages)...`);
     
-    let properties: Property[] = [];
+    const { data: existingData } = await supabase.from('properties').select('id').eq('source', 'zap');
+    const existingIds = new Set(existingData?.map(p => p.id) || []);
     const newPropertiesForSupabase: Property[] = [];
-    try {
-        if (fs.existsSync(dataPath)) {
-            const rawData = fs.readFileSync(dataPath, 'utf-8');
-            if (rawData.trim() !== '') properties = JSON.parse(rawData);
-        }
-    } catch (e) {
-        console.error('Could not read existing data.', e);
-    }
-
-    const existingIds = new Set(properties.map(p => p.id));
     
     const browser = await chromium.launch({
         headless: true,

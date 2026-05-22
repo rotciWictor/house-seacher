@@ -1,13 +1,12 @@
 import { chromium } from 'playwright-extra';
 import stealth from 'puppeteer-extra-plugin-stealth';
-import fs from 'fs';
+import { supabase } from '../src/lib/supabase';
 import path from 'path';
 import type { Property } from './index';
 import { saveProperties } from './saveProperties';
 
 chromium.use(stealth());
 
-const dataPath = path.resolve('src/data/properties.json');
 const MAX_PAGES = 15;
 const BASE_URL = 'https://lista.mercadolivre.com.br/imoveis/aluguel/rio-de-janeiro/rio-de-janeiro/_PriceRange_0-1000_NoIndex_True';
 
@@ -35,20 +34,10 @@ function extractNumber(text: string, pattern: RegExp): number {
 async function scrapeML() {
     console.log(`🔍 Starting Mercado Livre scraper (${MAX_PAGES} pages)...\\n`);
 
-    let properties: Property[] = [];
+    const { data: existingData } = await supabase.from('properties').select('id').eq('source', 'mercadolivre');
+    const existingIds = new Set(existingData?.map(p => p.id) || []);
+    
     const newPropertiesForSupabase: Property[] = [];
-    try {
-        if (fs.existsSync(dataPath)) {
-            const raw = fs.readFileSync(dataPath, 'utf-8');
-            if (raw.trim()) properties = JSON.parse(raw);
-        }
-    } catch (e) {
-        console.error('Could not read existing data, starting fresh.', e);
-    }
-
-    const threeDaysAgo = new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString();
-    properties = properties.filter(p => p.source !== 'mercadolivre' || p.found_at > threeDaysAgo);
-    const existingIds = new Set(properties.map(p => p.id));
     let totalNew = 0;
 
     const browser = await chromium.launch({ headless: true });
@@ -118,7 +107,7 @@ async function scrapeML() {
                     // Location
                     const locEl = await card.$('.poly-component__location');
                     const location = locEl ? await locEl.innerText() : 'Rio de Janeiro';
-                    const neighborhood = location.split(',')[0].trim();
+                    const neighborhood = location;
                     const zone = classifyZone(location);
 
                     // Image

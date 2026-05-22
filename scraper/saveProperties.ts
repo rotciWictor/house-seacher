@@ -1,9 +1,5 @@
-import fs from 'fs';
-import path from 'path';
 import { supabase } from '../src/lib/supabase';
 import { isCommercial, normalizeNeighborhood, reclassifyZone } from '../src/utils/normalize';
-
-const dataPath = path.resolve(process.cwd(), 'src/data/properties.json');
 
 export async function saveProperties(newProperties: any[], sourceName: string) {
     console.log(`\n💾 Salvando ${newProperties.length} imóveis de ${sourceName}...`);
@@ -49,21 +45,4 @@ export async function saveProperties(newProperties: any[], sourceName: string) {
         console.log(`   ✅ Supabase: ${successCount} salvos/atualizados.`);
     }
 
-    // 3. Manter o backup local (opcional, mas bom pra debug)
-    let localProperties: any[] = [];
-    if (fs.existsSync(dataPath)) {
-        localProperties = JSON.parse(fs.readFileSync(dataPath, 'utf-8'));
-    }
-    
-    let addedLocal = 0;
-    const ids = new Set(localProperties.map(p => p.id));
-    for (const p of validProperties) {
-        if (!ids.has(p.id)) {
-            localProperties.push(p);
-            addedLocal++;
-        }
-    }
-    
-    fs.writeFileSync(dataPath, JSON.stringify(localProperties, null, 2));
-    console.log(`   📁 Backup Local: ${addedLocal} novos imóveis adicionados.`);
 }

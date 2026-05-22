@@ -1,10 +1,8 @@
+import { supabase } from '../src/lib/supabase';
 import * as cheerio from 'cheerio';
-import fs from 'fs';
-import path from 'path';
 import type { Property } from './index';
 import { saveProperties } from './saveProperties';
 
-const dataPath = path.resolve('src/data/properties.json');
 const MAX_PAGES = 40;
 const BASE_URL = 'https://www.chavesnamao.com.br/imoveis-para-alugar/rj-rio-de-janeiro/?valormax=1000';
 
@@ -43,22 +41,9 @@ function extractNumber(text: string, pattern: RegExp): number {
 async function scrapeChavesNaMao() {
     console.log(`🔍 Starting Chaves na Mão scraper (${MAX_PAGES} pages)...\n`);
 
-    let properties: Property[] = [];
+    const { data: existingData } = await supabase.from('properties').select('id').eq('source', 'chavesnamao');
+    const existingIds = new Set(existingData?.map(p => p.id) || []);
     const newPropertiesForSupabase: Property[] = [];
-    try {
-        if (fs.existsSync(dataPath)) {
-            const raw = fs.readFileSync(dataPath, 'utf-8');
-            if (raw.trim()) properties = JSON.parse(raw);
-        }
-    } catch (e) {
-        console.error('Could not read existing data, starting fresh.', e);
-    }
-
-    // Remove old chaves listings (older than 3 days)
-    const threeDaysAgo = new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString();
-    properties = properties.filter(p => p.source !== 'chavesnamao' || p.found_at > threeDaysAgo);
-
-    const existingIds = new Set(properties.map(p => p.id));
     let totalNew = 0;
 
     for (let page = 1; page <= MAX_PAGES; page++) {
