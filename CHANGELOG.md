@@ -22,6 +22,10 @@ Todas as mudanças relevantes do projeto House Searcher estão documentadas nest
 - **Lixo nos Bairros (Ruas do ML)**: O filtro de lixo não estava pegando alguns "bairros" porque o Mercado Livre estava enviando o nome da *Rua* em vez do bairro. Corrigido para passar a string completa ao classificador, eliminando falsos bairros como "Almirante Tamandaré 50".
 - **Paginação Presa nos Filtros**: Corrigido um bug onde clicar no "Favoritos" ou em outro filtro em uma página avançada resultava em uma tela vazia (porque ele tentava exibir a página 3 de um resultado de 1 página).
 - **Filtro de Lixo nos Bairros**: Nomes de bairros bizarros vindos do Mercado Livre e Chaves na Mão ("aciSala/Conjunto para alugar", "15 de mai", etc.) foram extirpados. Criamos um filtro em `normalize.ts` que ignora strings > 25 chars, e palavras como "LTDA", "Imóveis", "alugar", renomeando-os para "Desconhecido" (que é oculto na UI).
+
+### 🏗️ Arquitetura e Engenharia
+- **Expurgo de 7 Dias (Auto-Clean)**: Implementado rotina de expurgo no Supabase (`pg_cron`) para deletar anúncios mais velhos que 7 dias. Com isso, os scrapers recadastram anúncios que ainda estiverem online como "novos", garantindo um frescor máximo na listagem e matando anúncios zumbis.
+- **Scrapers Stateless**: Removida a dependência do arquivo local `properties.json`. Os scrapers agora buscam a lista de IDs existentes diretamente do Supabase em tempo real, permitindo uma dedicação perfeita (onConflict) sem necessidade de cache local ou de commit no repositório.
 - **Retry Automático nos Scrapers (GitHub Actions)**: Se ocorrer um erro de rede temporário (ex: `ENOTFOUND` com Supabase), o scraper tenta novamente até 3 vezes antes de falhar, evitando que o fluxo quebre atoa.
 - **Alertas de Falha Crítica**: Adicionada uma etapa (`gh issue create`) no GitHub Actions para gerar uma Issue alertando o dono do repositório em caso de falha persistente nos scrapers.
 - **Sync ML e Chaves na Mão**: Foi corrigido o bug onde ML e Chaves na Mão exibiam "0 imóveis" por causa da mudança drástica no HTML do ML (agora usando classes `.poly-component`). O scraper foi 100% reescrito.
