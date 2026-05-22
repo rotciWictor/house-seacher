@@ -1,0 +1,722 @@
+[
+  {
+    "nome": "Abolição                  ",
+    "regiao": "MEIER                   ",
+    "zona": "3"
+  },
+  {
+    "nome": "Acari                     ",
+    "regiao": "PAVUNA                  ",
+    "zona": "3"
+  },
+  {
+    "nome": "Água Santa                ",
+    "regiao": "MEIER                   ",
+    "zona": "3"
+  },
+  {
+    "nome": "Alto da Boa Vista         ",
+    "regiao": "TIJUCA                  ",
+    "zona": "2"
+  },
+  {
+    "nome": "Anchieta                  ",
+    "regiao": "ANCHIETA                ",
+    "zona": "3"
+  },
+  {
+    "nome": "Andaraí                   ",
+    "regiao": "VILA ISABEL             ",
+    "zona": "2"
+  },
+  {
+    "nome": "Anil                      ",
+    "regiao": "JACAREPAGUA             ",
+    "zona": "4"
+  },
+  {
+    "nome": "Bangu",
+    "regiao": "BANGU                   ",
+    "zona": "5"
+  },
+  {
+    "nome": "Barra da Tijuca           ",
+    "regiao": "BARRA DA TIJUCA         ",
+    "zona": "4"
+  },
+  {
+    "nome": "Barra de Guaratiba        ",
+    "regiao": "GUARATIBA               ",
+    "zona": "5"
+  },
+  {
+    "nome": "Barros Filho              ",
+    "regiao": "PAVUNA                  ",
+    "zona": "3"
+  },
+  {
+    "nome": "Benfica                   ",
+    "regiao": "SAO CRISTOVAO           ",
+    "zona": "1"
+  },
+  {
+    "nome": "Bento Ribeiro             ",
+    "regiao": "MADUREIRA               ",
+    "zona": "3"
+  },
+  {
+    "nome": "Bonsucesso                ",
+    "regiao": "RAMOS                   ",
+    "zona": "3"
+  },
+  {
+    "nome": "Botafogo                  ",
+    "regiao": "BOTAFOGO                ",
+    "zona": "2"
+  },
+  {
+    "nome": "Brás de Pina              ",
+    "regiao": "PENHA                   ",
+    "zona": "3"
+  },
+  {
+    "nome": "Cachambi                  ",
+    "regiao": "MEIER                   ",
+    "zona": "3"
+  },
+  {
+    "nome": "Caju                      ",
+    "regiao": "PORTUARIA               ",
+    "zona": "1"
+  },
+  {
+    "nome": "Camorim                   ",
+    "regiao": "BARRA DA TIJUCA         ",
+    "zona": "4"
+  },
+  {
+    "nome": "Campinho                  ",
+    "regiao": "MADUREIRA               ",
+    "zona": "3"
+  },
+  {
+    "nome": "Campo dos Afonsos         ",
+    "regiao": "REALENGO                ",
+    "zona": "5"
+  },
+  {
+    "nome": "Campo Grande",
+    "regiao": "CAMPO GRANDE            ",
+    "zona": "5"
+  },
+  {
+    "nome": "Cascadura                 ",
+    "regiao": "MADUREIRA               ",
+    "zona": "3"
+  },
+  {
+    "nome": "Catete                    ",
+    "regiao": "BOTAFOGO                ",
+    "zona": "2"
+  },
+  {
+    "nome": "Catumbi                   ",
+    "regiao": "RIO COMPRIDO            ",
+    "zona": "1"
+  },
+  {
+    "nome": "Cavalcanti                ",
+    "regiao": "MADUREIRA               ",
+    "zona": "3"
+  },
+  {
+    "nome": "Centro                    ",
+    "regiao": "CENTRO                  ",
+    "zona": "1"
+  },
+  {
+    "nome": "Cidade de Deus            ",
+    "regiao": "CIDADE DE DEUS          ",
+    "zona": "4"
+  },
+  {
+    "nome": "Cidade Nova               ",
+    "regiao": "RIO COMPRIDO            ",
+    "zona": "1"
+  },
+  {
+    "nome": "Coelho Neto               ",
+    "regiao": "PAVUNA                  ",
+    "zona": "3"
+  },
+  {
+    "nome": "Colégio                   ",
+    "regiao": "IRAJA                   ",
+    "zona": "3"
+  },
+  {
+    "nome": "Complexo do Alemão        ",
+    "regiao": "COMPLEXO DO ALEMÃO      ",
+    "zona": "3"
+  },
+  {
+    "nome": "Copacabana                ",
+    "regiao": "COPACABANA              ",
+    "zona": "2"
+  },
+  {
+    "nome": "Cordovil                  ",
+    "regiao": "VIGARIO GERAL           ",
+    "zona": "3"
+  },
+  {
+    "nome": "Cosme Velho               ",
+    "regiao": "BOTAFOGO                ",
+    "zona": "2"
+  },
+  {
+    "nome": "Cosmos                    ",
+    "regiao": "CAMPO GRANDE            ",
+    "zona": "5"
+  },
+  {
+    "nome": "Costa Barros              ",
+    "regiao": "PAVUNA                  ",
+    "zona": "3"
+  },
+  {
+    "nome": "Curicica                  ",
+    "regiao": "JACAREPAGUA             ",
+    "zona": "4"
+  },
+  {
+    "nome": "Del Castilho              ",
+    "regiao": "INHAUMA                 ",
+    "zona": "3"
+  },
+  {
+    "nome": "Deodoro                   ",
+    "regiao": "REALENGO                ",
+    "zona": "5"
+  },
+  {
+    "nome": "Encantado                 ",
+    "regiao": "MEIER                   ",
+    "zona": "3"
+  },
+  {
+    "nome": "Engenheiro Leal           ",
+    "regiao": "MADUREIRA               ",
+    "zona": "3"
+  },
+  {
+    "nome": "Engenho da Rainha         ",
+    "regiao": "INHAUMA                 ",
+    "zona": "3"
+  },
+  {
+    "nome": "Engenho de Dentro         ",
+    "regiao": "MEIER                   ",
+    "zona": "3"
+  },
+  {
+    "nome": "Engenho Novo              ",
+    "regiao": "MEIER                   ",
+    "zona": "3"
+  },
+  {
+    "nome": "Estácio                   ",
+    "regiao": "RIO COMPRIDO            ",
+    "zona": "1"
+  },
+  {
+    "nome": "Flamengo                  ",
+    "regiao": "BOTAFOGO                ",
+    "zona": "2"
+  },
+  {
+    "nome": "Freguesia (Jacarepaguá)   ",
+    "regiao": "JACAREPAGUA             ",
+    "zona": "4"
+  },
+  {
+    "nome": "Gamboa                    ",
+    "regiao": "PORTUARIA               ",
+    "zona": "1"
+  },
+  {
+    "nome": "Gardênia Azul             ",
+    "regiao": "JACAREPAGUA             ",
+    "zona": "4"
+  },
+  {
+    "nome": "Gávea                     ",
+    "regiao": "LAGOA                   ",
+    "zona": "2"
+  },
+  {
+    "nome": "Glória                    ",
+    "regiao": "BOTAFOGO                ",
+    "zona": "2"
+  },
+  {
+    "nome": "Grajaú                    ",
+    "regiao": "VILA ISABEL             ",
+    "zona": "2"
+  },
+  {
+    "nome": "Grumari                   ",
+    "regiao": "BARRA DA TIJUCA         ",
+    "zona": "4"
+  },
+  {
+    "nome": "Guadalupe                 ",
+    "regiao": "ANCHIETA                ",
+    "zona": "3"
+  },
+  {
+    "nome": "Guaratiba                 ",
+    "regiao": "GUARATIBA               ",
+    "zona": "5"
+  },
+  {
+    "nome": "Higienópolis              ",
+    "regiao": "INHAUMA                 ",
+    "zona": "3"
+  },
+  {
+    "nome": "Honório Gurgel            ",
+    "regiao": "MADUREIRA               ",
+    "zona": "3"
+  },
+  {
+    "nome": "Humaitá                   ",
+    "regiao": "BOTAFOGO                ",
+    "zona": "2"
+  },
+  {
+    "nome": "Inhaúma                   ",
+    "regiao": "INHAUMA                 ",
+    "zona": "3"
+  },
+  {
+    "nome": "Inhoaíba                  ",
+    "regiao": "CAMPO GRANDE            ",
+    "zona": "5"
+  },
+  {
+    "nome": "Ipanema                   ",
+    "regiao": "LAGOA                   ",
+    "zona": "2"
+  },
+  {
+    "nome": "Irajá                     ",
+    "regiao": "IRAJA                   ",
+    "zona": "3"
+  },
+  {
+    "nome": "Itanhangá                 ",
+    "regiao": "BARRA DA TIJUCA         ",
+    "zona": "4"
+  },
+  {
+    "nome": "Jacaré                    ",
+    "regiao": "MEIER                   ",
+    "zona": "3"
+  },
+  {
+    "nome": "Jacarepaguá               ",
+    "regiao": "JACAREPAGUA             ",
+    "zona": "4"
+  },
+  {
+    "nome": "Jacarezinho               ",
+    "regiao": "JACAREZINHO             ",
+    "zona": "3"
+  },
+  {
+    "nome": "Jardim América            ",
+    "regiao": "VIGARIO GERAL           ",
+    "zona": "3"
+  },
+  {
+    "nome": "Jardim Botânico           ",
+    "regiao": "LAGOA                   ",
+    "zona": "2"
+  },
+  {
+    "nome": "Jardim Sulacap            ",
+    "regiao": "REALENGO                ",
+    "zona": "5"
+  },
+  {
+    "nome": "Joá                       ",
+    "regiao": "BARRA DA TIJUCA         ",
+    "zona": "4"
+  },
+  {
+    "nome": "Lagoa                     ",
+    "regiao": "LAGOA                   ",
+    "zona": "2"
+  },
+  {
+    "nome": "Laranjeiras               ",
+    "regiao": "BOTAFOGO                ",
+    "zona": "2"
+  },
+  {
+    "nome": "Leblon                    ",
+    "regiao": "LAGOA                   ",
+    "zona": "2"
+  },
+  {
+    "nome": "Leme                      ",
+    "regiao": "COPACABANA              ",
+    "zona": "2"
+  },
+  {
+    "nome": "Lins de Vasconcelos       ",
+    "regiao": "MEIER                   ",
+    "zona": "3"
+  },
+  {
+    "nome": "Madureira                 ",
+    "regiao": "MADUREIRA               ",
+    "zona": "3"
+  },
+  {
+    "nome": "Magalhães Bastos          ",
+    "regiao": "REALENGO                ",
+    "zona": "5"
+  },
+  {
+    "nome": "Mangueira                 ",
+    "regiao": "SAO CRISTOVAO           ",
+    "zona": "1"
+  },
+  {
+    "nome": "Manguinhos                ",
+    "regiao": "RAMOS                   ",
+    "zona": "3"
+  },
+  {
+    "nome": "Maracanã                  ",
+    "regiao": "VILA ISABEL             ",
+    "zona": "2"
+  },
+  {
+    "nome": "Maré                      ",
+    "regiao": "COMPLEXO DA MARE        ",
+    "zona": "3"
+  },
+  {
+    "nome": "Marechal Hermes           ",
+    "regiao": "MADUREIRA               ",
+    "zona": "3"
+  },
+  {
+    "nome": "Maria da Graça            ",
+    "regiao": "INHAUMA                 ",
+    "zona": "3"
+  },
+  {
+    "nome": "Méier                     ",
+    "regiao": "MEIER                   ",
+    "zona": "3"
+  },
+  {
+    "nome": "Olaria                    ",
+    "regiao": "RAMOS                   ",
+    "zona": "3"
+  },
+  {
+    "nome": "Osvaldo Cruz              ",
+    "regiao": "MADUREIRA               ",
+    "zona": "3"
+  },
+  {
+    "nome": "Paciência                 ",
+    "regiao": "SANTA CRUZ              ",
+    "zona": "5"
+  },
+  {
+    "nome": "Padre Miguel              ",
+    "regiao": "BANGU                   ",
+    "zona": "5"
+  },
+  {
+    "nome": "Paquetá                   ",
+    "regiao": "PAQUETA                 ",
+    "zona": "1"
+  },
+  {
+    "nome": "Parada de Lucas           ",
+    "regiao": "VIGARIO GERAL           ",
+    "zona": "3"
+  },
+  {
+    "nome": "Parque Anchieta           ",
+    "regiao": "ANCHIETA                ",
+    "zona": "3"
+  },
+  {
+    "nome": "Parque Colúmbia           ",
+    "regiao": "PAVUNA                  ",
+    "zona": "3"
+  },
+  {
+    "nome": "Pavuna                    ",
+    "regiao": "PAVUNA                  ",
+    "zona": "3"
+  },
+  {
+    "nome": "Pechincha                 ",
+    "regiao": "JACAREPAGUA             ",
+    "zona": "4"
+  },
+  {
+    "nome": "Pedra de Guaratiba        ",
+    "regiao": "GUARATIBA               ",
+    "zona": "5"
+  },
+  {
+    "nome": "Penha                     ",
+    "regiao": "PENHA                   ",
+    "zona": "3"
+  },
+  {
+    "nome": "Penha Circular            ",
+    "regiao": "PENHA                   ",
+    "zona": "3"
+  },
+  {
+    "nome": "Piedade                   ",
+    "regiao": "MEIER                   ",
+    "zona": "3"
+  },
+  {
+    "nome": "Pilares                   ",
+    "regiao": "MEIER                   ",
+    "zona": "3"
+  },
+  {
+    "nome": "Praça da Bandeira         ",
+    "regiao": "TIJUCA                  ",
+    "zona": "2"
+  },
+  {
+    "nome": "Praça Seca                ",
+    "regiao": "JACAREPAGUA             ",
+    "zona": "4"
+  },
+  {
+    "nome": "Quintino Bocaiúva         ",
+    "regiao": "MADUREIRA               ",
+    "zona": "3"
+  },
+  {
+    "nome": "Ramos                     ",
+    "regiao": "RAMOS                   ",
+    "zona": "3"
+  },
+  {
+    "nome": "Realengo                  ",
+    "regiao": "REALENGO                ",
+    "zona": "5"
+  },
+  {
+    "nome": "Recreio dos Bandeirantes  ",
+    "regiao": "BARRA DA TIJUCA         ",
+    "zona": "4"
+  },
+  {
+    "nome": "Riachuelo                 ",
+    "regiao": "MEIER                   ",
+    "zona": "3"
+  },
+  {
+    "nome": "Ricardo de Albuquerque    ",
+    "regiao": "ANCHIETA                ",
+    "zona": "3"
+  },
+  {
+    "nome": "Rio Comprido              ",
+    "regiao": "RIO COMPRIDO            ",
+    "zona": "1"
+  },
+  {
+    "nome": "Rocha                     ",
+    "regiao": "MEIER                   ",
+    "zona": "3"
+  },
+  {
+    "nome": "Rocha Miranda             ",
+    "regiao": "MADUREIRA               ",
+    "zona": "3"
+  },
+  {
+    "nome": "Rocinha                   ",
+    "regiao": "ROCINHA                 ",
+    "zona": "2"
+  },
+  {
+    "nome": "Sampaio                   ",
+    "regiao": "MEIER                   ",
+    "zona": "3"
+  },
+  {
+    "nome": "Santa Cruz                ",
+    "regiao": "SANTA CRUZ              ",
+    "zona": "5"
+  },
+  {
+    "nome": "Santa Teresa              ",
+    "regiao": "SANTA TEREZA            ",
+    "zona": "1"
+  },
+  {
+    "nome": "Santíssimo                ",
+    "regiao": "CAMPO GRANDE            ",
+    "zona": "5"
+  },
+  {
+    "nome": "Santo Cristo              ",
+    "regiao": "PORTUARIA               ",
+    "zona": "1"
+  },
+  {
+    "nome": "São Conrado               ",
+    "regiao": "LAGOA                   ",
+    "zona": "2"
+  },
+  {
+    "nome": "São Cristóvão             ",
+    "regiao": "SAO CRISTOVAO           ",
+    "zona": "1"
+  },
+  {
+    "nome": "São Francisco Xavier      ",
+    "regiao": "MEIER                   ",
+    "zona": "3"
+  },
+  {
+    "nome": "Saúde                     ",
+    "regiao": "PORTUARIA               ",
+    "zona": "1"
+  },
+  {
+    "nome": "Senador Camará            ",
+    "regiao": "BANGU                   ",
+    "zona": "5"
+  },
+  {
+    "nome": "Senador Vasconcelos       ",
+    "regiao": "CAMPO GRANDE            ",
+    "zona": "5"
+  },
+  {
+    "nome": "Sepetiba                  ",
+    "regiao": "SANTA CRUZ              ",
+    "zona": "5"
+  },
+  {
+    "nome": "Tanque                    ",
+    "regiao": "JACAREPAGUA             ",
+    "zona": "4"
+  },
+  {
+    "nome": "Taquara                   ",
+    "regiao": "JACAREPAGUA             ",
+    "zona": "4"
+  },
+  {
+    "nome": "Tijuca                    ",
+    "regiao": "TIJUCA                  ",
+    "zona": "2"
+  },
+  {
+    "nome": "Todos os Santos           ",
+    "regiao": "MEIER                   ",
+    "zona": "3"
+  },
+  {
+    "nome": "Tomás Coelho              ",
+    "regiao": "INHAUMA                 ",
+    "zona": "3"
+  },
+  {
+    "nome": "Turiaçú                   ",
+    "regiao": "MADUREIRA               ",
+    "zona": "3"
+  },
+  {
+    "nome": "Urca                      ",
+    "regiao": "BOTAFOGO                ",
+    "zona": "2"
+  },
+  {
+    "nome": "Vargem Grande             ",
+    "regiao": "BARRA DA TIJUCA         ",
+    "zona": "4"
+  },
+  {
+    "nome": "Vargem Pequena            ",
+    "regiao": "BARRA DA TIJUCA         ",
+    "zona": "4"
+  },
+  {
+    "nome": "Vasco da Gama             ",
+    "regiao": "SAO CRISTOVAO           ",
+    "zona": "1"
+  },
+  {
+    "nome": "Vaz Lobo                  ",
+    "regiao": "MADUREIRA               ",
+    "zona": "3"
+  },
+  {
+    "nome": "Vicente de Carvalho       ",
+    "regiao": "IRAJA                   ",
+    "zona": "3"
+  },
+  {
+    "nome": "Vidigal                   ",
+    "regiao": "LAGOA                   ",
+    "zona": "2"
+  },
+  {
+    "nome": "Vigário Geral             ",
+    "regiao": "VIGARIO GERAL           ",
+    "zona": "3"
+  },
+  {
+    "nome": "Vila da Penha             ",
+    "regiao": "IRAJA                   ",
+    "zona": "3"
+  },
+  {
+    "nome": "Vila Isabel               ",
+    "regiao": "VILA ISABEL             ",
+    "zona": "2"
+  },
+  {
+    "nome": "Vila Kosmos               ",
+    "regiao": "IRAJA                   ",
+    "zona": "3"
+  },
+  {
+    "nome": "Vila Militar              ",
+    "regiao": "REALENGO                ",
+    "zona": "5"
+  },
+  {
+    "nome": "Vila Valqueire            ",
+    "regiao": "JACAREPAGUA             ",
+    "zona": "4"
+  },
+  {
+    "nome": "Vista Alegre              ",
+    "regiao": "IRAJA                   ",
+    "zona": "3"
+  }
+]

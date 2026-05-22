@@ -3,11 +3,12 @@ import stealth from 'puppeteer-extra-plugin-stealth';
 import fs from 'fs';
 import path from 'path';
 import type { Property } from './index';
+import { saveProperties } from './saveProperties';
 
 chromium.use(stealth());
 
 const dataPath = path.resolve('src/data/properties.json');
-const MAX_PAGES = 10;
+const MAX_PAGES = 15;
 
 function classifyZone(text: string): string {
     const lower = text.toLowerCase();
@@ -93,6 +94,7 @@ async function scrapeSource(source: 'zap' | 'vivareal') {
     console.log(`\n🔍 Starting ${siteName} scraper (${MAX_PAGES} pages)...`);
     
     let properties: Property[] = [];
+    const newPropertiesForSupabase: Property[] = [];
     try {
         if (fs.existsSync(dataPath)) {
             const rawData = fs.readFileSync(dataPath, 'utf-8');
@@ -161,6 +163,7 @@ async function scrapeSource(source: 'zap' | 'vivareal') {
                 const property = parseCard(card, source, existingIds);
                 if (property) {
                     properties.push(property);
+                    newPropertiesForSupabase.push(property);
                     existingIds.add(property.id);
                     pageNew++;
                     totalNew++;
@@ -180,9 +183,7 @@ async function scrapeSource(source: 'zap' | 'vivareal') {
         }
     }
 
-    const dir = path.dirname(dataPath);
-    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-    fs.writeFileSync(dataPath, JSON.stringify(properties, null, 2));
+    await saveProperties(newPropertiesForSupabase, siteName);
     console.log(`\n🏁 Finished ${siteName}. Added ${totalNew} new. Total: ${properties.length}`);
     await browser.close();
 }

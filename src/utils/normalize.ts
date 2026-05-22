@@ -27,26 +27,47 @@ export function isCommercial(title: string, description: string): boolean {
     return false;
 }
 
+import bairrosData from '../data/bairros_rj.json';
+
+// Ordena os bairros do maior pro menor pra evitar que "Botafogo" dê match antes de "Botafogo" (não tem sobreposição aqui, mas ex: "Vargem Pequena" antes de "Vargem")
+const OFFICIAL_BAIRROS = bairrosData
+    .map(b => b.nome)
+    .sort((a, b) => b.length - a.length);
+
 export function normalizeNeighborhood(text: string): string {
-    const raw = text.split(',')[0].toLowerCase().trim();
+    const raw = text.toLowerCase().trim();
     
-    // Mapeamento simples de bairros problemáticos
-    if (raw.includes('copacabana')) return 'Copacabana';
-    if (raw.includes('botafogo')) return 'Botafogo';
-    if (raw.includes('tijuca') && !raw.includes('barra')) return 'Tijuca';
-    if (raw.includes('barra da tijuca')) return 'Barra da Tijuca';
+    // Mapeamento manual de apelidos comuns ou erros de digitação conhecidos
     if (raw.includes('recreio')) return 'Recreio dos Bandeirantes';
-    if (raw.includes('centro') && !raw.includes('rio centro')) return 'Centro';
-    if (raw.includes('campo grande')) return 'Campo Grande';
-    if (raw.includes('freguesia')) return 'Freguesia';
-    if (raw.includes('del castilho')) return 'Del Castilho';
+    if (raw.includes('freguesia (jacarepaguá)') || raw.includes('freguesia - jacarepaguá')) return 'Freguesia (Jacarepaguá)';
     if (raw.includes('meier') || raw.includes('méier')) return 'Méier';
     if (raw.includes('taquara')) return 'Taquara';
     
-    // Remove "Rio de Janeiro" se vier junto (ex: "Centro - Rio de Janeiro")
-    let cleaned = raw.replace(/-?\s*rio de janeiro\s*-?/g, '').trim();
+    // Tenta encontrar o bairro oficial no texto
+    for (const bairro of OFFICIAL_BAIRROS) {
+        // Ignora acentos na busca e cria uma regex para match exato da palavra
+        const cleanBairro = bairro.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        const cleanRaw = raw.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        
+        // Matcher que exige borda de palavra (para não dar match de "Rio" em "Riachuelo")
+        // Como regex em TS é meio chato com \b em caracteres acentuados, usamos indexOf simples se for longo, ou regex
+        if (cleanRaw.includes(cleanBairro)) {
+            // Checagem extra de falsos positivos (ex: "Centro" no meio de "Rio Centro")
+            if (cleanBairro === 'centro' && cleanRaw.includes('rio centro')) return 'Riocentro';
+            return bairro;
+        }
+    }
     
-    // Capitalize primeira letra de cada palavra
+    // Fallback: Remove "Rio de Janeiro" e estados do final
+    let cleaned = raw.split(',')[0]
+        .replace(/-?\s*rio de janeiro\s*-?/ig, '')
+        .replace(/-?\s*rj\s*$/ig, '')
+        .replace(/-?\s*niter[óo]i\s*-?/ig, '')
+        .replace(/-?\s*s[ãa]o gon[çc]alo\s*-?/ig, '')
+        .replace(/-?\s*nova igua[çc]u\s*-?/ig, '')
+        .replace(/-?\s*duque de caxias\s*-?/ig, '')
+        .trim();
+        
     cleaned = cleaned.replace(/\b\w/g, l => l.toUpperCase());
     
     return cleaned || 'Desconhecido';

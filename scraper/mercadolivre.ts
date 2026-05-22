@@ -3,11 +3,12 @@ import stealth from 'puppeteer-extra-plugin-stealth';
 import fs from 'fs';
 import path from 'path';
 import type { Property } from './index';
+import { saveProperties } from './saveProperties';
 
 chromium.use(stealth());
 
 const dataPath = path.resolve('src/data/properties.json');
-const MAX_PAGES = 5; // Mercado Livre has fewer cheap properties usually
+const MAX_PAGES = 15;
 const BASE_URL = 'https://lista.mercadolivre.com.br/imoveis/aluguel/rio-de-janeiro/rio-de-janeiro/_PriceRange_0-1000_NoIndex_True';
 
 function classifyZone(text: string): string {
@@ -35,6 +36,7 @@ async function scrapeML() {
     console.log(`🔍 Starting Mercado Livre scraper (${MAX_PAGES} pages)...\\n`);
 
     let properties: Property[] = [];
+    const newPropertiesForSupabase: Property[] = [];
     try {
         if (fs.existsSync(dataPath)) {
             const raw = fs.readFileSync(dataPath, 'utf-8');
@@ -117,7 +119,7 @@ async function scrapeML() {
                     const imgEl = await card.$('img.ui-search-result-image__image');
                     const image = imgEl ? (await imgEl.getAttribute('src') || await imgEl.getAttribute('data-src') || '') : '';
 
-                    properties.push({
+                    const property: Property = {
                         id,
                         title,
                         price,
@@ -134,7 +136,9 @@ async function scrapeML() {
                         source: 'mercadolivre',
                         directOwner: false,
                         found_at: new Date().toISOString()
-                    });
+                    };
+                    properties.push(property);
+                    newPropertiesForSupabase.push(property);
                     
                     existingIds.add(id);
                     pageNew++;
@@ -168,7 +172,7 @@ async function scrapeML() {
 
     await browser.close();
     
-    fs.writeFileSync(dataPath, JSON.stringify(properties, null, 2), 'utf-8');
+    await saveProperties(newPropertiesForSupabase, 'Mercado Livre');
     console.log(`\\n🏁 Finished Mercado Livre. Added ${totalNew} new. Total: ${properties.length}\\n`);
 }
 

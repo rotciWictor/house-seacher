@@ -65,6 +65,30 @@ export default function Home() {
     const [filterRooms, setFilterRooms] = useState<string>('any');
     const [filterDirectOwner, setFilterDirectOwner] = useState<boolean>(false);
     const [filterHasPhoto, setFilterHasPhoto] = useState<boolean>(false);
+    const [filterFavorites, setFilterFavorites] = useState<boolean>(false);
+
+    // Pagination & Favorites
+    const [favorites, setFavorites] = useState<Set<string>>(new Set());
+    const [currentPage, setCurrentPage] = useState(1);
+    const ITEMS_PER_PAGE = 30;
+
+    useEffect(() => {
+        const saved = localStorage.getItem('hs_favorites');
+        if (saved) setFavorites(new Set(JSON.parse(saved)));
+    }, []);
+
+    const toggleFavorite = (e: React.MouseEvent, id: string) => {
+        e.preventDefault();
+        const newFavs = new Set(favorites);
+        if (newFavs.has(id)) newFavs.delete(id);
+        else newFavs.add(id);
+        setFavorites(newFavs);
+        localStorage.setItem('hs_favorites', JSON.stringify(Array.from(newFavs)));
+    };
+
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [selectedZone, selectedNeighborhoods, selectedSources, maxPrice, sortBy, searchQuery, filterRooms, filterDirectOwner, filterHasPhoto, filterFavorites]);
 
     useEffect(() => {
         async function fetchProperties() {
@@ -115,6 +139,7 @@ export default function Home() {
             if (filterRooms !== 'any' && p.rooms !== parseInt(filterRooms)) return false;
             if (filterDirectOwner && !p.directOwner) return false;
             if (filterHasPhoto && !p.image) return false;
+            if (filterFavorites && !favorites.has(p.id)) return false;
             return true;
         }).sort((a, b) => {
             if (sortBy === 'lowest') return a.price - b.price;
@@ -141,8 +166,16 @@ export default function Home() {
         setFilterRooms('any');
         setFilterDirectOwner(false);
         setFilterHasPhoto(false);
+        setFilterFavorites(false);
         setSortBy('newest');
     };
+
+    const paginatedProperties = useMemo(() => {
+        const start = (currentPage - 1) * ITEMS_PER_PAGE;
+        return filteredProperties.slice(start, start + ITEMS_PER_PAGE);
+    }, [filteredProperties, currentPage]);
+    
+    const totalPages = Math.ceil(filteredProperties.length / ITEMS_PER_PAGE);
 
     return (
         <main className="min-h-screen bg-gray-50 text-gray-900 font-sans selection:bg-indigo-500 selection:text-white">
@@ -313,6 +346,14 @@ export default function Home() {
                         📷 Com foto
                     </button>
 
+                    {/* Favorites Filter */}
+                    <button 
+                        onClick={() => setFilterFavorites(!filterFavorites)}
+                        className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all border ${filterFavorites ? 'bg-pink-600 text-white border-pink-600' : 'bg-pink-50 text-pink-600 border-pink-200 hover:bg-pink-100'}`}
+                    >
+                        ❤️ Só Favoritos
+                    </button>
+
                     {/* Clear Filters Button */}
                     <button 
                         onClick={clearFilters}
@@ -359,8 +400,9 @@ export default function Home() {
                         </p>
                     </div>
                 ) : (
+                    <>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-                        {filteredProperties.map((property) => (
+                        {paginatedProperties.map((property) => (
                             <a 
                                 href={property.url} 
                                 target="_blank" 
@@ -397,7 +439,7 @@ export default function Home() {
                                         )}
                                     </div>
                                     {/* Right badges */}
-                                    <div className="absolute top-3 right-3 flex flex-col items-end gap-1.5">
+                                    <div className="absolute top-12 right-3 flex flex-col items-end gap-1.5">
                                         <div className={`${SOURCE_COLORS[property.source || 'olx'] || 'bg-gray-600 text-white'} font-bold px-2 py-1 rounded-md text-[10px] shadow-lg tracking-wider uppercase`}>
                                             {SOURCE_LABELS[property.source || 'olx'] || 'OLX'}
                                         </div>
@@ -417,6 +459,16 @@ export default function Home() {
                                     <div className="absolute bottom-3 right-3 bg-gray-900 text-white font-medium px-2 py-0.5 rounded-full text-[10px] shadow-md">
                                         {timeAgo(property.found_at)}
                                     </div>
+                                    
+                                    {/* Favorite Button */}
+                                    <button
+                                        onClick={(e) => toggleFavorite(e, property.id)}
+                                        className="absolute top-3 right-3 w-8 h-8 flex items-center justify-center bg-white/90 backdrop-blur-sm rounded-full shadow-lg hover:scale-110 transition-transform"
+                                    >
+                                        <svg xmlns="http://www.w3.org/2000/svg" className={`h-5 w-5 ${favorites.has(property.id) ? 'text-pink-600 fill-current' : 'text-gray-400'}`} viewBox="0 0 24 24" stroke="currentColor" fill="none">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                                        </svg>
+                                    </button>
                                 </div>
                                 
                                 {/* Content */}
@@ -459,6 +511,53 @@ export default function Home() {
                             </a>
                         ))}
                     </div>
+
+                    {/* ============= PAGINATION CONTROLS ============= */}
+                    {totalPages > 1 && (
+                        <div className="flex items-center justify-center gap-2 mt-12 mb-8">
+                            <button 
+                                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                                disabled={currentPage === 1}
+                                className="px-4 py-2 rounded-lg font-medium text-sm border bg-white text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+                            >
+                                Anterior
+                            </button>
+                            
+                            <div className="flex items-center gap-1 mx-2">
+                                {Array.from({ length: Math.min(5, totalPages) }).map((_, i) => {
+                                    let pageNum = currentPage;
+                                    if (currentPage <= 3) pageNum = i + 1;
+                                    else if (currentPage >= totalPages - 2) pageNum = totalPages - 4 + i;
+                                    else pageNum = currentPage - 2 + i;
+                                    
+                                    if (pageNum > 0 && pageNum <= totalPages) {
+                                        return (
+                                            <button 
+                                                key={pageNum}
+                                                onClick={() => {
+                                                    setCurrentPage(pageNum);
+                                                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                                                }}
+                                                className={`w-10 h-10 rounded-lg font-semibold text-sm flex items-center justify-center transition-all ${currentPage === pageNum ? 'bg-indigo-600 text-white shadow-md scale-110' : 'bg-white border text-gray-700 hover:bg-gray-50'}`}
+                                            >
+                                                {pageNum}
+                                            </button>
+                                        );
+                                    }
+                                    return null;
+                                })}
+                            </div>
+
+                            <button 
+                                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                                disabled={currentPage === totalPages}
+                                className="px-4 py-2 rounded-lg font-medium text-sm border bg-white text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+                            >
+                                Próxima
+                            </button>
+                        </div>
+                    )}
+                    </>
                 )}
             </div>
             

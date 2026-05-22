@@ -2,9 +2,10 @@ import * as cheerio from 'cheerio';
 import fs from 'fs';
 import path from 'path';
 import type { Property } from './index';
+import { saveProperties } from './saveProperties';
 
 const dataPath = path.resolve('src/data/properties.json');
-const MAX_PAGES = 10;
+const MAX_PAGES = 15;
 const BASE_URL = 'https://www.chavesnamao.com.br/imoveis-para-alugar/rj-rio-de-janeiro/?valormax=1000';
 
 function classifyZone(text: string): string {
@@ -43,6 +44,7 @@ async function scrapeChavesNaMao() {
     console.log(`🔍 Starting Chaves na Mão scraper (${MAX_PAGES} pages)...\n`);
 
     let properties: Property[] = [];
+    const newPropertiesForSupabase: Property[] = [];
     try {
         if (fs.existsSync(dataPath)) {
             const raw = fs.readFileSync(dataPath, 'utf-8');
@@ -155,6 +157,7 @@ async function scrapeChavesNaMao() {
                     };
 
                     properties.push(property);
+                    newPropertiesForSupabase.push(property);
                     existingIds.add(id);
                     pageNew++;
                 } catch (e) {
@@ -176,7 +179,7 @@ async function scrapeChavesNaMao() {
     }
 
     // Save
-    fs.writeFileSync(dataPath, JSON.stringify(properties, null, 2), 'utf-8');
+    await saveProperties(newPropertiesForSupabase, 'Chaves na Mão');
     console.log(`\n🏁 Finished Chaves na Mão. Added ${totalNew} new. Total: ${properties.length}\n`);
 }
 

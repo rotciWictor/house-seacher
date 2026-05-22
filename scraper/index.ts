@@ -2,6 +2,7 @@ import { chromium } from 'playwright-extra';
 import stealth from 'puppeteer-extra-plugin-stealth';
 import fs from 'fs';
 import path from 'path';
+import { saveProperties } from './saveProperties';
 
 chromium.use(stealth());
 
@@ -191,8 +192,9 @@ async function scrapeOLX() {
 
     const page = await context.newPage();
 
-    const maxPages = 10;
+    const maxPages = 15;
     let newCount = 0;
+    const newPropertiesForSupabase: Property[] = [];
 
     for (let pageNum = 1; pageNum <= maxPages; pageNum++) {
         const pageUrl = pageNum === 1 ? startUrl : `${startUrl}&o=${pageNum}`;
@@ -321,6 +323,7 @@ async function scrapeOLX() {
                 };
 
                 properties.push(property);
+                newPropertiesForSupabase.push(property);
                 existingIds.add(id);
                 newCount++;
                 console.log(`   ✅ ${property.title.substring(0, 50)} — R$${property.price} — ${property.neighborhood} (${property.zone})`);
@@ -328,13 +331,8 @@ async function scrapeOLX() {
         }
     }
 
-    // Ensure data directory exists
-    const dir = path.dirname(dataPath);
-    if (!fs.existsSync(dir)) {
-        fs.mkdirSync(dir, { recursive: true });
-    }
+    await saveProperties(newPropertiesForSupabase, 'OLX');
 
-    fs.writeFileSync(dataPath, JSON.stringify(properties, null, 2));
     console.log(`\n🏁 Finished OLX. Added ${newCount} new. Total: ${properties.length}`);
     await browser.close();
 }
