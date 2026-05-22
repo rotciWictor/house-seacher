@@ -152,7 +152,7 @@ async function scrapeML() {
             totalNew += pageNew;
 
             // Pagination
-            const nextBtn = await page.$('a.andes-pagination__link.ui-search-link[title="Seguinte"]');
+            const nextBtn = await page.$('a.andes-pagination__link[title="Seguinte"]');
             if (nextBtn) {
                 const nextUrl = await nextBtn.getAttribute('href');
                 if (nextUrl) {
