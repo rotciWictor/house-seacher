@@ -9,3 +9,14 @@ export function timeAgo(dateStr: string): string {
     const diffDays = Math.floor(diffHours / 24);
     return `${diffDays}d atrás`;
 }
+
+export function slugify(text: string): string {
+    return text
+        .toString()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase()
+        .trim()
+        .replace(/[^a-z0-9 ]/g, '')
+        .replace(/\s+/g, '-');
+}

@@ -9,6 +9,23 @@ interface PageProps {
 
 const capitalize = (s: string) => s.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
 
+export const dynamicParams = true; // ISR fallback para rotas não listadas
+
+export async function generateStaticParams() {
+    // Renderiza estaticamente apenas as rotas raiz de Zonas no momento do Build para evitar timeout.
+    // Os bairros detalhados serão cacheados via ISR (sob demanda) na primeira vez que o Googlebot acessar.
+    return [
+        { slug: [] },
+        { slug: ['zona-sul'] },
+        { slug: ['zona-norte'] },
+        { slug: ['zona-oeste'] },
+        { slug: ['centro'] },
+        { slug: ['baixada'] },
+        { slug: ['niteroi'] },
+        { slug: ['sao-goncalo'] },
+    ];
+}
+
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
     const slug = params.slug || [];
     const zone = slug[0] ? capitalize(slug[0]) : '';
