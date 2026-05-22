@@ -69,11 +69,13 @@ export function ClientPropertyBrowser({ initialZone, initialNeighborhood }: Clie
                 .select('*')
                 .order('found_at', { ascending: false });
             
-            if (data) {
-                const mappedData = data.map(p => ({
-                    ...p,
-                    directOwner: p.directowner
-                }));
+                const mappedData = data
+                    .map(p => ({
+                        ...p,
+                        directOwner: p.directowner
+                    }))
+                    .filter(p => !isCommercial(p.title, p.description));
+                
                 setProperties(mappedData as Property[]);
                 
                 // Hydrate from URL props after fetching
@@ -153,7 +155,6 @@ export function ClientPropertyBrowser({ initialZone, initialNeighborhood }: Clie
 
     const filteredProperties = useMemo(() => {
         return properties.filter(p => {
-            if (isCommercial(p.title, p.description)) return false;
             if (selectedZone !== 'Todas' && p.zone !== selectedZone) return false;
             if (selectedNeighborhoods.length > 0 && !selectedNeighborhoods.includes(p.neighborhood)) return false;
             if (selectedSources.length > 0 && !selectedSources.includes(p.source || 'olx')) return false;

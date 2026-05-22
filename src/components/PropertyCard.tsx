@@ -20,7 +20,7 @@ export function PropertyCard({ property, isFavorite, onToggleFavorite }: Propert
             href={property.url} 
             target="_blank" 
             rel="noopener noreferrer"
-            className="group flex flex-col bg-white rounded-2xl overflow-hidden border border-gray-100 hover:border-indigo-300 hover:shadow-2xl hover:shadow-indigo-500/10 hover:-translate-y-1 transition-all duration-300 relative"
+            className="group flex flex-col bg-white rounded-2xl overflow-hidden shadow-[0_2px_12px_rgb(0,0,0,0.04)] border border-transparent hover:border-indigo-100 hover:shadow-xl hover:shadow-indigo-500/10 hover:-translate-y-1 transition-all duration-300 relative"
         >
             {/* Image Section */}
             <div className="relative h-56 w-full bg-gray-100 overflow-hidden">
@@ -40,12 +40,12 @@ export function PropertyCard({ property, isFavorite, onToggleFavorite }: Propert
                     </div>
                 )}
                 
-                {/* Top Overlay Gradient */}
-                <div className="absolute top-0 left-0 right-0 h-24 bg-gradient-to-b from-black/60 to-transparent pointer-events-none" />
+                {/* Top Overlay Gradient - Lighter */}
+                <div className="absolute top-0 left-0 right-0 h-24 bg-gradient-to-b from-black/40 to-transparent pointer-events-none" />
 
                 {/* Top Badges */}
                 <div className="absolute top-3 left-3 flex flex-wrap gap-2 pr-12">
-                    <Badge variant={property.source === 'olx' ? 'default' : 'secondary'} className="shadow-lg backdrop-blur-md bg-black/40 border-white/10 text-white hover:bg-black/60">
+                    <Badge variant={property.source === 'olx' ? 'default' : 'secondary'} className="shadow-sm backdrop-blur-md bg-black/30 border-white/10 text-white hover:bg-black/50">
                         {SOURCE_LABELS[property.source || 'olx'] || 'OLX'}
                     </Badge>
                     {property.directOwner && (
@@ -68,8 +68,8 @@ export function PropertyCard({ property, isFavorite, onToggleFavorite }: Propert
                     </svg>
                 </button>
 
-                {/* Bottom Overlay Gradient */}
-                <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-black/80 via-black/40 to-transparent pointer-events-none" />
+                {/* Bottom Overlay Gradient - Softer */}
+                <div className="absolute bottom-0 left-0 right-0 h-28 bg-gradient-to-t from-black/70 via-black/20 to-transparent pointer-events-none" />
 
                 {/* Pricing / CTM */}
                 <div className="absolute bottom-3 left-3 right-3 flex justify-between items-end">
@@ -105,15 +105,15 @@ export function PropertyCard({ property, isFavorite, onToggleFavorite }: Propert
                     {property.neighborhood}{property.zone !== 'Geral' ? `, ${property.zone}` : ''}
                 </p>
 
-                {/* Oráculo de Viabilidade (Slots) */}
-                <div className="grid grid-cols-2 gap-2 mb-4">
-                    <div className="flex flex-col bg-gray-50 rounded-lg p-2 border border-gray-100">
-                        <span className="text-[9px] text-gray-400 uppercase tracking-wider font-bold mb-1">Custo Moradia (CTM)</span>
-                        <span className="text-xs font-bold text-gray-700">~ R$ {mockCTM.toLocaleString('pt-BR')}</span>
+                {/* Oráculo de Viabilidade (Slots) - Softer appearance */}
+                <div className="grid grid-cols-2 gap-2.5 mb-4">
+                    <div className="flex flex-col bg-slate-50/50 rounded-xl p-2.5">
+                        <span className="text-[9px] text-gray-400 uppercase tracking-widest font-bold mb-0.5">Custo Moradia (CTM)</span>
+                        <span className="text-xs font-semibold text-gray-700">~ R$ {mockCTM.toLocaleString('pt-BR')}</span>
                     </div>
-                    <div className="flex flex-col bg-gray-50 rounded-lg p-2 border border-gray-100">
-                        <span className="text-[9px] text-gray-400 uppercase tracking-wider font-bold mb-1">Tempo ao Centro</span>
-                        <span className="text-xs font-bold text-gray-700 flex items-center gap-1">
+                    <div className="flex flex-col bg-slate-50/50 rounded-xl p-2.5">
+                        <span className="text-[9px] text-gray-400 uppercase tracking-widest font-bold mb-0.5">Tempo ao Centro</span>
+                        <span className="text-xs font-semibold text-gray-700 flex items-center gap-1">
                             🚌 {mockMobilityTime}
                         </span>
                     </div>
