@@ -1,25 +1,29 @@
 import fs from 'fs';
 import path from 'path';
 import { supabase } from '../src/lib/supabase';
-import { isCommercial, normalizeNeighborhood } from '../src/utils/normalize';
+import { isCommercial, normalizeNeighborhood, reclassifyZone } from '../src/utils/normalize';
 
 const dataPath = path.resolve(process.cwd(), 'src/data/properties.json');
 
 export async function saveProperties(newProperties: any[], sourceName: string) {
     console.log(`\n💾 Salvando ${newProperties.length} imóveis de ${sourceName}...`);
     
-    // 1. Filtrar comerciais e normalizar bairros
+    // 1. Filtrar comerciais, normalizar bairros e reclassificar zona (AP4 -> Sudoeste)
     const validProperties = newProperties.filter(p => {
         if (isCommercial(p.title, p.description)) {
             console.log(`   🚫 Ignorado (Comercial): ${p.title.substring(0, 40)}...`);
             return false;
         }
         return true;
-    }).map(p => ({
-        ...p,
-        neighborhood: normalizeNeighborhood(p.neighborhood),
-        directowner: p.directOwner, // Supabase map
-    }));
+    }).map(p => {
+        const normNeighborhood = normalizeNeighborhood(p.neighborhood);
+        return {
+            ...p,
+            neighborhood: normNeighborhood,
+            zone: reclassifyZone(p.zone, normNeighborhood),
+            directowner: p.directOwner, // Supabase map
+        };
+    });
 
     // Remove directOwner from Supabase payload
     const supabasePayload = validProperties.map(p => {

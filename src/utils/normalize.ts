@@ -71,5 +71,41 @@ export function normalizeNeighborhood(text: string): string {
         
     cleaned = cleaned.replace(/\b\w/g, l => l.toUpperCase());
     
+    // Filtro de lixo (strings muito grandes, nomes de empresas, datas de scraping)
+    const lowerClean = cleaned.toLowerCase();
+    if (
+        cleaned.length > 25 || 
+        lowerClean.includes('ltda') || 
+        lowerClean.includes('imóveis') || 
+        lowerClean.includes('para alugar') ||
+        lowerClean.includes('hoje') ||
+        /\d{1,2} de [a-z]+/i.test(cleaned)
+    ) {
+        return 'Desconhecido';
+    }
+    
     return cleaned || 'Desconhecido';
+}
+
+// Lista de bairros da AP4 (Zona Sudoeste)
+const ZONA_SUDOESTE = [
+    'barra da tijuca', 'barra', 'recreio', 'jacarepaguá', 'taquara', 'anil', 'curicica',
+    'pechincha', 'praça seca', 'itanhangá', 'gardênia azul', 'vila valqueire', 'tanque',
+    'camorim', 'grumari', 'joá', 'freguesia (jacarepaguá)', 'freguesia', 'rio das pedras',
+    'cidade de deus', 'vargem grande', 'vargem pequena', 'barra olímpica'
+];
+
+export function reclassifyZone(currentZone: string, neighborhood: string): string {
+    // Se já não é Zona Oeste, não precisamos checar se é Sudoeste
+    if (currentZone !== 'Zona Oeste') return currentZone;
+    
+    const lowerBairro = neighborhood.toLowerCase();
+    
+    // Se o bairro pertence à AP4, reclassifica como Zona Sudoeste
+    if (ZONA_SUDOESTE.some(b => lowerBairro.includes(b) || b.includes(lowerBairro))) {
+        return 'Zona Sudoeste';
+    }
+    
+    // Continua como Zona Oeste
+    return currentZone;
 }

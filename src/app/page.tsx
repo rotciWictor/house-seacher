@@ -152,7 +152,9 @@ export default function Home() {
     const stats = useMemo(() => ({
         total: properties.length,
         zones: new Set(properties.map(p => p.zone)).size,
-        neighborhoods: new Set(properties.map(p => p.neighborhood)).size,
+        neighborhoods: Array.from(new Set(properties.map(p => p.neighborhood)))
+            .filter(n => n !== 'Desconhecido')
+            .length,
         sources: new Set(properties.map(p => p.source || 'olx')).size,
         avgPrice: properties.length > 0 ? Math.round(properties.reduce((s, p) => s + p.price, 0) / properties.length) : 0,
     }), [properties]);
