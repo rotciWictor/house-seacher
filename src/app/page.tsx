@@ -669,7 +669,8 @@ export default function Home() {
                                 <span className="bg-[#6e0ad6] text-white text-[10px] font-bold px-2.5 py-1 rounded-md uppercase tracking-wider">OLX</span>
                                 <span className="bg-[#8229e5] text-white text-[10px] font-bold px-2.5 py-1 rounded-md uppercase tracking-wider">ZAP</span>
                                 <span className="bg-[#ff5a00] text-white text-[10px] font-bold px-2.5 py-1 rounded-md uppercase tracking-wider">VivaReal</span>
-                                <span className="bg-gray-700 text-gray-300 text-[10px] font-bold px-2.5 py-1 rounded-md uppercase tracking-wider">+ em breve</span>
+                                <span className="bg-[#fff159] text-gray-900 text-[10px] font-bold px-2.5 py-1 rounded-md uppercase tracking-wider">Mercado Livre</span>
+                                <span className="bg-[#0052cc] text-white text-[10px] font-bold px-2.5 py-1 rounded-md uppercase tracking-wider">Chaves na Mão</span>
                             </div>
                             <p className="text-xs text-gray-500 mt-3">
                                 Atualizado a cada 6 horas via GitHub Actions. Anúncios antigos são expurgados do sistema após 7 dias para evitar "anúncios zumbis".
