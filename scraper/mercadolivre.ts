@@ -75,7 +75,7 @@ async function scrapeML() {
 
             for (const card of cards) {
                 try {
-                    const linkEl = await card.$('.ui-search-link');
+                    const linkEl = await card.$('a.poly-component__title');
                     if (!linkEl) continue;
                     
                     const url = await linkEl.getAttribute('href') || '';
@@ -89,20 +89,21 @@ async function scrapeML() {
                     if (existingIds.has(id)) continue;
 
                     // Title
-                    const titleEl = await card.$('.ui-search-item__title');
+                    const titleEl = await card.$('.poly-component__title');
                     const title = titleEl ? await titleEl.innerText() : 'Imóvel no Mercado Livre';
 
                     // Price
                     const priceEl = await card.$('.andes-money-amount__fraction');
                     const priceText = priceEl ? await priceEl.innerText() : '0';
-                    const price = parseInt(priceText.replace(/\\./g, ''), 10);
+                    const price = parseInt(priceText.replace(/\./g, ''), 10);
                     
                     if (price <= 0 || price > 1000) continue;
 
                     // Attributes (m², quartos)
-                    const attrEls = await card.$$('.ui-search-item__attributes li');
+                    const attrEls = await card.$$('.poly-attributes_list__item');
                     let area = 0;
                     let rooms = 0;
+                    let bathrooms = 0;
                     for (const attr of attrEls) {
                         const text = await attr.innerText();
                         if (text.includes('m²')) area = parseInt(text.replace(/[^\d]/g, ''), 10);
@@ -110,13 +111,13 @@ async function scrapeML() {
                     }
 
                     // Location
-                    const locEl = await card.$('.ui-search-item__location');
+                    const locEl = await card.$('.poly-component__location');
                     const location = locEl ? await locEl.innerText() : 'Rio de Janeiro';
                     const neighborhood = location.split(',')[0].trim();
                     const zone = classifyZone(location);
 
                     // Image
-                    const imgEl = await card.$('img.ui-search-result-image__image');
+                    const imgEl = await card.$('img.poly-component__picture');
                     const image = imgEl ? (await imgEl.getAttribute('src') || await imgEl.getAttribute('data-src') || '') : '';
 
                     const property: Property = {
