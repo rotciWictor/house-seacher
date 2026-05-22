@@ -4,6 +4,15 @@ Todas as mudanças relevantes do projeto House Searcher estão documentadas nest
 
 ---
 
+## [3.2.0] — 2026-05-22
+
+### 🏗️ Arquitetura e UI (Fase 1: Oráculo de Viabilidade)
+- **Design System Criado**: O frontend foi componentizado em "peças de Lego" (`Button`, `Badge`, `Input`) para garantir leveza e escalabilidade, substituindo o amontoado de classes Tailwind em arquivos únicos.
+- **`FilterBar` Separada**: A barra de filtros foi isolada do `ClientPropertyBrowser` para um componente próprio, melhorando a manutenibilidade do código.
+- **Card Preparado para o Oráculo**: O componente `PropertyCard` foi refatorado estruturalmente para exibir as futuras "Badges" do Oráculo (como CTM e Tempo de Deslocamento).
+- **SEO & Hidratação de Rota (Planejamento)**: Decidido o modelo híbrido onde rotas dinâmicas captam buscas no Google (`/aluguel/[bairro]`), mas a navegação na plataforma usa estado global + Query Params para não restringir a busca do usuário.
+- **Arquitetura Geográfica de Custo Zero**: Definido que o limite da API do OpenStreetMap será contornado por meio de uma tabela `geocache` nativa no próprio banco do Supabase, eliminando qualquer infraestrutura de proxy local (Datasette/SQLite).
+
 ## [3.1.0] — 2026-05-21
 
 ### 🚀 Novidades e Correções
