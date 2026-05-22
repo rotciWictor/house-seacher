@@ -11,15 +11,18 @@ Um agregador de imóveis para aluguel focado na cidade do Rio de Janeiro. O obje
 2. **Banco de Dados (Supabase)**: Banco PostgreSQL acessado via `@supabase/supabase-js`.
 3. **Scraper (Playwright/Cheerio)**: Fica em `scraper/`.
 4. **Pipeline (GitHub Actions)**: Roda o scraper a cada 6 horas salvando dados no Supabase.
-5. **Deploy (Vercel)**: Frontend hospedado na Vercel.
+5. **Normalização**: O arquivo `src/utils/normalize.ts` faz Fuzzy Matching (`fastest-levenshtein`) e limpeza defensiva de strings corrompidas. Sempre passe strings de bairros pelo `limpar_e_padronizar_texto`.
 
 ## ⚠️ Regras Restritas de Modificação (NÃO QUEBRE)
 
 ### 1. ATUALIZE O CHANGELOG OBRIGATORIAMENTE
-Sempre que finalizar uma funcionalidade, bugfix ou refatoração, adicione um registro no `CHANGELOG.md`. O desenvolvedor humano usa isso para acompanhar o que a IA fez.
+Sempre que finalizar uma funcionalidade, bugfix ou refatoração, adicione um registro no `CHANGELOG.md` e nos documentos técnicos dentro da pasta `docs/`. O desenvolvedor humano usa isso para acompanhar o que a IA fez de forma autônoma.
 
-### 2. BANCO DE DADOS (SUPABASE)
-O projeto migrou para Supabase (PostgreSQL) na v3.0. Não usamos mais `properties.json` como banco estático. Os scrapers rodam de forma stateless no GitHub Actions e salvam no Supabase via cliente JS.
+### 2. LICENÇA E OPEN SOURCE
+O projeto está sob a Licença MIT. Todo o código escrito deve respeitar a premissa de código aberto e evitar APIs fechadas ou pagas que prejudiquem desenvolvedores que fizerem fork do projeto (arquitetura de Custo Zero).
+
+### 3. BANCO DE DADOS (SUPABASE)
+O projeto usa Supabase (PostgreSQL). Não usamos mais `properties.json` como banco estático. Os scrapers rodam de forma stateless no GitHub Actions e salvam no Supabase via cliente JS. Nunca limpe a base de dados sem perguntar ao humano.
 
 ### 3. NÃO FAÇA DOWNLOAD DAS IMAGENS
 Nós hospedamos a base de dados no próprio GitHub. Se o scraper baixar os arquivos binários das fotos para a pasta do projeto, o repositório vai ultrapassar o limite de 1GB rapidamente e bloquear o deploy da Vercel.

@@ -1,14 +1,13 @@
-# Plano de Implementação: Refatoração 3 Estrelas (Design System & SEO Max)
+# Plano de Implementação Tático
 
-Este documento centraliza o plano técnico da arquitetura de SEO e Design System.
+Este documento centraliza o plano técnico da arquitetura atual do House Searcher.
 
-## 1. O Problema da Hidratação vs Flexibilidade Total
-**Cenário:** O usuário NÃO pode ser restringido por "Zona". Ele tem que poder comparar imóveis em Cascadura (Norte), Campo Grande (Oeste) e Jacarepaguá (Sudoeste) na mesma tela, com flexibilidade total.
+## 1. Concluído Recente (v3.4.0)
+- **Fuzzy Matching e Limpeza Defensiva**: Integração do `fastest-levenshtein` e criação do pipeline `limpar_e_padronizar_texto` para correção ortográfica automática dos bairros.
+- **Segunda Vista no Lixo**: Criação do `recoverNeighborhood` para resgatar anúncios em que o bairro estava corrompido, extraindo a informação de geolocalização através de varredura no Título e Descrição.
+- **Oficialização Open Source**: Adicionada Licença MIT.
 
-**Solução: Rotas de Entrada (SEO) vs Estado Global (Query Params):**
-- **A Experiência do Usuário (UX Livre):** A tela principal do aplicativo viverá na raiz (`/`). Qualquer filtro selecionado apenas "hidrata" a URL com Query Params (ex: `/?bairros=cascadura,campo-grande,jacarepagua`).
-- **As Portas para o Google (SEO Michelin):** Criamos rotas *somente para indexação*, como `/aluguel/cascadura` ou `/aluguel/zona-sul`.
-- **A Mágica da Transição:** Se alguém buscar no Google "Aluguel Cascadura", cai na nossa rota SEO. Se adicionar "Campo Grande" no filtro, o React intercepta a ação e atualiza a URL para `/?bairros=cascadura,campo-grande` sem piscar a tela.
+## 2. Próximo Passo: Arquitetura de Geocodificação (Geocache)
 
 ## 2. Preparação para o "Oráculo de Viabilidade" (Integrações Futuras)
 O Design System será construído focado em leveza (PWA) e escalabilidade de estado para comportar os futuros vetores de dados:
