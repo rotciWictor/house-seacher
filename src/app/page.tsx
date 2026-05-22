@@ -672,7 +672,7 @@ export default function Home() {
                                 <span className="bg-gray-700 text-gray-300 text-[10px] font-bold px-2.5 py-1 rounded-md uppercase tracking-wider">+ em breve</span>
                             </div>
                             <p className="text-xs text-gray-500 mt-3">
-                                Atualizado automaticamente a cada 6 horas via GitHub Actions.
+                                Atualizado a cada 6 horas via GitHub Actions. Anúncios antigos são expurgados do sistema após 7 dias para evitar "anúncios zumbis".
                             </p>
                         </div>
 
