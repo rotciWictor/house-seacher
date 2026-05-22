@@ -82,6 +82,7 @@ Um **agregador inteligente de imóveis para aluguel de baixa renda no Rio de Jan
 - 📷 **Com foto** — esconde anúncios sem imagem
 - 📱 **Design mobile-first** — otimizado para celulares
 - 🏷️ **Badges inteligentes** — fonte, zona, preço, tempo relativo
+- 🛡️ **Fuzzy Matching & Limpeza Defensiva** — corrige erros de digitação de corretores e classifica os bairros com precisão via `fastest-levenshtein`
 - 📈 **SEO completo** — Schema.org, OG Tags, sitemap, PWA
 
 ---
@@ -137,6 +138,8 @@ npx tsx scraper/enrich.ts
 
 ## 📄 Licença
 
-Open-source. Fork, issues e PRs são bem-vindos!
+Distribuído sob a licença **MIT**. Veja o arquivo `LICENSE` para mais informações.
+Fork, issues e PRs são extremamente bem-vindos!
 
-> **Para IAs**: Leia [`AI_README.md`](./AI_README.md) antes de modificar o código.
+> **Para IAs e Contribuidores**: Leia a documentação técnica na pasta `docs/`.
+> Comece pelo [`docs/AI_README.md`](./docs/AI_README.md) e [`docs/IMPLEMENTATION_PLAN.md`](./docs/IMPLEMENTATION_PLAN.md) antes de modificar o código.
