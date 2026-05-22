@@ -9,6 +9,11 @@ Todas as mudanças relevantes do projeto House Searcher estão documentadas nest
 ### ✨ Adicionado
 - **Fuzzy Matching de Bairros**: Instalação da biblioteca `fastest-levenshtein` (ultraleve) e implementação de um algoritmo de similaridade nos scrapers (`enrich.ts`) e no normalizador de frontend (`normalize.ts`). A plataforma agora é resistente a erros de digitação de corretores em anúncios (ex: "Copacabamna", "Tihuca") corrigindo-os automaticamente.
 - **Pipeline de Limpeza Defensiva**: Adicionada a função `limpar_e_padronizar_texto` que destrói acentos ortográficos e lixo textual das strings originais antes da avaliação categórica.
+- **Recuperação de Lixo (Fallback)**: Nova função `recoverNeighborhood` varre os títulos e descrições dos anúncios em busca de bairros oficiais caso o campo de bairro venha totalmente corrompido (ex: "10:30", "Ontem" ou "Desconhecido").
+
+### 🔄 Modificado
+- **Oficialização Open Source**: Projeto oficialmente licenciado sob a **Licença MIT**.
+- **Organização Arquitetural**: Arquivos de documentação técnica pesada (`IMPLEMENTATION_PLAN.md`, `AI_README.md`) isolados em uma pasta própria `/docs` para melhor governança do repositório.
 
 ## [3.3.1] — 2026-05-22
 
