@@ -124,34 +124,33 @@ export function FilterBar(props: FilterBarProps) {
                 </div>
 
                 {/* Toggles (Direto, Foto, Favorito) */}
-                <Button 
-                    variant={props.filterDirectOwner ? "default" : "outline"} 
-                    size="sm"
+                <button 
                     onClick={() => props.setFilterDirectOwner(!props.filterDirectOwner)}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all border ${props.filterDirectOwner ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100'}`}
                 >
                     ✓ Direto c/ Dono
-                </Button>
+                </button>
 
-                <Button 
-                    variant={props.filterHasPhoto ? "default" : "outline"} 
-                    size="sm"
+                <button 
                     onClick={() => props.setFilterHasPhoto(!props.filterHasPhoto)}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all border ${props.filterHasPhoto ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100'}`}
                 >
                     📷 Com foto
-                </Button>
+                </button>
 
-                <Button 
-                    variant={props.filterFavorites ? "default" : "outline"} 
-                    size="sm"
-                    className={props.filterFavorites ? 'bg-pink-600 hover:bg-pink-700 text-white' : ''}
+                <button 
                     onClick={() => props.setFilterFavorites(!props.filterFavorites)}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all border ${props.filterFavorites ? 'bg-pink-600 text-white border-pink-600' : 'bg-pink-50 text-pink-600 border-pink-200 hover:bg-pink-100'}`}
                 >
                     ❤️ Favoritos
-                </Button>
+                </button>
 
-                <Button variant="ghost" size="sm" onClick={props.clearFilters} className="text-gray-500 hover:text-red-600">
+                <button 
+                    onClick={props.clearFilters} 
+                    className="px-3 py-1.5 rounded-lg text-xs font-medium transition-all border bg-red-50 text-red-600 border-red-200 hover:bg-red-100"
+                >
                     🧹 Limpar
-                </Button>
+                </button>
 
                 <select 
                     className="bg-white border border-gray-200 text-gray-700 text-xs font-semibold rounded-lg py-2 px-3 outline-none cursor-pointer md:ml-auto shadow-sm hover:border-indigo-300 transition-colors"
