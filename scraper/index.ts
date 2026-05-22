@@ -1,7 +1,6 @@
+import { supabase } from '../src/lib/supabase';
 import { chromium } from 'playwright-extra';
 import stealth from 'puppeteer-extra-plugin-stealth';
-import fs from 'fs';
-import path from 'path';
 import { saveProperties } from './saveProperties';
 
 chromium.use(stealth());
@@ -162,28 +161,12 @@ function isDirectOwner(text: string): boolean {
 // ============================================================
 
 const startUrl = 'https://www.olx.com.br/imoveis/aluguel/estado-rj/rio-de-janeiro-e-regiao?pe=1000';
-const dataPath = path.resolve('src/data/properties.json');
 
 async function scrapeOLX() {
     console.log('🔍 Starting OLX stealth scraper for RJ region...');
     
-    let properties: Property[] = [];
-    try {
-        if (fs.existsSync(dataPath)) {
-            const rawData = fs.readFileSync(dataPath, 'utf-8');
-            if (rawData.trim() !== '') {
-                properties = JSON.parse(rawData);
-            }
-        }
-    } catch (e) {
-        console.error('Could not read existing data, starting fresh.', e);
-    }
-
-    // Remove old OLX listings (older than 3 days) to keep data fresh
-    const threeDaysAgo = new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString();
-    properties = properties.filter(p => p.source !== 'olx' || p.found_at > threeDaysAgo);
-
-    const existingIds = new Set(properties.map(p => p.id));
+    const { data: existingData } = await supabase.from('properties').select('id').eq('source', 'olx');
+    const existingIds = new Set(existingData?.map(p => p.id) || []);
 
     const browser = await chromium.launch({
         headless: true,
@@ -327,7 +310,6 @@ async function scrapeOLX() {
                     found_at: new Date().toISOString()
                 };
 
-                properties.push(property);
                 newPropertiesForSupabase.push(property);
                 existingIds.add(id);
                 newCount++;
@@ -338,7 +320,7 @@ async function scrapeOLX() {
 
     await saveProperties(newPropertiesForSupabase, 'OLX');
 
-    console.log(`\n🏁 Finished OLX. Added ${newCount} new. Total: ${properties.length}`);
+    console.log(`\n🏁 Finished OLX. Added ${newCount} new. Total IDs tracked: ${existingIds.size}`);
     await browser.close();
 }
 

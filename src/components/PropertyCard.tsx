@@ -10,10 +10,7 @@ interface PropertyCardProps {
 }
 
 export function PropertyCard({ property, isFavorite, onToggleFavorite }: PropertyCardProps) {
-    // Oráculo Placeholders (Mocks for Future Features)
-    // These would eventually be calculated based on the property data
-    const mockMobilityTime = property.zone === 'Centro' ? '15min' : '55min';
-    const mockCTM = property.price + property.condominio + 200; // Simulated CTM
+
 
     return (
         <a 
@@ -105,19 +102,7 @@ export function PropertyCard({ property, isFavorite, onToggleFavorite }: Propert
                     {property.neighborhood}{property.zone !== 'Geral' ? `, ${property.zone}` : ''}
                 </p>
 
-                {/* Oráculo de Viabilidade (Slots) - Softer appearance */}
-                <div className="grid grid-cols-2 gap-2.5 mb-4">
-                    <div className="flex flex-col bg-slate-50/50 rounded-xl p-2.5">
-                        <span className="text-[9px] text-gray-400 uppercase tracking-widest font-bold mb-0.5">Custo Moradia (CTM)</span>
-                        <span className="text-xs font-semibold text-gray-700">~ R$ {mockCTM.toLocaleString('pt-BR')}</span>
-                    </div>
-                    <div className="flex flex-col bg-slate-50/50 rounded-xl p-2.5">
-                        <span className="text-[9px] text-gray-400 uppercase tracking-widest font-bold mb-0.5">Tempo ao Centro</span>
-                        <span className="text-xs font-semibold text-gray-700 flex items-center gap-1">
-                            🚌 {mockMobilityTime}
-                        </span>
-                    </div>
-                </div>
+
 
                 {/* Info pills */}
                 <div className="mt-auto pt-3 border-t border-gray-100 flex items-center justify-between flex-wrap gap-y-2">

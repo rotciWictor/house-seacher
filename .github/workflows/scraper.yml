@@ -42,16 +42,15 @@ jobs:
         run: |
           for i in 1 2 3; do npx tsx scraper/chavesnamao.ts && break || { echo "Retry $i failed"; if [ $i -eq 3 ]; then exit 1; else sleep 10; fi; }; done
 
-      - name: Run Zone Enrichment
+      - name: Trigger Vercel Deploy
         run: |
-          for i in 1 2 3; do npx tsx scraper/enrich.ts && break || { echo "Retry $i failed"; if [ $i -eq 3 ]; then exit 1; else sleep 10; fi; }; done
-
-      - name: Commit and push changes
-        run: |
-          git config --global user.name "House Searcher Bot"
-          git config --global user.email "bot@housesearcher.com"
-          git commit -m "Auto-update properties (Supabase sync) [skip ci]" || echo "No changes to commit"
-          git push
+          if [ -z "${{ secrets.VERCEL_DEPLOY_HOOK_URL }}" ]; then
+            echo "Deploy hook não configurado. Adicione VERCEL_DEPLOY_HOOK_URL nos secrets do GitHub."
+            exit 0
+          else
+            curl -X POST "${{ secrets.VERCEL_DEPLOY_HOOK_URL }}"
+            echo "Deploy na Vercel trigado com sucesso."
+          fi
 
       - name: Create Alert Issue on Failure
         if: failure()
