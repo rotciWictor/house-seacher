@@ -4,6 +4,12 @@ Todas as mudanças relevantes do projeto House Searcher estão documentadas nest
 
 ---
 
+## [3.4.0] — 2026-05-22
+
+### ✨ Adicionado
+- **Fuzzy Matching de Bairros**: Instalação da biblioteca `fastest-levenshtein` (ultraleve) e implementação de um algoritmo de similaridade nos scrapers (`enrich.ts`) e no normalizador de frontend (`normalize.ts`). A plataforma agora é resistente a erros de digitação de corretores em anúncios (ex: "Copacabamna", "Tihuca") corrigindo-os automaticamente.
+- **Pipeline de Limpeza Defensiva**: Adicionada a função `limpar_e_padronizar_texto` que destrói acentos ortográficos e lixo textual das strings originais antes da avaliação categórica.
+
 ## [3.3.1] — 2026-05-22
 
 ### 🐛 Corrigido
