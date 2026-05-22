@@ -69,6 +69,7 @@ export function ClientPropertyBrowser({ initialZone, initialNeighborhood }: Clie
                 .select('*')
                 .order('found_at', { ascending: false });
             
+            if (data) {
                 const mappedData = data
                     .map(p => ({
                         ...p,
