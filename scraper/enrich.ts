@@ -1,6 +1,8 @@
 import fs from 'fs';
 import path from 'path';
 import type { Property } from './index';
+import { limpar_e_padronizar_texto } from '../src/utils/normalize';
+import { distance } from 'fastest-levenshtein';
 
 const dataPath = path.resolve('src/data/properties.json');
 
@@ -157,12 +159,35 @@ function tryClassify(property: Property): string {
         if (location.includes(cityKey) || allText.includes(cityKey)) return zone;
     }
 
-    // 4. Match neighborhood against comprehensive database
+    // 4. Match neighborhood against comprehensive database (Exact + Fuzzy)
+    const cleanNeighborhood = limpar_e_padronizar_texto(property.neighborhood);
+    let bestFuzzyZone: string | null = null;
+    let minDistance = Infinity;
+
     for (const [zone, neighborhoods] of Object.entries(ZONES)) {
         for (const bairro of neighborhoods) {
-            if (neighborhood === bairro) return zone;
-            if (neighborhood.includes(bairro) || bairro.includes(neighborhood)) return zone;
+            const cleanBairro = limpar_e_padronizar_texto(bairro);
+            
+            // Substring exata
+            if (cleanNeighborhood === cleanBairro || cleanNeighborhood.includes(cleanBairro) || cleanBairro.includes(cleanNeighborhood)) {
+                return zone;
+            }
+            
+            // Calcula similaridade se a string for razoável
+            if (cleanNeighborhood.length >= 4 && cleanBairro.length >= 4) {
+                const dist = distance(cleanNeighborhood, cleanBairro);
+                if (dist < minDistance) {
+                    minDistance = dist;
+                    bestFuzzyZone = zone;
+                }
+            }
         }
+    }
+    
+    // Se não encontrou exato, aplica o cutoff de erro (1 erro a cada 5 caracteres)
+    const maxAllowedDist = Math.max(1, Math.floor(cleanNeighborhood.length / 5));
+    if (bestFuzzyZone && minDistance <= maxAllowedDist) {
+        return bestFuzzyZone;
     }
 
     // 5. Search in ALL text for neighborhood clues

@@ -56,10 +56,20 @@ export function isSeasonal(title: string, description: string): boolean {
 }
 
 import bairrosData from '../data/bairros_rj.json';
+import { distance } from 'fastest-levenshtein';
+
+export function limpar_e_padronizar_texto(texto: string): string {
+    if (!texto) return '';
+    return texto
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .trim();
+}
 
 // Ordena os bairros do maior pro menor pra evitar que "Botafogo" dê match antes de "Botafogo" (não tem sobreposição aqui, mas ex: "Vargem Pequena" antes de "Vargem")
 const OFFICIAL_BAIRROS = bairrosData
-    .map(b => b.nome)
+    .map(b => b.nome.trim())
     .sort((a, b) => b.length - a.length);
 
 export function normalizeNeighborhood(text: string): string {
@@ -71,22 +81,7 @@ export function normalizeNeighborhood(text: string): string {
     if (raw.includes('meier') || raw.includes('méier')) return 'Méier';
     if (raw.includes('taquara')) return 'Taquara';
     
-    // Tenta encontrar o bairro oficial no texto
-    for (const bairro of OFFICIAL_BAIRROS) {
-        // Ignora acentos na busca e cria uma regex para match exato da palavra
-        const cleanBairro = bairro.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-        const cleanRaw = raw.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-        
-        // Matcher que exige borda de palavra (para não dar match de "Rio" em "Riachuelo")
-        // Como regex em TS é meio chato com \b em caracteres acentuados, usamos indexOf simples se for longo, ou regex
-        if (cleanRaw.includes(cleanBairro)) {
-            // Checagem extra de falsos positivos (ex: "Centro" no meio de "Rio Centro")
-            if (cleanBairro === 'centro' && cleanRaw.includes('rio centro')) return 'Riocentro';
-            return bairro;
-        }
-    }
-    
-    // Fallback: Remove "Rio de Janeiro" e estados do final
+    // Fallback: Remove "Rio de Janeiro" e estados do final para isolar o bairro real
     let cleaned = raw.split(',')[0]
         .replace(/-?\s*rio de janeiro\s*-?/ig, '')
         .replace(/-?\s*rj\s*$/ig, '')
@@ -95,7 +90,39 @@ export function normalizeNeighborhood(text: string): string {
         .replace(/-?\s*nova igua[çc]u\s*-?/ig, '')
         .replace(/-?\s*duque de caxias\s*-?/ig, '')
         .trim();
+
+    const cleanRawForIncludes = limpar_e_padronizar_texto(raw);
+    const cleanCleanedForFuzzy = limpar_e_padronizar_texto(cleaned);
+
+    let bestMatch: string | null = null;
+    let minDistance = Infinity;
+
+    // Tenta encontrar o bairro oficial no texto
+    for (const bairro of OFFICIAL_BAIRROS) {
+        const cleanBairro = limpar_e_padronizar_texto(bairro);
         
+        // 1. Busca por substring exata (ignora acentos)
+        if (cleanRawForIncludes.includes(cleanBairro)) {
+            // Checagem extra de falsos positivos (ex: "Centro" no meio de "Rio Centro")
+            if (cleanBairro === 'centro' && cleanRawForIncludes.includes('rio centro')) return 'Riocentro';
+            return bairro;
+        }
+
+        // 2. Busca por Fuzzy Matching (distância de Levenshtein) contra o bairro isolado
+        const dist = distance(cleanCleanedForFuzzy, cleanBairro);
+        if (dist < minDistance) {
+            minDistance = dist;
+            bestMatch = bairro;
+        }
+    }
+    
+    // 3. Aplica o corte (cutoff) do Fuzzy Matching
+    // Permite 1 erro de digitação a cada 5 caracteres (ex: Copacabana = 10 chars = até 2 erros permitidos)
+    const maxAllowedDist = Math.max(1, Math.floor(cleanCleanedForFuzzy.length / 5));
+    if (bestMatch && minDistance <= maxAllowedDist && cleanCleanedForFuzzy.length >= 4) {
+        return bestMatch;
+    }
+    
     cleaned = cleaned.replace(/\b\w/g, l => l.toUpperCase());
     
     // Filtro de lixo (strings muito grandes, nomes de empresas, datas de scraping)
