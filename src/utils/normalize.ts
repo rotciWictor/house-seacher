@@ -163,3 +163,22 @@ export function reclassifyZone(currentZone: string, neighborhood: string): strin
     // Continua como Zona Oeste
     return currentZone;
 }
+
+// "Dar uma segunda vista no lixo": se o bairro veio destruído (ex: "Ontem", "10:30", "Desconhecido"),
+// varremos o título e a descrição em busca de algum bairro oficial
+export function recoverNeighborhood(neighborhood: string, title: string, description: string): string {
+    const norm = normalizeNeighborhood(neighborhood);
+    if (norm !== 'Desconhecido') return norm;
+
+    const fullText = limpar_e_padronizar_texto(`${title} ${description}`);
+    
+    // Procura o maior bairro oficial possível dentro do título/descrição
+    for (const bairro of OFFICIAL_BAIRROS) {
+        const cleanBairro = limpar_e_padronizar_texto(bairro);
+        if (fullText.includes(cleanBairro) && cleanBairro.length >= 4) {
+            return bairro; // Resgatado do lixo!
+        }
+    }
+
+    return 'Desconhecido';
+}

@@ -1,5 +1,5 @@
 import { supabase } from '../src/lib/supabase';
-import { isCommercial, normalizeNeighborhood, reclassifyZone } from '../src/utils/normalize';
+import { isCommercial, recoverNeighborhood, reclassifyZone } from '../src/utils/normalize';
 
 export async function saveProperties(newProperties: any[], sourceName: string) {
     console.log(`\n💾 Salvando ${newProperties.length} imóveis de ${sourceName}...`);
@@ -12,7 +12,7 @@ export async function saveProperties(newProperties: any[], sourceName: string) {
         }
         return true;
     }).map(p => {
-        const normNeighborhood = normalizeNeighborhood(p.neighborhood);
+        const normNeighborhood = recoverNeighborhood(p.neighborhood, p.title, p.description);
         return {
             ...p,
             neighborhood: normNeighborhood,
