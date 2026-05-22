@@ -25,19 +25,24 @@ jobs:
         run: npx playwright install chromium --with-deps
 
       - name: Run OLX Scraper
-        run: npx tsx scraper/index.ts
+        run: |
+          for i in 1 2 3; do npx tsx scraper/index.ts && break || { echo "Retry $i failed"; if [ $i -eq 3 ]; then exit 1; else sleep 10; fi; }; done
 
       - name: Run ZAP + VivaReal Scraper
-        run: npx tsx scraper/zap.ts
+        run: |
+          for i in 1 2 3; do npx tsx scraper/zap.ts && break || { echo "Retry $i failed"; if [ $i -eq 3 ]; then exit 1; else sleep 10; fi; }; done
 
       - name: Run Mercado Livre Scraper
-        run: npx tsx scraper/mercadolivre.ts
+        run: |
+          for i in 1 2 3; do npx tsx scraper/mercadolivre.ts && break || { echo "Retry $i failed"; if [ $i -eq 3 ]; then exit 1; else sleep 10; fi; }; done
 
       - name: Run Chaves na Mão Scraper
-        run: npx tsx scraper/chavesnamao.ts
+        run: |
+          for i in 1 2 3; do npx tsx scraper/chavesnamao.ts && break || { echo "Retry $i failed"; if [ $i -eq 3 ]; then exit 1; else sleep 10; fi; }; done
 
       - name: Run Zone Enrichment
-        run: npx tsx scraper/enrich.ts
+        run: |
+          for i in 1 2 3; do npx tsx scraper/enrich.ts && break || { echo "Retry $i failed"; if [ $i -eq 3 ]; then exit 1; else sleep 10; fi; }; done
 
       - name: Commit and push changes
         run: |
@@ -46,3 +51,10 @@ jobs:
           git add src/data/properties.json
           git commit -m "🏠 Update properties [skip ci]" || echo "No changes to commit"
           git push
+
+      - name: Create Alert Issue on Failure
+        if: failure()
+        run: |
+          gh issue create --title "🚨 Falha Crítica no Scraper" --body "O fluxo do scraper falhou após todas as 3 tentativas de retry. Verifique os logs do GitHub Actions para entender o erro." --repo ${{ github.repository }} || echo "Failed to create issue"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
