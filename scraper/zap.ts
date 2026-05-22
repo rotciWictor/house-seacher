@@ -10,16 +10,18 @@ const MAX_PAGES = 15;
 
 function classifyZone(text: string): string {
     const lower = text.toLowerCase();
-    if (lower.includes('zona-oeste') || lower.includes('zona oeste')) return 'Zona Oeste';
-    if (lower.includes('zona-norte') || lower.includes('zona norte')) return 'Zona Norte';
-    if (lower.includes('zona-sul') || lower.includes('zona sul')) return 'Zona Sul';
-    if (lower.includes('zona-central') || lower.includes('centro')) return 'Centro';
     if (lower.includes('niterói') || lower.includes('niteroi')) return 'Niterói';
     if (lower.includes('são gonçalo') || lower.includes('sao-goncalo')) return 'São Gonçalo';
     if (lower.includes('duque de caxias') || lower.includes('nova iguaçu') || lower.includes('belford roxo') || lower.includes('nilópolis') || lower.includes('mesquita') || lower.includes('são joão de meriti') || lower.includes('itaguaí')) return 'Baixada';
     if (lower.includes('maricá') || lower.includes('marica')) return 'Maricá';
     if (lower.includes('teresópolis') || lower.includes('petrópolis')) return 'Serrana';
     if (lower.includes('mangaratiba') || lower.includes('angra')) return 'Costa Verde';
+
+    if (lower.includes('zona-oeste') || lower.includes('zona oeste')) return 'Zona Oeste';
+    if (lower.includes('zona-norte') || lower.includes('zona norte')) return 'Zona Norte';
+    if (lower.includes('zona-sul') || lower.includes('zona sul')) return 'Zona Sul';
+    if (lower.includes('zona-central') || lower.includes('centro')) return 'Centro';
+    
     return 'Geral';
 }
 
