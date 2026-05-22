@@ -1,9 +1,9 @@
 # 🏠 House Searcher — Oráculo de Viabilidade Urbana (RJ)
 
 [![Deploy](https://img.shields.io/badge/Deploy-Vercel-black?logo=vercel)](https://house-seacher.vcampos.dev/)
-[![Imóveis](https://img.shields.io/badge/Imóveis-1.168+-green)](#)
-[![Fontes](https://img.shields.io/badge/Fontes-4-blue)](#)
-[![Custo](https://img.shields.io/badge/Custo-R$0-brightgreen)](#)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Database](https://img.shields.io/badge/Database-Supabase-green?logo=supabase)](https://supabase.com/)
+[![Scraper](https://img.shields.io/badge/Scraper-Playwright-2EAD33?logo=playwright)](https://playwright.dev/)
 
 Um **agregador inteligente de imóveis para aluguel de baixa renda no Rio de Janeiro** (até R$ 1.000). O sistema varre automaticamente 4 plataformas a cada 6 horas, classifica por zona/bairro, e oferece uma interface moderna mobile-first.
 
