@@ -2,6 +2,9 @@ import { MetadataRoute } from 'next';
 import { supabase } from '../lib/supabase';
 import { slugify } from '../utils/format';
 
+export const dynamic = 'force-dynamic'; // Força o Vercel a bater no Supabase e não usar cache morto
+export const revalidate = 21600; // Recalcula o sitemap a cada 6 horas (mesmo tempo do scraper)
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const baseUrl = 'https://house-seacher.vcampos.dev';
     
