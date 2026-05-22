@@ -151,7 +151,6 @@ async function scrapeSource(source: 'zap' | 'vivareal') {
             for (const card of cards) {
                 const property = parseCard(card, source, existingIds);
                 if (property) {
-                    properties.push(property);
                     newPropertiesForSupabase.push(property);
                     existingIds.add(property.id);
                     pageNew++;
@@ -173,7 +172,7 @@ async function scrapeSource(source: 'zap' | 'vivareal') {
     }
 
     await saveProperties(newPropertiesForSupabase, siteName);
-    console.log(`\n🏁 Finished ${siteName}. Added ${totalNew} new. Total: ${properties.length}`);
+    console.log(`\n🏁 Finished ${siteName}. Added ${totalNew} new. Total: ${existingIds.size + totalNew}`);
     await browser.close();
 }
 

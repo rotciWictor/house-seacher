@@ -141,7 +141,6 @@ async function scrapeChavesNaMao() {
                         found_at: new Date().toISOString(),
                     };
 
-                    properties.push(property);
                     newPropertiesForSupabase.push(property);
                     existingIds.add(id);
                     pageNew++;
@@ -165,7 +164,7 @@ async function scrapeChavesNaMao() {
 
     // Save
     await saveProperties(newPropertiesForSupabase, 'Chaves na Mão');
-    console.log(`\n🏁 Finished Chaves na Mão. Added ${totalNew} new. Total: ${properties.length}\n`);
+    console.log(`✅ Finished Chaves na Mão. Added ${totalNew} new. Total: ${existingIds.size + totalNew}\n`);
 }
 
 scrapeChavesNaMao();

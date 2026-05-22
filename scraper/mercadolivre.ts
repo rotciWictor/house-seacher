@@ -132,7 +132,6 @@ async function scrapeML() {
                         directOwner: false,
                         found_at: new Date().toISOString()
                     };
-                    properties.push(property);
                     newPropertiesForSupabase.push(property);
                     
                     existingIds.add(id);
@@ -168,7 +167,7 @@ async function scrapeML() {
     await browser.close();
     
     await saveProperties(newPropertiesForSupabase, 'Mercado Livre');
-    console.log(`\\n🏁 Finished Mercado Livre. Added ${totalNew} new. Total: ${properties.length}\\n`);
+    console.log(`\n🏁 Finished Mercado Livre. Added ${totalNew} new. Total: ${existingIds.size + totalNew}\n`);
 }
 
 scrapeML();
