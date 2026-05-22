@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import { supabase } from '../lib/supabase';
+import { isCommercial } from '../utils/normalize';
 
 interface Property {
     id: string;
@@ -105,6 +106,7 @@ export default function Home() {
 
     const filteredProperties = useMemo(() => {
         return properties.filter(p => {
+            if (isCommercial(p.title, p.description)) return false;
             if (selectedZone !== 'Todas' && p.zone !== selectedZone) return false;
             if (selectedNeighborhoods.length > 0 && !selectedNeighborhoods.includes(p.neighborhood)) return false;
             if (selectedSources.length > 0 && !selectedSources.includes(p.source || 'olx')) return false;
@@ -129,6 +131,18 @@ export default function Home() {
         sources: new Set(properties.map(p => p.source || 'olx')).size,
         avgPrice: properties.length > 0 ? Math.round(properties.reduce((s, p) => s + p.price, 0) / properties.length) : 0,
     }), [properties]);
+
+    const clearFilters = () => {
+        setSelectedZone('Todas');
+        setSelectedNeighborhoods([]);
+        setSelectedSources([]);
+        setMaxPrice(1000);
+        setSearchQuery('');
+        setFilterRooms('any');
+        setFilterDirectOwner(false);
+        setFilterHasPhoto(false);
+        setSortBy('newest');
+    };
 
     return (
         <main className="min-h-screen bg-gray-50 text-gray-900 font-sans selection:bg-indigo-500 selection:text-white">
@@ -297,6 +311,14 @@ export default function Home() {
                         className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all border ${filterHasPhoto ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100'}`}
                     >
                         📷 Com foto
+                    </button>
+
+                    {/* Clear Filters Button */}
+                    <button 
+                        onClick={clearFilters}
+                        className="px-3 py-1.5 rounded-lg text-xs font-medium transition-all border bg-red-50 text-red-600 border-red-200 hover:bg-red-100"
+                    >
+                        🧹 Limpar
                     </button>
 
                     {/* Sort — pushed right on desktop */}
