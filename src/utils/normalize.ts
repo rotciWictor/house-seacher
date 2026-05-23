@@ -1,31 +1,34 @@
 export function isCommercial(title: string, description: string): boolean {
     const text = (title + ' ' + description).toLowerCase();
+    const lowerTitle = title.toLowerCase().trim();
     
-    // Palavras fortes que indicam imóvel comercial ou garagem/vaga
-    const commercialKeywords = [
-        'loja', 'sala comercial', 'galpão', 'galpao', 'consultório', 'consultorio',
-        'prédio comercial', 'predio comercial', 'laje corporativa', 'coworking',
-        'ponto comercial', 'box comercial', 'depósito', 'deposito', 'armazém',
-        'armazem', 'terreno comercial', 'sobreloja', 'escritório', 'escritorio',
-        'garagem', 'vaga', 'vaga de garagem', 'estacionamento', 'box de garagem'
-    ];
+    // 1. Detecção rigorosa direto no TÍTULO (não importa o que diga a descrição)
+    if (/\b(comercial|comerciais|loja|galpão|galpao|consultório|consultorio|clínica|clinica|coworking|sobreloja|depósito|armazém)\b/.test(lowerTitle)) {
+        return true;
+    }
+    
+    if (lowerTitle.includes('sala') && !lowerTitle.includes('sala e quarto') && !lowerTitle.includes('quarto e sala')) {
+        // Se o título diz "Sala para alugar" ou "Sala/Conjunto" (Padrão Zap/VivaReal)
+        if (lowerTitle.startsWith('sala') || lowerTitle.includes('sala comercial') || lowerTitle.includes('sala de')) {
+            return true;
+        }
+    }
 
-    // Se o título começar com Sala ou Conjunto (padrão ZAP/VivaReal para imóveis comerciais)
-    if (/^(sala\b|conjunto\b|lote\b|terreno\b|prédio\b|galpão\b|loja\b)/i.test(title.trim())) {
+    // ZAP/VivaReal categories in title
+    if (/^(conjunto\b|lote\b|terreno\b|prédio\b)/.test(lowerTitle)) {
         return true;
     }
 
-    // Se o título tiver explicitamente "apartamento" ou "casa", damos um peso maior residencial
+    // 2. Detecção na descrição (só avalia se não houver prova clara de que é residencial)
+    const commercialKeywords = [
+        'sala comercial', 'galpão', 'consultório', 'laje corporativa',
+        'ponto comercial', 'box comercial', 'terreno comercial', 'escritório', 'escritorio'
+    ];
+
     const isExplicitlyResidential = /\b(apartamento|apt|apto|casa|kitnet|quitinete|conjugado|loft|studio|flat)\b/.test(text);
 
     for (const kw of commercialKeywords) {
         if (text.includes(kw)) {
-            // Se tem palavra comercial, mas também diz que é apartamento, pode ser "apartamento perto de loja"
-            // Mas se a palavra comercial estiver no título, é quase certeza que é comercial.
-            const titleHasKw = title.toLowerCase().includes(kw);
-            if (titleHasKw) return true;
-            
-            // Se está só na descrição, checa se não é um apartamento
             if (!isExplicitlyResidential) return true;
         }
     }
