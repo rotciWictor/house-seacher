@@ -4,6 +4,14 @@ Todas as mudanças relevantes do projeto House Searcher estão documentadas nest
 
 ---
 
+## [3.5.0] — 2026-05-23
+
+### ✨ Adicionado
+- **Arquitetura Deep Scraper (v2)**: Reformulação completa do motor de captura de todos os 4 robôs (OLX, ZAP/VivaReal, Mercado Livre e Chaves na Mão) para atuar em duas fases (Discovery + Infiltração). Agora os scrapers filtram resultados comerciais e de venda lendo os metadados profundos das páginas (`application/ld+json` e conteúdo HTML das descrições puras), injetando dados estritamente residenciais no Supabase.
+
+### 🔄 Modificado
+- **Workflow do GitHub Actions (`scraper.yml`)**: Ajustado o cronograma de execução dos robôs para varredura a cada 5 horas e limite de tempo (timeout) elevado de 25m para 90m visando acomodar o custo da primeira grande fase de infiltração na base.
+
 ## [3.4.0] — 2026-05-22
 
 ### ✨ Adicionado
