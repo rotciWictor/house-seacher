@@ -160,7 +160,7 @@ async function scrapeSource() {
         }
     }
 
-    console.log(`\n   ✅ Discovery concluído. ${discoveredCards.size} anúncios INÉDITOS para Deep Scraping.`);
+    console.log(`\n   ✅ Fase 1 finalizada. Iniciando análise profunda... ${discoveredCards.size} anúncios INÉDITOS para Deep Scraping.`);
 
     const newPropertiesForSupabase: Property[] = [];
     let processed = 0;
