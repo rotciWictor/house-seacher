@@ -28,12 +28,9 @@ export interface Property {
 // ZONE CLASSIFICATION — RJ Metropolitan Area
 // ============================================================
 
-// STEP 1: Classify by CITY name (from location text)
 function classifyByCity(locationText: string): string | null {
     const lower = locationText.toLowerCase();
     
-    // Extract city part (usually before the comma: "São Gonçalo, Bairro")
-    // or sometimes the whole text contains the city name
     if (lower.includes('niterói')) return 'Niterói';
     if (lower.includes('são gonçalo')) return 'São Gonçalo';
     if (lower.includes('duque de caxias')) return 'Baixada';
@@ -60,7 +57,6 @@ function classifyByCity(locationText: string): string | null {
     return null;
 }
 
-// STEP 2: Classify by NEIGHBORHOOD name (for Rio de Janeiro city)
 const ZONES: Record<string, string[]> = {
     'Zona Oeste': [
         'bangu', 'campo grande', 'santa cruz', 'barra da tijuca', 'barra', 'recreio',
@@ -109,47 +105,12 @@ const ZONES: Record<string, string[]> = {
 
 function classifyByNeighborhood(neighborhood: string): string {
     const lower = neighborhood.toLowerCase();
-    
     for (const [zone, neighborhoods] of Object.entries(ZONES)) {
         if (neighborhoods.some(b => lower.includes(b))) {
             return zone;
         }
     }
-    
     return 'Geral';
-}
-
-function isTimestamp(text: string): boolean {
-    return /^\d{1,2}:\d{2}$/.test(text.trim());
-}
-
-// ============================================================
-// EXTRACT MORE DATA FROM TEXT
-// ============================================================
-
-function extractRooms(text: string, title: string): number {
-    const match = text.match(/(\d+)\s*(?:quarto|dormitório|cômodo|comodo)/i);
-    if (match) return parseInt(match[1]);
-    
-    // Se for kitnet, loft, studio e não mencionar quartos, define como 0 (botão Kitnet na UI)
-    if (/(kitnet|quitinete|studio|loft|flat|conjugado)/i.test(title)) return 0;
-    
-    return 1;
-}
-
-function extractBathrooms(text: string): number {
-    const match = text.match(/(\d+)\s*(?:banheiro|wc|lavabo)/i);
-    return match ? parseInt(match[1]) : 1;
-}
-
-function extractArea(text: string): number {
-    const match = text.match(/(\d+)\s*m²/i);
-    return match ? parseInt(match[1]) : 0;
-}
-
-function extractCondominio(text: string): number {
-    const match = text.match(/condom[ií]nio.*?R\$\s*([\d.]+)/i);
-    return match ? parseFloat(match[1].replace('.', '')) : 0;
 }
 
 function isDirectOwner(text: string): boolean {
@@ -157,16 +118,18 @@ function isDirectOwner(text: string): boolean {
 }
 
 // ============================================================
-// MAIN SCRAPER
+// MAIN DEEP SCRAPER (v2)
 // ============================================================
 
 const startUrl = 'https://www.olx.com.br/imoveis/aluguel/estado-rj/rio-de-janeiro-e-regiao?pe=1000';
 
 async function scrapeOLX() {
-    console.log('🔍 Starting OLX stealth scraper for RJ region...');
+    console.log('\n🔍 Iniciando OLX Deep Scraper (v2) - O Robô Cirurgião');
     
+    // 1. Carregar IDs já conhecidos do banco para evitar navegação desnecessária
     const { data: existingData } = await supabase.from('properties').select('id').eq('source', 'olx');
     const existingIds = new Set(existingData?.map(p => p.id) || []);
+    console.log(`🗄️ Base atual tem ${existingIds.size} imóveis da OLX salvos.`);
 
     const browser = await chromium.launch({
         headless: true,
@@ -179,148 +142,164 @@ async function scrapeOLX() {
     });
 
     const page = await context.newPage();
-
     const maxPages = 20;
-    let newCount = 0;
-    const newPropertiesForSupabase: Property[] = [];
+    const discoveredUrls = new Set<string>();
 
+    // ========================================
+    // FASE 1: DISCOVERY (Crawling Superficial)
+    // ========================================
+    console.log('\n📡 Fase 1: Discovery (Buscando novos links)...');
     for (let pageNum = 1; pageNum <= maxPages; pageNum++) {
         const pageUrl = pageNum === 1 ? startUrl : `${startUrl}&o=${pageNum}`;
-        console.log(`📄 Page ${pageNum}: ${pageUrl}`);
+        process.stdout.write(`   Pesquisando Vitrine [${pageNum}/${maxPages}]...\r`);
         await page.goto(pageUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
 
         try {
             await page.waitForSelector('section', { timeout: 15000 });
-            await page.waitForTimeout(3000);
         } catch (e) {
-            console.log(`⏰ Timeout on page ${pageNum}, stopping.`);
+            console.log(`\n   ⏰ Timeout na vitrine ${pageNum}, parando paginação.`);
             break;
         }
 
-        const listings = await page.$$eval('section', (elements) => {
-            return elements
-                .map(el => {
-                    const aTag = el.querySelector('a[href*="/imoveis/"]');
-                    if (!aTag) return null;
-                    const url = (aTag as HTMLAnchorElement).href;
-                    if (!url.match(/-\d+(\?|$)/)) return null;
-
-                    const textContent = el.textContent || '';
-                    
-                    const imgEl = el.querySelector('img');
-                    let image = imgEl ? (imgEl.getAttribute('src') || '') : '';
-                    if (image.includes('data:image')) {
-                        image = imgEl?.getAttribute('srcset')?.split(' ')[0] || image;
-                    }
-                    
-                    const spans = Array.from(el.querySelectorAll('span, p'));
-                    const locationSpan = spans.find(s => s.textContent?.includes(','));
-                    const locationText = locationSpan ? locationSpan.textContent || '' : '';
-
-                    return { url, textContent, image, locationText };
-                })
-                .filter(item => item !== null) as {url: string, textContent: string, image: string, locationText: string}[];
-        });
-
-        const uniqueListings = [];
-        const seenUrls = new Set();
-        for (const item of listings) {
-            const idMatch = item.url.match(/-(\d+)(?:\?|$)/);
-            const id = idMatch ? idMatch[1] : null;
-            if (id && !seenUrls.has(id)) {
-                seenUrls.add(id);
-                uniqueListings.push(item);
-            }
+        const links = await page.$$eval('section a[href*="/imoveis/"]', els => els.map(el => (el as HTMLAnchorElement).href));
+        for (const link of links) {
+            const idMatch = link.match(/-(\d+)(?:\?|$)/);
+            if (idMatch) discoveredUrls.add(link.split('?')[0]);
         }
+    }
+    console.log(`\n   ✅ Discovery concluído. ${discoveredUrls.size} URLs encontradas na vitrine.`);
 
-        console.log(`   Found ${uniqueListings.length} unique listings.`);
-
-        for (const item of uniqueListings) {
-            const idMatch = item.url.match(/-(\d+)(?:\?|$)/);
-            const id = idMatch ? idMatch[1] : Buffer.from(item.url || '').toString('base64').substring(0, 10);
-            
-            if (existingIds.has(id)) continue;
-
-            const priceMatch = item.textContent.match(/R\$\s*([\d.]+)/);
-            const price = priceMatch ? parseFloat(priceMatch[1].replace('.', '')) : 0;
-
-            if (price > 0 && price <= 1000) {
-                let title = "Imóvel no RJ";
-                const parts = item.textContent.split(/(?:R\$)|(?:\d+ quartos)|(?:condomínio)/i);
-                if (parts.length > 0 && parts[0].trim().length > 5) {
-                    title = parts[0].trim().substring(0, 80);
-                }
-
-                // --- ZONE CLASSIFICATION ---
-                let neighborhood = "Desconhecido";
-                let zone = "Geral";
-                
-                if (item.locationText) {
-                    const locParts = item.locationText.split(',');
-                    if (locParts.length > 1) {
-                        let extracted = locParts[locParts.length - 1].trim();
-                        
-                        // Fix: skip if it's a timestamp like "14:55"
-                        if (isTimestamp(extracted) && locParts.length > 2) {
-                            extracted = locParts[locParts.length - 2].trim();
-                        }
-                        if (isTimestamp(extracted)) {
-                            extracted = locParts[0].trim();
-                        }
-                        
-                        // Check for explicit zone text
-                        if (extracted.toLowerCase().includes('zona oeste')) zone = 'Oeste';
-                        else if (extracted.toLowerCase().includes('zona norte')) zone = 'Norte';
-                        else if (extracted.toLowerCase().includes('zona sul')) zone = 'Sul';
-                        else if (extracted.toLowerCase().includes('centro')) zone = 'Centro';
-                        
-                        neighborhood = extracted.replace(/-\s*Zona.*/i, '').trim();
-                    } else {
-                        neighborhood = item.locationText.trim();
-                    }
-                    
-                    // STEP 1: Try to classify by city name
-                    if (zone === 'Geral') {
-                        const cityZone = classifyByCity(item.locationText);
-                        if (cityZone) zone = cityZone;
-                    }
-                }
-
-                // STEP 2: Try to classify by neighborhood
-                if (zone === 'Geral' && neighborhood !== 'Desconhecido') {
-                    zone = classifyByNeighborhood(neighborhood);
-                }
-
-                const property: Property = {
-                    id,
-                    title,
-                    price,
-                    condominio: extractCondominio(item.textContent),
-                    url: item.url,
-                    image: item.image,
-                    rooms: extractRooms(item.textContent, title),
-                    bathrooms: extractBathrooms(item.textContent),
-                    area: extractArea(item.textContent),
-                    location: item.locationText || 'Rio de Janeiro, RJ',
-                    neighborhood,
-                    zone,
-                    description: item.textContent || '',
-                    source: 'olx',
-                    directOwner: isDirectOwner(item.textContent),
-                    found_at: new Date().toISOString()
-                };
-
-                newPropertiesForSupabase.push(property);
-                existingIds.add(id);
-                newCount++;
-                console.log(`   ✅ ${property.title.substring(0, 50)} — R$${property.price} — ${property.neighborhood} (${property.zone})`);
-            }
+    // ========================================
+    // FILTRO DE INÉDITOS
+    // ========================================
+    const urlsToScrape: string[] = [];
+    for (const url of discoveredUrls) {
+        const idMatch = url.match(/-(\d+)(?:\?|$)/);
+        const id = idMatch ? `olx_${idMatch[1]}` : null;
+        if (id && !existingIds.has(id)) {
+            urlsToScrape.push(url);
         }
     }
 
-    await saveProperties(newPropertiesForSupabase, 'OLX');
+    console.log(`\n🎯 Resultado: ${urlsToScrape.length} anúncios INÉDITOS para Deep Scraping.`);
 
-    console.log(`\n🏁 Finished OLX. Added ${newCount} new. Total IDs tracked: ${existingIds.size}`);
+    // ========================================
+    // FASE 2: DEEP SCRAPING (Extrator Cirúrgico)
+    // ========================================
+    const newPropertiesForSupabase: Property[] = [];
+    let processed = 0;
+
+    for (const url of urlsToScrape) {
+        processed++;
+        const idMatch = url.match(/-(\d+)(?:\?|$)/);
+        const id = `olx_${idMatch![1]}`;
+
+        try {
+            process.stdout.write(`   ⬇️ [${processed}/${urlsToScrape.length}] Entrando no anúncio...\r`);
+            await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 30000 });
+            
+            // O tesouro da OLX fica enterrado na tag __NEXT_DATA__
+            const dataJson = await page.$eval('#initial-data', el => el.getAttribute('data-json')).catch(() => null);
+            if (!dataJson) {
+                console.log(`   ⚠️ [${processed}/${urlsToScrape.length}] Fallback estrutural: Sem JSON puro. URL: ${url}`);
+                continue;
+            }
+
+            const ad = JSON.parse(dataJson).ad;
+            
+            // 🛡️ BARREIRAS DE PROTEÇÃO E DEEP FILTERING
+            const categoryName = ad.categoryName?.toLowerCase() || '';
+            const parentCategoryName = ad.parentCategoryName?.toLowerCase() || '';
+            
+            // Regra 1: Oficialmente classificado como comercial
+            if (categoryName.includes('comércio') || categoryName.includes('terrenos') || categoryName.includes('lojas')) {
+                console.log(`   🚫 Bloqueado: Categoria Comercial da OLX identificada (${categoryName})`);
+                continue;
+            }
+
+            // Regra 2: "Vendas" disfarçadas de aluguel ou Venda de Ponto Comercial
+            const bodyLower = (ad.body || '').toLowerCase();
+            const titleLower = (ad.subject || '').toLowerCase();
+            if (titleLower.includes('vendo ') || bodyLower.includes('passo ponto') || titleLower.includes('venda')) {
+                console.log(`   🚫 Bloqueado: Semântica de venda detectada na descrição profunda.`);
+                continue;
+            }
+
+            // ========================================
+            // MONTAGEM DO PAYLOAD
+            // ========================================
+            const priceStr = ad.priceValue || '';
+            const price = parseFloat(priceStr.replace(/\D/g, '')) || 0;
+            if (price <= 0 || price > 1000) {
+                 console.log(`   🚫 Bloqueado: Preço inválido ou fora da janela aceitável (R$ ${price})`);
+                 continue;
+            }
+
+            const props = ad.properties || [];
+            const getProp = (name: string) => props.find((p: any) => p.name === name)?.value || '';
+
+            const condStr = getProp('condominio');
+            const sizeStr = getProp('size');
+            const roomsStr = getProp('rooms');
+            const bathStr = getProp('bathrooms');
+
+            const title = ad.subject || 'Imóvel no RJ';
+            const description = ad.body || '';
+            const image = ad.images && ad.images.length > 0 ? ad.images[0].original : '';
+
+            // Localização precisa (A OLX já destrincha estado e bairro internamente)
+            const loc = ad.location || {};
+            const city = loc.municipality || 'Rio de Janeiro';
+            const neighborhood = loc.neighbourhood || 'Desconhecido';
+            const locationText = `${city}, ${neighborhood}`;
+
+            let zone = 'Geral';
+            const cityZone = classifyByCity(locationText);
+            if (cityZone) {
+                zone = cityZone;
+            } else if (neighborhood !== 'Desconhecido') {
+                zone = classifyByNeighborhood(neighborhood);
+            }
+
+            // Regra para Kitnets/Studios no Deep Scrape (Ajuste de UI)
+            let roomsRaw = parseInt(roomsStr.replace(/\D/g, ''));
+            if (isNaN(roomsRaw)) {
+                roomsRaw = /(kitnet|quitinete|studio|loft|flat|conjugado)/i.test(title) ? 0 : 1;
+            }
+
+            const property: Property = {
+                id,
+                title: title.substring(0, 80),
+                price,
+                condominio: parseFloat(condStr.replace(/\D/g, '')) || 0,
+                url,
+                image,
+                rooms: roomsRaw,
+                bathrooms: parseInt(bathStr.replace(/\D/g, '')) || 1,
+                area: parseInt(sizeStr.replace(/\D/g, '')) || 0,
+                location: locationText,
+                neighborhood,
+                zone,
+                description: description.substring(0, 500),
+                source: 'olx',
+                directOwner: isDirectOwner(description),
+                found_at: new Date().toISOString()
+            };
+
+            newPropertiesForSupabase.push(property);
+            existingIds.add(id);
+            console.log(`   ✅ Deep Scraped: ${property.title.substring(0, 40)} (R$ ${price})`);
+
+        } catch (e: any) {
+             console.log(`   ❌ Erro durante o deep scrape do anúncio: ${e.message}`);
+        }
+    }
+
+    if (newPropertiesForSupabase.length > 0) {
+        await saveProperties(newPropertiesForSupabase, 'OLX');
+    }
+
+    console.log(`\n🏁 Concluído! O Deep Scraper da OLX injetou ${newPropertiesForSupabase.length} anúncios cirurgicamente purificados no banco.`);
     await browser.close();
 }
 

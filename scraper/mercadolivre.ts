@@ -1,7 +1,6 @@
 import { chromium } from 'playwright-extra';
 import stealth from 'puppeteer-extra-plugin-stealth';
 import { supabase } from '../src/lib/supabase';
-import path from 'path';
 import type { Property } from './index';
 import { saveProperties } from './saveProperties';
 
@@ -26,19 +25,12 @@ function classifyZone(text: string): string {
     return 'Geral';
 }
 
-function extractNumber(text: string, pattern: RegExp): number {
-    const match = text.match(pattern);
-    return match ? parseInt(match[1].replace(/[^\d]/g, ''), 10) : 0;
-}
-
 async function scrapeML() {
-    console.log(`🔍 Starting Mercado Livre scraper (${MAX_PAGES} pages)...\\n`);
+    console.log(`\n🔍 Iniciando Deep Scraper (v2) para Mercado Livre...`);
 
     const { data: existingData } = await supabase.from('properties').select('id').eq('source', 'mercadolivre');
     const existingIds = new Set(existingData?.map(p => p.id) || []);
-    
-    const newPropertiesForSupabase: Property[] = [];
-    let totalNew = 0;
+    console.log(`🗄️ Base atual tem ${existingIds.size} imóveis do Mercado Livre salvos.`);
 
     const browser = await chromium.launch({ headless: true });
     const context = await browser.newContext();
@@ -46,21 +38,24 @@ async function scrapeML() {
 
     let currentUrl = BASE_URL;
 
+    // ========================================
+    // FASE 1: DISCOVERY (Crawling Superficial)
+    // ========================================
+    console.log(`\n📡 Fase 1: Discovery (Buscando novos anúncios no Mercado Livre)...`);
+    const discoveredCards = new Map<string, Partial<Property>>();
+
     for (let p = 1; p <= MAX_PAGES; p++) {
-        console.log(`   📄 Page ${p}/${MAX_PAGES}: ${currentUrl}`);
+        process.stdout.write(`   Pesquisando Vitrine [${p}/${MAX_PAGES}]...\r`);
 
         try {
             await page.goto(currentUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
-            
-            // Wait for cards to appear
             await page.waitForSelector('.ui-search-layout__item', { timeout: 10000 }).catch(() => {});
 
             const cards = await page.$$('.ui-search-layout__item');
-            console.log(`   Found ${cards.length} cards.`);
-            
-            if (cards.length === 0) break;
-
-            let pageNew = 0;
+            if (cards.length === 0) {
+                 console.log(`\n   ⏹️ Sem resultados na página ${p}. Parando vitrine.`);
+                 break;
+            }
 
             for (const card of cards) {
                 try {
@@ -68,106 +63,150 @@ async function scrapeML() {
                     if (!linkEl) continue;
                     
                     const url = await linkEl.getAttribute('href') || '';
-                    if (!url) continue;
-                    
-                    if (!url.includes('imovel.mercadolivre.com.br')) {
-                        console.log('Skipped non-real estate:', url);
-                        continue;
-                    }
+                    if (!url || !url.includes('imovel.mercadolivre.com.br')) continue;
 
-                    // ML ids are like MLB1234567. We can extract from URL.
                     const idMatch = url.match(/MLB-?(\d+)/i);
                     if (!idMatch) continue;
                     const id = `ml-${idMatch[1]}`;
                     
                     if (existingIds.has(id)) continue;
 
-                    // Title
                     const titleEl = await card.$('.poly-component__title');
-                    const title = titleEl ? await titleEl.innerText() : 'Imóvel no Mercado Livre';
+                    const title = titleEl ? await titleEl.innerText() : 'Imóvel ML';
 
-                    // Price
                     const priceEl = await card.$('.andes-money-amount__fraction');
                     const priceText = priceEl ? await priceEl.innerText() : '0';
                     const price = parseInt(priceText.replace(/\./g, ''), 10);
-                    
                     if (price <= 0 || price > 1000) continue;
 
-                    // Attributes (m², quartos)
                     const attrEls = await card.$$('.poly-attributes_list__item');
                     let area = 0;
                     let rooms = 0;
-                    let bathrooms = 0;
                     for (const attr of attrEls) {
                         const text = await attr.innerText();
                         if (text.includes('m²')) area = parseInt(text.replace(/[^\d]/g, ''), 10);
                         if (text.includes('quarto')) rooms = parseInt(text.replace(/[^\d]/g, ''), 10);
                     }
+                    if (rooms === 0 && /(kitnet|quitinete|studio|loft|flat|conjugado)/i.test(title)) {
+                        rooms = 0;
+                    } else if (rooms === 0) {
+                        rooms = 1;
+                    }
 
-                    // Location
                     const locEl = await card.$('.poly-component__location');
                     const location = locEl ? await locEl.innerText() : 'Rio de Janeiro';
-                    const neighborhood = location;
                     const zone = classifyZone(location);
 
-                    // Image
                     const imgEl = await card.$('img.poly-component__picture');
                     const image = imgEl ? (await imgEl.getAttribute('src') || await imgEl.getAttribute('data-src') || '') : '';
 
-                    const property: Property = {
-                        id,
-                        title,
-                        price,
-                        condominio: 0,
-                        url: url.split('#')[0],
-                        image,
-                        rooms,
-                        bathrooms: 0,
-                        area,
-                        location,
-                        neighborhood,
-                        zone,
-                        description: '',
-                        source: 'mercadolivre',
-                        directOwner: false,
-                        found_at: new Date().toISOString()
-                    };
-                    newPropertiesForSupabase.push(property);
-                    
-                    existingIds.add(id);
-                    pageNew++;
-                } catch (e) {
-                    // skip card
-                }
+                    discoveredCards.set(id, {
+                        id, title, price, condominio: 0, url: url.split('#')[0],
+                        image, rooms, bathrooms: 1, area, location, neighborhood: location, zone,
+                        source: 'mercadolivre', found_at: new Date().toISOString()
+                    });
+                } catch (e) { }
             }
-            
-            console.log(`   ✅ +${pageNew} new properties from page ${p}.`);
-            totalNew += pageNew;
 
-            // Pagination
             const nextBtn = await page.$('a.andes-pagination__link[title="Seguinte"]');
             if (nextBtn) {
                 const nextUrl = await nextBtn.getAttribute('href');
                 if (nextUrl) {
                     currentUrl = nextUrl;
                     await page.waitForTimeout(2000);
-                } else {
-                    break;
-                }
-            } else {
-                break;
-            }
+                } else break;
+            } else break;
 
         } catch (e: any) {
-            console.log(`   ❌ Page error: ${e.message}`);
+            console.log(`\n   ❌ Erro na vitrine ${p}: ${e.message}`);
             break;
         }
     }
 
+    console.log(`\n   ✅ Discovery concluído. ${discoveredCards.size} anúncios INÉDITOS para Deep Scraping.`);
+
+    // ========================================
+    // FASE 2: DEEP SCRAPING
+    // ========================================
+    const newPropertiesForSupabase: Property[] = [];
+    let processed = 0;
+    const cardsToScrape = Array.from(discoveredCards.values());
+
+    for (const partialProp of cardsToScrape) {
+        processed++;
+        try {
+            process.stdout.write(`   ⬇️ [${processed}/${cardsToScrape.length}] Entrando no anúncio...\r`);
+            await page.goto(partialProp.url!, { waitUntil: 'domcontentloaded', timeout: 30000 });
+            await page.waitForTimeout(2000);
+
+            const descData = await page.evaluate(() => {
+                const scripts = Array.from(document.querySelectorAll('script[type="application/ld+json"]'));
+                let description = '';
+                for (const s of scripts) {
+                    try {
+                        const j = JSON.parse(s.textContent || '{}');
+                        if (j['@type'] === 'Product' || j['@type'] === 'Apartment' || j['@type'] === 'House' || j.description) {
+                            description = j.description || description;
+                        }
+                    } catch (e) {}
+                }
+                if (!description) {
+                    const descEl = document.querySelector('.ui-pdp-description__content');
+                    if (descEl) description = descEl.textContent || '';
+                }
+                return description;
+            });
+
+            const description = descData || partialProp.title || '';
+            const descLower = description.toLowerCase();
+
+            // 🛡️ DEEP FILTERING
+            if (descLower.includes('venda') || descLower.includes('passo ponto') || descLower.includes('vendo')) {
+                console.log(`   🚫 Bloqueado: Semântica de venda na descrição profunda. (${partialProp.url})`);
+                continue;
+            }
+
+            if (descLower.includes('comercial') || descLower.includes('loja comercial') || descLower.includes('sala comercial')) {
+                console.log(`   🚫 Bloqueado: Uso comercial detectado na descrição profunda. (${partialProp.url})`);
+                continue;
+            }
+
+            const directOwner = descLower.includes('direto com o proprietário') || descLower.includes('direto com proprietario');
+
+            const property: Property = {
+                id: partialProp.id!,
+                title: partialProp.title!,
+                price: partialProp.price!,
+                condominio: partialProp.condominio || 0,
+                url: partialProp.url!,
+                image: partialProp.image || '',
+                rooms: partialProp.rooms || 0,
+                bathrooms: partialProp.bathrooms || 1,
+                area: partialProp.area || 0,
+                location: partialProp.location!,
+                neighborhood: partialProp.neighborhood!,
+                zone: partialProp.zone!,
+                description: description.substring(0, 500),
+                source: partialProp.source!,
+                directOwner,
+                found_at: partialProp.found_at!
+            };
+
+            newPropertiesForSupabase.push(property);
+            existingIds.add(property.id);
+            console.log(`   ✅ Deep Scraped: ${property.title.substring(0, 40)} (R$ ${property.price})`);
+
+        } catch (e: any) {
+             console.log(`   ❌ Erro durante o deep scrape do anúncio: ${e.message}`);
+        }
+    }
+
+    if (newPropertiesForSupabase.length > 0) {
+        await saveProperties(newPropertiesForSupabase, 'Mercado Livre');
+    }
+
+    console.log(`\n🏁 Concluído! O Deep Scraper ML injetou ${newPropertiesForSupabase.length} anúncios purificados no banco.`);
     await browser.close();
-    
-    await saveProperties(newPropertiesForSupabase, 'Mercado Livre');
-    console.log(`\n🏁 Finished Mercado Livre. Added ${totalNew} new. Total: ${existingIds.size + totalNew}\n`);
 }
 
-scrapeML();
+scrapeML().catch(console.error);

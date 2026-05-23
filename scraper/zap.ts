@@ -1,8 +1,8 @@
 import { supabase } from '../src/lib/supabase';
 import { chromium } from 'playwright-extra';
 import stealth from 'puppeteer-extra-plugin-stealth';
-import type { Property } from './index';
 import { saveProperties } from './saveProperties';
+import type { Property } from './index';
 
 chromium.use(stealth());
 
@@ -25,34 +25,44 @@ function classifyZone(text: string): string {
     return 'Geral';
 }
 
-function parseCard(card: { href: string; text: string; image: string }, source: string, existingIds: Set<string>): Property | null {
+function parseCard(card: { href: string; text: string; image: string }, source: string): Partial<Property> | null {
     const idMatch = card.href.match(/id-(\d+)/);
     if (!idMatch) return null;
     const id = `${source}_${idMatch[1]}`;
-    if (existingIds.has(id)) return null;
 
     // Price
     const priceMatch = card.text.match(/R\$\s*([\d.]+)\s*\/mês/i);
     if (!priceMatch) return null;
-    const price = parseFloat(priceMatch[1].replace('.', ''));
+    const price = parseFloat(priceMatch[1].replace(/\./g, ''));
     if (price <= 0 || price > 1000) return null;
 
     // Condo
     const condoMatch = card.text.match(/Cond\.\s*R\$\s*([\d.]+)/i);
-    const condominio = condoMatch ? parseFloat(condoMatch[1].replace('.', '')) : 0;
+    const condominio = condoMatch ? parseFloat(condoMatch[1].replace(/\./g, '')) : 0;
 
     // Area
     const areaMatch = card.text.match(/(\d+)\s*m²/);
     const area = areaMatch ? parseInt(areaMatch[1]) : 0;
 
+    // Title / Type
+    const typeMatch = card.text.match(/(Apartamento|Casa|Kitnet|Sobrado|Sala|Conjunto|Studio|Loft|Flat|Quitinete|Ponto comercial|Galpão|Prédio)[^\n]*/i);
+    const title = typeMatch ? typeMatch[0].substring(0, 80).trim() : `Imóvel em ${card.href.match(/id-(\d+)/)?.[1] || 'Desconhecido'}`;
+
+    // Block obvious commercials based on title
+    const lowerTitle = title.toLowerCase();
+    if (lowerTitle.includes('comercial') || lowerTitle.includes('galpão') || lowerTitle.includes('loja') || lowerTitle.includes('sala')) {
+        return null;
+    }
+
     // Rooms
     const roomsQty = card.text.match(/Quantidade de quartos\s*(\d+)/i);
     const roomsAlt = card.text.match(/(\d+)\s*quartos?/i);
-    const rooms = roomsQty ? parseInt(roomsQty[1]) : roomsAlt ? parseInt(roomsAlt[1]) : 0;
-    
-    // Title
-    const typeMatch = card.text.match(/(Apartamento|Casa|Kitnet|Sobrado|Sala|Conjunto|Studio|Loft|Flat|Quitinete|Ponto comercial|Galpão|Prédio)[^\n]*/i);
-    const title = typeMatch ? typeMatch[0].substring(0, 80).trim() : `Imóvel em ${card.href.match(/id-(\d+)/)?.[1] || 'Desconhecido'}`;
+    let rooms = roomsQty ? parseInt(roomsQty[1]) : roomsAlt ? parseInt(roomsAlt[1]) : 0;
+    if (rooms === 0 && /(kitnet|quitinete|studio|loft|flat|conjugado)/i.test(title)) {
+        rooms = 0;
+    } else if (rooms === 0) {
+        rooms = 1;
+    }
 
     // Bathrooms
     const bathQty = card.text.match(/Quantidade de banheiros\s*(\d+)/i);
@@ -82,20 +92,18 @@ function parseCard(card: { href: string; text: string; image: string }, source: 
         location: `${city}, ${neighborhood}`,
         neighborhood,
         zone,
-        description: card.text.substring(0, 300),
         source,
-        directOwner: false,
         found_at: new Date().toISOString()
     };
 }
 
 async function scrapeSource(source: 'zap' | 'vivareal') {
     const siteName = source === 'zap' ? 'ZAP Imóveis' : 'VivaReal';
-    console.log(`\n🔍 Starting ${siteName} scraper (${MAX_PAGES} pages)...`);
+    console.log(`\n🔍 Iniciando Deep Scraper (v2) para ${siteName}...`);
     
-    const { data: existingData } = await supabase.from('properties').select('id').eq('source', 'zap');
+    const { data: existingData } = await supabase.from('properties').select('id').eq('source', source);
     const existingIds = new Set(existingData?.map(p => p.id) || []);
-    const newPropertiesForSupabase: Property[] = [];
+    console.log(`🗄️ Base atual tem ${existingIds.size} imóveis da ${siteName} salvos.`);
     
     const browser = await chromium.launch({
         headless: true,
@@ -109,7 +117,13 @@ async function scrapeSource(source: 'zap' | 'vivareal') {
     });
 
     const page = await context.newPage();
-    let totalNew = 0;
+    
+    // ========================================
+    // FASE 1: DISCOVERY (Crawling Superficial)
+    // ========================================
+    console.log(`\n📡 Fase 1: Discovery (Buscando novos cards no ${siteName})...`);
+    
+    const discoveredCards = new Map<string, Partial<Property>>();
 
     for (let pg = 1; pg <= MAX_PAGES; pg++) {
         try {
@@ -118,17 +132,16 @@ async function scrapeSource(source: 'zap' | 'vivareal') {
                 ? `https://www.zapimoveis.com.br/aluguel/imoveis/rj+rio-de-janeiro/?precoMaximo=1000&transacao=aluguel${pageParam}`
                 : `https://www.vivareal.com.br/aluguel/rj/rio-de-janeiro/?precoMaximo=1000${pageParam}`;
 
-            console.log(`\n   📄 Page ${pg}/${MAX_PAGES}: ${baseUrl.substring(0, 80)}...`);
-            await page.goto(baseUrl, { waitUntil: 'networkidle', timeout: 60000 });
-            await page.waitForTimeout(4000);
+            process.stdout.write(`   Pesquisando Vitrine [${pg}/${MAX_PAGES}]...\r`);
+            await page.goto(baseUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
+            await page.waitForTimeout(3000);
 
-            // Scroll to load lazy content
+            // Scroll para carregar imagens e cards lazy
             for (let i = 0; i < 5; i++) {
                 await page.evaluate(() => window.scrollBy(0, 800));
                 await page.waitForTimeout(600);
             }
 
-            // Extract cards
             const cards = await page.evaluate(() => {
                 const links = Array.from(document.querySelectorAll('a[href*="/imovel/"]'));
                 return links.map(link => {
@@ -147,34 +160,101 @@ async function scrapeSource(source: 'zap' | 'vivareal') {
                 });
             });
 
-            console.log(`   Found ${cards.length} cards.`);
-            let pageNew = 0;
-
-            for (const card of cards) {
-                const property = parseCard(card, source, existingIds);
-                if (property) {
-                    newPropertiesForSupabase.push(property);
-                    existingIds.add(property.id);
-                    pageNew++;
-                    totalNew++;
-                }
-            }
-
-            console.log(`   ✅ +${pageNew} new properties from page ${pg}.`);
-
-            // If no new cards, stop paginating
-            if (pageNew === 0 && cards.length === 0) {
-                console.log(`   ⏹️ No more results. Stopping.`);
+            if (cards.length === 0) {
+                console.log(`\n   ⏹️ Sem resultados na página ${pg}. Parando vitrine.`);
                 break;
             }
 
+            for (const card of cards) {
+                const parsed = parseCard(card, source);
+                if (parsed && !existingIds.has(parsed.id!)) {
+                    discoveredCards.set(parsed.id!, parsed);
+                }
+            }
         } catch (e: any) {
-            console.log(`   ❌ Page ${pg} error: ${e.message}`);
+            console.log(`\n   ❌ Erro na vitrine ${pg}: ${e.message}`);
         }
     }
 
-    await saveProperties(newPropertiesForSupabase, siteName);
-    console.log(`\n🏁 Finished ${siteName}. Added ${totalNew} new. Total: ${existingIds.size + totalNew}`);
+    console.log(`\n   ✅ Discovery concluído. ${discoveredCards.size} anúncios INÉDITOS para Deep Scraping.`);
+
+    // ========================================
+    // FASE 2: DEEP SCRAPING
+    // ========================================
+    const newPropertiesForSupabase: Property[] = [];
+    let processed = 0;
+    const cardsToScrape = Array.from(discoveredCards.values());
+
+    for (const partialProp of cardsToScrape) {
+        processed++;
+        try {
+            process.stdout.write(`   ⬇️ [${processed}/${cardsToScrape.length}] Entrando no anúncio...\r`);
+            await page.goto(partialProp.url!, { waitUntil: 'domcontentloaded', timeout: 30000 });
+            await page.waitForTimeout(2000);
+
+            const descData = await page.evaluate(() => {
+                const scripts = Array.from(document.querySelectorAll('script[type="application/ld+json"]'));
+                let description = '';
+                for (const s of scripts) {
+                    try {
+                        const j = JSON.parse(s.textContent || '{}');
+                        if (j['@type'] === 'Product' || j['@type'] === 'Apartment' || j['@type'] === 'House' || j.description) {
+                            description = j.description || description;
+                        }
+                    } catch (e) {}
+                }
+                return description;
+            });
+
+            const description = descData || partialProp.title || '';
+            const descLower = description.toLowerCase();
+
+            // 🛡️ DEEP FILTERING
+            if (descLower.includes('venda') || descLower.includes('passo ponto') || descLower.includes('vendo')) {
+                console.log(`   🚫 Bloqueado: Semântica de venda na descrição profunda. (${partialProp.url})`);
+                continue;
+            }
+
+            if (descLower.includes('comercial') || descLower.includes('loja comercial') || descLower.includes('sala comercial')) {
+                console.log(`   🚫 Bloqueado: Uso comercial detectado na descrição profunda. (${partialProp.url})`);
+                continue;
+            }
+
+            const directOwner = descLower.includes('direto com o proprietário') || descLower.includes('direto com proprietario');
+
+            const property: Property = {
+                id: partialProp.id!,
+                title: partialProp.title!,
+                price: partialProp.price!,
+                condominio: partialProp.condominio || 0,
+                url: partialProp.url!,
+                image: partialProp.image || '',
+                rooms: partialProp.rooms || 0,
+                bathrooms: partialProp.bathrooms || 1,
+                area: partialProp.area || 0,
+                location: partialProp.location!,
+                neighborhood: partialProp.neighborhood!,
+                zone: partialProp.zone!,
+                description: description.substring(0, 500),
+                source: partialProp.source!,
+                directOwner,
+                found_at: partialProp.found_at!
+            };
+
+            newPropertiesForSupabase.push(property);
+            existingIds.add(property.id);
+            console.log(`   ✅ Deep Scraped: ${property.title.substring(0, 40)} (R$ ${property.price})`);
+
+        } catch (e: any) {
+             console.log(`   ❌ Erro durante o deep scrape do anúncio: ${e.message}`);
+        }
+    }
+
+    if (newPropertiesForSupabase.length > 0) {
+        await saveProperties(newPropertiesForSupabase, siteName);
+    }
+
+    console.log(`\n🏁 Concluído! O Deep Scraper ${siteName} injetou ${newPropertiesForSupabase.length} anúncios purificados no banco.`);
     await browser.close();
 }
 
