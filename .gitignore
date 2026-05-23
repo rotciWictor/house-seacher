@@ -39,4 +39,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
-scraper/node_modules/  
+scraper/node_modules/
+
+# Dumps e Testes Locais do Scraper
+*_page.html
+scraper/test_*.ts
+test_*.ts
