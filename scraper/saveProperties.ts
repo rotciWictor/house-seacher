@@ -1,13 +1,17 @@
 import { supabase } from '../src/lib/supabase';
-import { isCommercial, recoverNeighborhood, reclassifyZone } from '../src/utils/normalize';
+import { isCommercial, isForSale, recoverNeighborhood, reclassifyZone } from '../src/utils/normalize';
 
 export async function saveProperties(newProperties: any[], sourceName: string) {
     console.log(`\n💾 Salvando ${newProperties.length} imóveis de ${sourceName}...`);
     
-    // 1. Filtrar comerciais, normalizar bairros e reclassificar zona (AP4 -> Sudoeste)
+    // 1. Filtrar comerciais e vendas, normalizar bairros e reclassificar zona (AP4 -> Sudoeste)
     const validProperties = newProperties.filter(p => {
         if (isCommercial(p.title, p.description)) {
             console.log(`   🚫 Ignorado (Comercial): ${p.title.substring(0, 40)}...`);
+            return false;
+        }
+        if (isForSale(p.title, p.description)) {
+            console.log(`   🚫 Ignorado (Venda): ${p.title.substring(0, 40)}...`);
             return false;
         }
         return true;

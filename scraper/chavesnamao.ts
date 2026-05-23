@@ -4,6 +4,7 @@ import { supabase } from '../src/lib/supabase';
 import * as cheerio from 'cheerio';
 import type { Property } from './index';
 import { saveProperties } from './saveProperties';
+import { isCommercial, isForSale } from '../src/utils/normalize';
 
 chromium.use(stealth());
 
@@ -170,12 +171,12 @@ async function scrapeChavesNaMao() {
                 const descLower = description.toLowerCase();
 
                 // 🛡️ DEEP FILTERING
-                if (descLower.includes('venda') || descLower.includes('passo ponto') || descLower.includes('vendo')) {
+                if (isForSale(partialProp.title!, description)) {
                     console.log(`   🚫 Bloqueado: Semântica de venda na descrição profunda. (${partialProp.url})`);
                     continue;
                 }
 
-                if (descLower.includes('comercial') || descLower.includes('loja comercial') || descLower.includes('sala comercial')) {
+                if (isCommercial(partialProp.title!, description)) {
                     console.log(`   🚫 Bloqueado: Uso comercial detectado na descrição profunda. (${partialProp.url})`);
                     continue;
                 }

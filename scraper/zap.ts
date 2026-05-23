@@ -2,6 +2,7 @@ import { supabase } from '../src/lib/supabase';
 import { chromium } from 'playwright-extra';
 import stealth from 'puppeteer-extra-plugin-stealth';
 import { saveProperties } from './saveProperties';
+import { isCommercial, isForSale } from '../src/utils/normalize';
 import type { Property } from './index';
 
 chromium.use(stealth());
@@ -49,8 +50,7 @@ function parseCard(card: { href: string; text: string; image: string }, source: 
     const title = typeMatch ? typeMatch[0].substring(0, 80).trim() : `Imóvel em ${card.href.match(/id-(\d+)/)?.[1] || 'Desconhecido'}`;
 
     // Block obvious commercials based on title
-    const lowerTitle = title.toLowerCase();
-    if (lowerTitle.includes('comercial') || lowerTitle.includes('galpão') || lowerTitle.includes('loja') || lowerTitle.includes('sala')) {
+    if (isCommercial(title, '')) {
         return null;
     }
 
@@ -210,12 +210,12 @@ async function scrapeSource(source: 'zap' | 'vivareal') {
             const descLower = description.toLowerCase();
 
             // 🛡️ DEEP FILTERING
-            if (descLower.includes('venda') || descLower.includes('passo ponto') || descLower.includes('vendo')) {
+            if (isForSale(partialProp.title!, description)) {
                 console.log(`   🚫 Bloqueado: Semântica de venda na descrição profunda. (${partialProp.url})`);
                 continue;
             }
 
-            if (descLower.includes('comercial') || descLower.includes('loja comercial') || descLower.includes('sala comercial')) {
+            if (isCommercial(partialProp.title!, description)) {
                 console.log(`   🚫 Bloqueado: Uso comercial detectado na descrição profunda. (${partialProp.url})`);
                 continue;
             }

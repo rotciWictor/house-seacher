@@ -2,35 +2,54 @@ export function isCommercial(title: string, description: string): boolean {
     const text = (title + ' ' + description).toLowerCase();
     const lowerTitle = title.toLowerCase().trim();
     
-    // 1. Detecção rigorosa direto no TÍTULO (não importa o que diga a descrição)
-    if (/\b(comercial|comerciais|loja|galpão|galpao|consultório|consultorio|clínica|clinica|coworking|sobreloja|depósito|armazém)\b/.test(lowerTitle)) {
+    // 1. Palavras que MATAM o anúncio se aparecerem no TÍTULO (tolerância zero)
+    if (/\b(comercial|comerciais|loja|galpão|galpao|consultório|consultorio|clínica|clinica|coworking|sobreloja|depósito|armazém|garagem|vaga|estacionamento|box|laje corporativa|ponto comercial|escritório|escritorio)\b/.test(lowerTitle)) {
         return true;
     }
     
-    if (lowerTitle.includes('sala') && !lowerTitle.includes('sala e quarto') && !lowerTitle.includes('quarto e sala')) {
-        // Se o título diz "Sala para alugar" ou "Sala/Conjunto" (Padrão Zap/VivaReal)
-        if (lowerTitle.startsWith('sala') || lowerTitle.includes('sala comercial') || lowerTitle.includes('sala de')) {
+    // 2. Regras para "Sala" (muito comum vazar)
+    if (/\bsala(s)?\b/.test(lowerTitle)) {
+        // Se tem "sala" mas não tem "quarto", "kitnet", "casa", etc., É COMERCIAL
+        if (!/\b(quarto|kitnet|quitinete|casa|apto|apartamento|studio)\b/.test(lowerTitle)) {
+            return true;
+        }
+        if (lowerTitle.includes('sala comercial') || lowerTitle.includes('conjunto') || lowerTitle.startsWith('sala ')) {
             return true;
         }
     }
 
-    // ZAP/VivaReal categories in title
-    if (/^(conjunto\b|lote\b|terreno\b|prédio\b)/.test(lowerTitle)) {
+    // 3. Regras para Categorias soltas no título (Terrenos e Prédios)
+    if (/^(conjunto\b|lote\b|terreno\b|prédio\b|predio\b)/.test(lowerTitle)) {
         return true;
     }
 
-    // 2. Detecção na descrição (só avalia se não houver prova clara de que é residencial)
+    // 4. Detecção na descrição (Varredura profunda)
     const commercialKeywords = [
         'sala comercial', 'galpão', 'consultório', 'laje corporativa',
-        'ponto comercial', 'box comercial', 'terreno comercial', 'escritório', 'escritorio'
+        'ponto comercial', 'box comercial', 'terreno comercial', 'escritório',
+        'prédio comercial', 'predio comercial', 'ideal para o seu negócio',
+        'ideal para seu negócio', 'vaga de garagem', 'alugo vaga', 'aluga-se vaga'
     ];
 
-    const isExplicitlyResidential = /\b(apartamento|apt|apto|casa|kitnet|quitinete|conjugado|loft|studio|flat)\b/.test(text);
-
+    // Se a descrição contém uma palavra chave comercial forte, assumimos que é lixo
     for (const kw of commercialKeywords) {
         if (text.includes(kw)) {
-            if (!isExplicitlyResidential) return true;
+            return true;
         }
+    }
+    
+    return false;
+}
+
+export function isForSale(title: string, description: string): boolean {
+    const text = (title + ' ' + description).toLowerCase();
+    
+    // Filtro agressivo para "venda"
+    if (/\b(passo ponto|vendo|vende-se|venda)\b/.test(title.toLowerCase())) return true;
+    
+    // Na descrição, "venda" pode ser "padaria a venda na esquina", mas "passo ponto" e "vendo" são matadores.
+    if (text.includes('passo ponto') || text.includes('vendo apartamento') || text.includes('vendo casa') || text.includes('vendo urgência')) {
+        return true;
     }
     
     return false;

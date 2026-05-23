@@ -2,6 +2,7 @@ import { supabase } from '../src/lib/supabase';
 import { chromium } from 'playwright-extra';
 import stealth from 'puppeteer-extra-plugin-stealth';
 import { saveProperties } from './saveProperties';
+import { isCommercial, isForSale } from '../src/utils/normalize';
 
 chromium.use(stealth());
 
@@ -210,6 +211,8 @@ async function scrapeOLX() {
             // 🛡️ BARREIRAS DE PROTEÇÃO E DEEP FILTERING
             const categoryName = ad.categoryName?.toLowerCase() || '';
             const parentCategoryName = ad.parentCategoryName?.toLowerCase() || '';
+            const bodyLower = (ad.body || '').toLowerCase();
+            const titleLower = (ad.subject || '').toLowerCase();
             
             // Regra 1: Oficialmente classificado como comercial
             if (categoryName.includes('comércio') || categoryName.includes('terrenos') || categoryName.includes('lojas')) {
@@ -217,11 +220,14 @@ async function scrapeOLX() {
                 continue;
             }
 
-            // Regra 2: "Vendas" disfarçadas de aluguel ou Venda de Ponto Comercial
-            const bodyLower = (ad.body || '').toLowerCase();
-            const titleLower = (ad.subject || '').toLowerCase();
-            if (titleLower.includes('vendo ') || bodyLower.includes('passo ponto') || titleLower.includes('venda')) {
-                console.log(`   🚫 Bloqueado: Semântica de venda detectada na descrição profunda.`);
+            // 🛡️ DEEP FILTERING
+            if (isForSale(titleLower, bodyLower)) {
+                console.log(`   🚫 Bloqueado: Semântica de venda na descrição profunda. (${url})`);
+                continue;
+            }
+
+            if (isCommercial(titleLower, bodyLower)) {
+                console.log(`   🚫 Bloqueado: Uso comercial detectado na descrição profunda. (${url})`);
                 continue;
             }
 
