@@ -52,6 +52,16 @@ async function scrapeML() {
             await page.goto(currentUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
             await page.waitForSelector('.ui-search-layout__item', { timeout: 10000 }).catch(() => {});
 
+            // Auto-scroll robusto para lazy loading
+            let previousHeight = 0;
+            for (let i = 0; i < 10; i++) {
+                await page.evaluate(() => window.scrollBy(0, 800));
+                await page.waitForTimeout(500);
+                const currentHeight = await page.evaluate(() => document.body.scrollHeight);
+                if (currentHeight === previousHeight) break;
+                previousHeight = currentHeight;
+            }
+
             const cards = await page.$$('.ui-search-layout__item');
             if (cards.length === 0) {
                  console.log(`\n   ⏹️ Sem resultados na página ${p}. Parando vitrine.`);

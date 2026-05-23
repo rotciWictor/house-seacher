@@ -33,9 +33,13 @@ jobs:
         run: |
           for i in 1 2 3; do npx tsx scraper/index.ts && break || { echo "Retry $i failed"; if [ $i -eq 3 ]; then exit 1; else sleep 10; fi; }; done
 
-      - name: Run ZAP + VivaReal Scraper
+      - name: Run ZAP Scraper
         run: |
           for i in 1 2 3; do npx tsx scraper/zap.ts && break || { echo "Retry $i failed"; if [ $i -eq 3 ]; then exit 1; else sleep 10; fi; }; done
+
+      - name: Run VivaReal Scraper
+        run: |
+          for i in 1 2 3; do npx tsx scraper/vivareal.ts && break || { echo "Retry $i failed"; if [ $i -eq 3 ]; then exit 1; else sleep 10; fi; }; done
 
       - name: Run Mercado Livre Scraper
         run: |

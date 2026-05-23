@@ -93,10 +93,10 @@ function parseCard(card: { href: string; text: string; image: string }, source: 
 }
 
 async function scrapeSource() {
-    const siteName = 'ZAP Imóveis';
+    const siteName = 'VivaReal';
     console.log(`\n🔍 Iniciando Deep Scraper (v2) para ${siteName}...`);
     
-    const { data: existingData } = await supabase.from('properties').select('id').eq('source', 'zap');
+    const { data: existingData } = await supabase.from('properties').select('id').eq('source', 'vivareal');
     const existingIds = new Set(existingData?.map(p => p.id) || []);
     console.log(`🗄️ Base atual tem ${existingIds.size} imóveis da ${siteName} salvos.`);
     
@@ -112,7 +112,7 @@ async function scrapeSource() {
 
     for (let pg = 1; pg <= MAX_PAGES; pg++) {
         try {
-            const baseUrl = `https://www.zapimoveis.com.br/aluguel/imoveis/rj+rio-de-janeiro/?precoMaximo=1000&transacao=aluguel&pagina=${pg}`;
+            const baseUrl = `https://www.vivareal.com.br/aluguel/rj/rio-de-janeiro/?precoMaximo=1000&pagina=${pg}`;
             process.stdout.write(`   Pesquisando Vitrine [${pg}/${MAX_PAGES}]...\r`);
             await page.goto(baseUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
             
@@ -150,7 +150,7 @@ async function scrapeSource() {
             }
 
             for (const card of cards) {
-                const parsed = parseCard(card, 'zap');
+                const parsed = parseCard(card, 'vivareal');
                 if (parsed && !existingIds.has(parsed.id!)) {
                     discoveredCards.set(parsed.id!, parsed);
                 }
@@ -209,7 +209,7 @@ async function scrapeSource() {
                 neighborhood: partialProp.neighborhood!,
                 zone: partialProp.zone!,
                 description: description.substring(0, 500),
-                source: 'zap',
+                source: 'vivareal',
                 directOwner,
                 found_at: partialProp.found_at!
             };
@@ -224,7 +224,7 @@ async function scrapeSource() {
         await saveProperties(newPropertiesForSupabase, siteName);
     }
 
-    console.log(`\n🏁 Concluído! O Deep Scraper ZAP injetou ${newPropertiesForSupabase.length} anúncios purificados no banco.`);
+    console.log(`\n🏁 Concluído! O Deep Scraper VivaReal injetou ${newPropertiesForSupabase.length} anúncios purificados no banco.`);
     await browser.close();
 }
 

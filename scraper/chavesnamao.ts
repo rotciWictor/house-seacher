@@ -1,7 +1,7 @@
 import { chromium } from 'playwright-extra';
 import stealth from 'puppeteer-extra-plugin-stealth';
 import { supabase } from '../src/lib/supabase';
-import * as cheerio from 'cheerio';
+
 import type { Property } from './index';
 import { saveProperties } from './saveProperties';
 import { isCommercial, isForSale } from '../src/utils/normalize';
@@ -51,53 +51,74 @@ async function scrapeChavesNaMao() {
     console.log(`\n📡 Fase 1: Discovery (Buscando novos anúncios via Fetch)...`);
     const discoveredCards = new Map<string, Partial<Property>>();
 
-    for (let page = 1; page <= MAX_PAGES; page++) {
-        process.stdout.write(`   Pesquisando Vitrine [${page}/${MAX_PAGES}]...\r`);
-        const pageUrl = page === 1 ? BASE_URL : `${BASE_URL}&pagina=${page}`;
+    const browser = await chromium.launch({ headless: true, args: ['--no-sandbox'] });
+    const context = await browser.newContext({
+        userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        viewport: { width: 1280, height: 720 }
+    });
+    const page = await context.newPage();
+
+    for (let pg = 1; pg <= MAX_PAGES; pg++) {
+        process.stdout.write(`   Pesquisando Vitrine [${pg}/${MAX_PAGES}]...\r`);
+        const pageUrl = pg === 1 ? BASE_URL : `${BASE_URL}&pagina=${pg}`;
 
         try {
-            const res = await fetch(pageUrl, {
-                headers: {
-                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-                }
-            });
-
-            if (!res.ok) {
-                console.log(`\n   ❌ Page ${page} returned ${res.status}`);
-                break;
+            await page.goto(pageUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
+            
+            let previousHeight = 0;
+            for (let i = 0; i < 15; i++) {
+                await page.evaluate(() => window.scrollBy(0, 800));
+                await page.waitForTimeout(600);
+                const currentHeight = await page.evaluate(() => document.body.scrollHeight);
+                if (currentHeight === previousHeight) break;
+                previousHeight = currentHeight;
             }
 
-            const html = await res.text();
-            const $ = cheerio.load(html);
-            const links = $('a[href*="/imovel/"]');
-
+            const links = await page.$$('a[href*="/imovel/"]');
+            
             if (links.length === 0) {
-                 console.log(`\n   ⏹️ Sem resultados na página ${page}. Parando vitrine.`);
+                 console.log(`\n   ⏹️ Sem resultados na página ${pg}. Parando vitrine.`);
                  break;
             }
 
-            links.each((_, el) => {
+            const cardsData = await page.evaluate(() => {
+                const anchors = Array.from(document.querySelectorAll('a[href*="/imovel/"]'));
+                return anchors.map(a => {
+                    const href = (a as HTMLAnchorElement).href;
+                    let parent = a.parentElement;
+                    for (let i = 0; i < 5; i++) {
+                        if (!parent) break;
+                        if (parent.textContent?.includes('R$') && parent.textContent?.includes('m²')) break;
+                        parent = parent.parentElement;
+                    }
+                    const text = parent ? parent.textContent || '' : a.textContent || '';
+                    const imgs = Array.from(parent ? parent.querySelectorAll('img') : a.querySelectorAll('img'));
+                    const image = imgs.map(img => img.src || img.getAttribute('data-src') || '').find(s => s && !s.includes('data:image')) || '';
+                    return { href, text, image };
+                });
+            });
+
+            for (const card of cardsData) {
                 try {
-                    const $el = $(el);
-                    const href = $el.attr('href') || '';
+                    const href = card.href;
                     const fullUrl = href.startsWith('http') ? href : `https://www.chavesnamao.com.br${href}`;
 
                     const idMatch = href.match(/id-(\d+)/);
-                    if (!idMatch) return;
+                    if (!idMatch) continue;
                     const id = `chaves-${idMatch[1]}`;
                     
-                    if (existingIds.has(id)) return;
+                    if (existingIds.has(id)) continue;
 
-                    const cardText = $el.text();
-                    const parentText = $el.parent().text();
+                    const cardText = card.text;
 
                     const price = extractPrice(cardText);
-                    if (price <= 0 || price > 1000) return;
+                    if (price <= 0 || price > 1000) continue;
 
-                    const condMatch = parentText.match(/Condomínio\s*R\$\s*([\d.]+)/i);
+                    const condMatch = cardText.match(/Condomínio\s*R\$\s*([\d.]+)/i);
                     const condominio = condMatch ? parseInt(condMatch[1].replace(/\./g, ''), 10) : 0;
 
-                    const title = $el.find('h2, h3, [class*="title"]').first().text().trim() || $el.attr('title') || cardText.substring(0, 80).trim();
+                    const titleMatch = cardText.match(/(Apartamento|Casa|Kitnet|Sobrado|Sala|Conjunto|Studio|Loft|Flat|Quitinete)[^\n]*/i);
+                    const title = titleMatch ? titleMatch[0].substring(0, 80).trim() : cardText.substring(0, 80).trim();
 
                     const locationMatch = cardText.match(/([\w\s]+),\s*Rio de Janeiro\/RJ/i) || cardText.match(/([\w\s]+),\s*[\w\s]+\/RJ/i);
                     const neighborhood = locationMatch ? locationMatch[1].trim() : '';
@@ -112,21 +133,17 @@ async function scrapeChavesNaMao() {
 
                     const bathrooms = extractNumber(cardText, /(\d+)\s*(?:banheiro|suíte)/i);
 
-                    const img = $el.find('img').first();
-                    const image = img.attr('data-src') || img.attr('src') || '';
-
                     const zone = classifyZone(location + ' ' + neighborhood);
 
                     discoveredCards.set(id, {
                         id, title: title || `Imóvel em ${neighborhood || 'Rio de Janeiro'}`, price, condominio, url: fullUrl,
-                        image, rooms, bathrooms, area, location, neighborhood, zone,
+                        image: card.image, rooms, bathrooms, area, location, neighborhood, zone,
                         source: 'chavesnamao', found_at: new Date().toISOString()
                     });
                 } catch (e) {}
-            });
-            await new Promise(r => setTimeout(r, 1000));
+            }
         } catch (e: any) {
-            console.log(`\n   ❌ Erro na vitrine ${page}: ${e.message}`);
+            console.log(`\n   ❌ Erro na vitrine ${pg}: ${e.message}`);
             break;
         }
     }
