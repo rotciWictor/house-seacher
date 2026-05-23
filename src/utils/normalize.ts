@@ -3,7 +3,7 @@ export function isCommercial(title: string, description: string): boolean {
     const lowerTitle = title.toLowerCase().trim();
     
     // 1. Palavras que MATAM o anúncio se aparecerem no TÍTULO (tolerância zero)
-    if (/\b(comercial|comerciais|loja|galpão|galpao|consultório|consultorio|clínica|clinica|coworking|sobreloja|depósito|armazém|garagem|vaga|estacionamento|box|laje corporativa|ponto comercial|escritório|escritorio)\b/.test(lowerTitle)) {
+    if (/\b(comercial|comerciais|loja|galpão|galpao|consultório|consultorio|clínica|clinica|coworking|sobreloja|depósito|armazém|garagem|vaga|estacionamento|box|laje corporativa|ponto comercial|escritório|escritorio|terreno|lote|container)\b/.test(lowerTitle)) {
         return true;
     }
     
@@ -19,7 +19,7 @@ export function isCommercial(title: string, description: string): boolean {
     }
 
     // 3. Regras para Categorias soltas no título (Terrenos e Prédios)
-    if (/^(conjunto\b|lote\b|terreno\b|prédio\b|predio\b)/.test(lowerTitle)) {
+    if (/\b(conjunto|prédio|predio)\b/.test(lowerTitle)) {
         return true;
     }
 
