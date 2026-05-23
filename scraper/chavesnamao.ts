@@ -8,7 +8,7 @@ import { isCommercial, isForSale } from '../src/utils/normalize';
 
 chromium.use(stealth());
 
-const MAX_PAGES = 10;
+const MAX_PAGES = 20;
 const BASE_URL = 'https://www.chavesnamao.com.br/imoveis-para-alugar/rj-rio-de-janeiro/?valormax=1000';
 
 function classifyZone(text: string): string {
