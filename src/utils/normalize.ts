@@ -28,7 +28,12 @@ export function isCommercial(title: string, description: string): boolean {
         'sala comercial', 'galpão', 'consultório', 'laje corporativa',
         'ponto comercial', 'box comercial', 'terreno comercial', 'escritório',
         'prédio comercial', 'predio comercial', 'ideal para o seu negócio',
-        'ideal para seu negócio', 'vaga de garagem', 'alugo vaga', 'aluga-se vaga'
+        'ideal para seu negócio', 'vaga de garagem', 'alugo vaga', 'aluga-se vaga',
+        'passo o ponto', 'sobreloja', 'franquia', 'polo gastronômico', 'polo gastronomico',
+        'ponto logístico', 'ponto logistico', 'ideal para clínicas', 'ideal para clinicas',
+        'excelente para comércio', 'excelente para comercio', 'próprio para restaurante',
+        'imóvel comercial', 'imovel comercial', 'loja comercial', 'espaço comercial',
+        'galpão logístico', 'galpao logistico', 'ideal para empresa', 'ótimo para empresa'
     ];
 
     // Se a descrição contém uma palavra chave comercial forte, assumimos que é lixo
@@ -36,6 +41,17 @@ export function isCommercial(title: string, description: string): boolean {
         if (text.includes(kw)) {
             return true;
         }
+    }
+
+    // 5. Regex avançado na descrição para padrões comerciais
+    if (/ideal para\s+(?:qualquer\s+)?(?:tipo de\s+)?(?:com[eé]rcio|neg[oó]cio|empresa|cl[ií]nica|loja|escrit[oó]rio)/i.test(text)) {
+        return true;
+    }
+    if (/excelente para\s+(?:com[eé]rcio|neg[oó]cio|empresa|cl[ií]nica|loja|escrit[oó]rio)/i.test(text)) {
+        return true;
+    }
+    if (/pr[oó]prio para\s+(?:com[eé]rcio|neg[oó]cio|empresa|cl[ií]nica|loja|escrit[oó]rio|restaurante|bar|lanchonete)/i.test(text)) {
+        return true;
     }
     
     return false;
