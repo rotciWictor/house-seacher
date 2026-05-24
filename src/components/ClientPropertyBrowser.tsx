@@ -7,6 +7,15 @@ import { Property } from '../types/property';
 import { timeAgo } from '../utils/format';
 import { PropertyCard } from './PropertyCard';
 import { FilterBar } from './FilterBar';
+import dynamic from 'next/dynamic';
+import { PropertyModal } from './PropertyModal';
+import { useTheme } from 'next-themes';
+import { Moon, Sun, Map as MapIcon, LayoutGrid } from 'lucide-react';
+
+const MapView = dynamic(() => import('./MapView'), { 
+    ssr: false, 
+    loading: () => <div className="w-full h-96 bg-card animate-pulse rounded-2xl flex items-center justify-center border border-border">Carregando Mapa Mágico...</div> 
+});
 
 interface ClientPropertyBrowserProps {
     initialZone?: string;
@@ -22,6 +31,10 @@ const unslugify = (slug: string, options: string[]) => {
 export function ClientPropertyBrowser({ initialZone, initialNeighborhood }: ClientPropertyBrowserProps) {
     const [properties, setProperties] = useState<Property[]>([]);
     const [loading, setLoading] = useState(true);
+    
+    const [viewMode, setViewMode] = useState<'grid' | 'map'>('grid');
+    const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
+    const { theme, setTheme } = useTheme();
     
     // Filters
     const [selectedZone, setSelectedZone] = useState<string>('Todas');
@@ -211,7 +224,7 @@ export function ClientPropertyBrowser({ initialZone, initialNeighborhood }: Clie
     const totalPages = Math.ceil(filteredProperties.length / ITEMS_PER_PAGE);
 
     return (
-        <main className="min-h-screen bg-gray-50 text-gray-900 font-sans selection:bg-indigo-500 selection:text-white">
+        <main className="min-h-screen bg-background text-foreground font-sans selection:bg-primary selection:text-primary-foreground">
             {/* ============= HERO SECTION ============= */}
             <section className="relative overflow-hidden bg-gradient-to-br from-indigo-700 via-purple-700 to-indigo-900">
                 <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -303,14 +316,41 @@ export function ClientPropertyBrowser({ initialZone, initialNeighborhood }: Clie
 
             {/* ============= RESULTS ============= */}
             <div className="max-w-7xl mx-auto px-4 py-6 md:py-8">
-                <div className="mb-5 flex justify-between items-center">
-                    <h2 className="text-base md:text-lg font-bold text-gray-800">
-                        {filteredProperties.length} imóveis encontrados
-                        {selectedNeighborhoods.length === 1 && ` em ${selectedNeighborhoods[0]}`}
-                        {selectedNeighborhoods.length === 0 && selectedZone !== 'Todas' && ` na ${selectedZone}`}
-                    </h2>
-                    <div className="text-xs text-gray-400 font-medium">
-                        Última atualização: {properties.length > 0 ? timeAgo(properties[0]?.found_at) : '—'}
+                <div className="mb-5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-card p-4 rounded-2xl shadow-sm border border-border">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                        <h2 className="text-base md:text-lg font-bold text-foreground">
+                            {filteredProperties.length} imóveis encontrados
+                            {selectedNeighborhoods.length === 1 && ` em ${selectedNeighborhoods[0]}`}
+                            {selectedNeighborhoods.length === 0 && selectedZone !== 'Todas' && ` na ${selectedZone}`}
+                        </h2>
+                        
+                        <div className="flex bg-background border border-border rounded-lg p-1">
+                            <button 
+                                onClick={() => setViewMode('grid')}
+                                className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${viewMode === 'grid' ? 'bg-primary text-primary-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground hover:bg-card'}`}
+                            >
+                                <LayoutGrid size={16} /> Grid
+                            </button>
+                            <button 
+                                onClick={() => setViewMode('map')}
+                                className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${viewMode === 'map' ? 'bg-primary text-primary-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground hover:bg-card'}`}
+                            >
+                                <MapIcon size={16} /> Mapa
+                            </button>
+                        </div>
+                    </div>
+
+                    <div className="flex items-center gap-4 w-full sm:w-auto justify-between sm:justify-end">
+                        <div className="text-xs text-muted-foreground font-medium">
+                            Última atualização: {properties.length > 0 ? timeAgo(properties[0]?.found_at) : '—'}
+                        </div>
+                        <button
+                            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                            className="p-2 rounded-full hover:bg-black/5 dark:hover:bg-white/10 text-gray-500 dark:text-gray-400 hover:text-foreground transition-colors"
+                            title="Alternar Modo Escuro"
+                        >
+                            {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
+                        </button>
                     </div>
                 </div>
 
@@ -328,16 +368,26 @@ export function ClientPropertyBrowser({ initialZone, initialNeighborhood }: Clie
                     </div>
                 ) : (
                     <>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-                        {paginatedProperties.map((property) => (
-                            <PropertyCard 
-                                key={property.id} 
-                                property={property} 
-                                isFavorite={favorites.has(property.id)} 
-                                onToggleFavorite={toggleFavorite} 
+                    {viewMode === 'map' ? (
+                        <div className="h-[600px] mb-8 w-full relative z-0">
+                            <MapView 
+                                properties={filteredProperties} 
+                                onPropertyClick={(p) => setSelectedProperty(p)} 
                             />
-                        ))}
-                    </div>
+                        </div>
+                    ) : (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+                            {paginatedProperties.map((property) => (
+                                <div key={property.id} onClick={() => setSelectedProperty(property)} className="cursor-pointer transition-transform hover:scale-[1.02]">
+                                    <PropertyCard 
+                                        property={property} 
+                                        isFavorite={favorites.has(property.id)} 
+                                        onToggleFavorite={toggleFavorite} 
+                                    />
+                                </div>
+                            ))}
+                        </div>
+                    )}
 
                     {/* ============= PAGINATION CONTROLS ============= */}
                     {totalPages > 1 && (
@@ -388,8 +438,14 @@ export function ClientPropertyBrowser({ initialZone, initialNeighborhood }: Clie
                 )}
             </div>
             
+            <PropertyModal 
+                property={selectedProperty} 
+                isOpen={!!selectedProperty} 
+                onClose={() => setSelectedProperty(null)} 
+            />
+            
             {/* ============= ZONE GUIDE (SEO CONTENT) ============= */}
-            <section className="bg-white border-t border-gray-100">
+            <section className="bg-card border-t border-border">
                 <div className="max-w-7xl mx-auto px-4 py-10">
                     <h2 className="text-xl font-bold text-gray-900 mb-6">Guia de Aluguéis por Região do Rio de Janeiro</h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -412,7 +468,7 @@ export function ClientPropertyBrowser({ initialZone, initialNeighborhood }: Clie
             </section>
 
             {/* ============= FAQ (SEO RICH SNIPPET) ============= */}
-            <section className="bg-gray-50 border-t border-gray-100">
+            <section className="bg-background border-t border-border">
                 <div className="max-w-7xl mx-auto px-4 py-10">
                     <h2 className="text-xl font-bold text-gray-900 mb-6">Perguntas Frequentes</h2>
                     <div className="space-y-4">
