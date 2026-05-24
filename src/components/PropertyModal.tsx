@@ -2,7 +2,7 @@
 
 import React, { useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, MapPin, BedDouble, Bath, Maximize, ExternalLink, ShieldCheck, Clock } from 'lucide-react';
+import { X, MapPin, BedDouble, Bath, Maximize, ExternalLink, ShieldCheck, Clock, ChevronLeft, ChevronRight, Camera } from 'lucide-react';
 import { Property } from '../types/property';
 import { timeAgo } from '../utils/format';
 
@@ -13,6 +13,13 @@ interface PropertyModalProps {
 }
 
 export function PropertyModal({ property, isOpen, onClose }: PropertyModalProps) {
+  const [currentImageIndex, setCurrentImageIndex] = React.useState(0);
+
+  // Reset index when property changes
+  useEffect(() => {
+    setCurrentImageIndex(0);
+  }, [property]);
+
   // Prevent body scroll when modal is open
   useEffect(() => {
     if (isOpen) {
@@ -37,6 +44,24 @@ export function PropertyModal({ property, isOpen, onClose }: PropertyModalProps)
   if (!property) return null;
 
   const totalCost = property.price + (property.condominio || 0);
+
+  const imagesList = property.images && property.images.length > 0 
+    ? property.images 
+    : (property.image ? [property.image] : []);
+
+  const handleNextImage = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (currentImageIndex < imagesList.length - 1) {
+      setCurrentImageIndex(prev => prev + 1);
+    }
+  };
+
+  const handlePrevImage = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (currentImageIndex > 0) {
+      setCurrentImageIndex(prev => prev - 1);
+    }
+  };
 
   return (
     <AnimatePresence>
@@ -69,17 +94,50 @@ export function PropertyModal({ property, isOpen, onClose }: PropertyModalProps)
                 <X size={20} />
               </button>
 
-              {/* Left Side: Image */}
-              <div className="w-full md:w-1/2 h-64 md:h-auto relative bg-gray-100 dark:bg-neutral-900">
-                {property.image ? (
-                  <img 
-                    src={property.image} 
-                    alt={property.title}
-                    className="w-full h-full object-cover"
-                  />
+              {/* Left Side: Image Carousel */}
+              <div className="w-full md:w-1/2 h-64 md:h-auto relative bg-gray-100 dark:bg-neutral-900 group">
+                {imagesList.length > 0 ? (
+                  <>
+                    <AnimatePresence mode="wait">
+                      <motion.img 
+                        key={currentImageIndex}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.2 }}
+                        src={imagesList[currentImageIndex]} 
+                        alt={`${property.title} - Foto ${currentImageIndex + 1}`}
+                        className="w-full h-full object-cover absolute inset-0"
+                      />
+                    </AnimatePresence>
+                    
+                    {/* Carousel Controls */}
+                    {imagesList.length > 1 && (
+                      <>
+                        <button 
+                          onClick={handlePrevImage}
+                          className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/80 text-white p-2 rounded-full backdrop-blur-md opacity-0 group-hover:opacity-100 transition-opacity disabled:opacity-0"
+                          disabled={currentImageIndex === 0}
+                        >
+                          <ChevronLeft size={24} />
+                        </button>
+                        <button 
+                          onClick={handleNextImage}
+                          className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/80 text-white p-2 rounded-full backdrop-blur-md opacity-0 group-hover:opacity-100 transition-opacity disabled:opacity-0"
+                          disabled={currentImageIndex === imagesList.length - 1}
+                        >
+                          <ChevronRight size={24} />
+                        </button>
+                        <div className="absolute bottom-4 right-4 bg-black/70 backdrop-blur-md text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow-lg flex items-center gap-2">
+                          <Camera size={14} /> {currentImageIndex + 1} / {imagesList.length}
+                        </div>
+                      </>
+                    )}
+                  </>
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center text-gray-400">
-                    Sem Imagem
+                  <div className="w-full h-full flex flex-col items-center justify-center text-gray-400 gap-2">
+                    <Camera size={32} />
+                    <span>Sem Imagem</span>
                   </div>
                 )}
                 
@@ -162,9 +220,10 @@ export function PropertyModal({ property, isOpen, onClose }: PropertyModalProps)
                   {/* Description (from Deep Scrape) */}
                   <div className="mb-8 flex-1">
                     <h3 className="font-bold text-lg mb-3 text-foreground">Descrição Original</h3>
-                    <div className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed whitespace-pre-wrap bg-black/5 dark:bg-white/5 p-4 rounded-xl border border-border/50 max-h-48 overflow-y-auto custom-scrollbar">
-                      {property.description || "Descrição não disponível para este imóvel."}
-                    </div>
+                    <div 
+                        className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed whitespace-pre-wrap bg-black/5 dark:bg-white/5 p-4 rounded-xl border border-border/50 max-h-48 overflow-y-auto custom-scrollbar"
+                        dangerouslySetInnerHTML={{ __html: property.description || "Descrição não disponível para este imóvel." }}
+                    />
                   </div>
 
                   {/* Action Button */}

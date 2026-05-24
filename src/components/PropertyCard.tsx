@@ -13,10 +13,7 @@ export function PropertyCard({ property, isFavorite, onToggleFavorite }: Propert
 
 
     return (
-        <a 
-            href={property.url} 
-            target="_blank" 
-            rel="noopener noreferrer"
+        <div 
             className="group flex flex-col bg-white rounded-2xl overflow-hidden shadow-[0_2px_12px_rgb(0,0,0,0.04)] border border-transparent hover:border-indigo-100 hover:shadow-xl hover:shadow-indigo-500/10 hover:-translate-y-1 transition-all duration-300 relative"
         >
             {/* Image Section */}
@@ -87,9 +84,9 @@ export function PropertyCard({ property, isFavorite, onToggleFavorite }: Propert
             </div>
             
             {/* Content Section */}
-            <div className="p-4 flex flex-col flex-grow bg-white">
+            <div className="p-4 flex flex-col flex-grow bg-card">
                 <div className="flex justify-between items-start gap-2 mb-2">
-                    <h3 className="text-sm font-semibold text-gray-900 line-clamp-2 leading-snug group-hover:text-indigo-600 transition-colors">
+                    <h3 className="text-sm font-semibold text-card-foreground line-clamp-2 leading-snug group-hover:text-indigo-600 transition-colors">
                         {property.title}
                     </h3>
                 </div>
@@ -127,6 +124,6 @@ export function PropertyCard({ property, isFavorite, onToggleFavorite }: Propert
                     </span>
                 </div>
             </div>
-        </a>
+        </div>
     );
 }

@@ -1,0 +1,980 @@
+{
+  "search": {
+    "result": {
+      "listings": [
+        {
+          "listing": {
+            "id": "2867808086",
+            "title": "Imóvel para aluguel e venda com 50 metros quadrados com 1 quarto em Pechincha - Rio de Janeiro - RJ",
+            "description": "PECHINCHA - EXCELENTE LOCALIZAÇÃO - AVENIDA GEREMÁRIO DANTAS N° 885 BLOCO B APTº 109 (BLOCO B = FUNDOS). SALA COM 1 QUARTO + QUARTO PEQUENO DE EMPREGADA (HOME OFFICE) - COZINHA E ÁREA DE SERVIÇO - GARAGEM 1 VAGA - ACEITO FGTS FAÇO TODO PROCESSO CAIXA FINANCIAMENTO. AGENDAR VISITA VIA MENSAGEM WHATSaPP COM VALENTINO IMÓVEIS CRECI 17.493",
+            "pricingInfos": [
+              {
+                "iptuPeriod": "YEARLY",
+                "rentalInfo": {
+                  "period": "MONTHLY",
+                  "warranties": [
+                    "SECURITY_DEPOSIT",
+                    "GUARANTEE_LETTER",
+                    "INSURANCE_GUARANTEE",
+                    "GUARANTOR"
+                  ]
+                },
+                "yearlyIptu": "0",
+                "price": "240000",
+                "iptu": "0",
+                "businessType": "SALE",
+                "monthlyCondoFee": "726"
+              },
+              {
+                "iptuPeriod": "YEARLY",
+                "rentalInfo": {
+                  "period": "MONTHLY",
+                  "warranties": [
+                    "SECURITY_DEPOSIT",
+                    "GUARANTEE_LETTER",
+                    "INSURANCE_GUARANTEE",
+                    "GUARANTOR"
+                  ],
+                  "monthlyRentalTotalPrice": "1676"
+                },
+                "yearlyIptu": "0",
+                "price": "950",
+                "iptu": "0",
+                "businessType": "RENTAL",
+                "monthlyCondoFee": "726"
+              }
+            ],
+            "address": {
+              "country": "BR",
+              "zipCode": "22743011",
+              "geoJson": "",
+              "city": "Rio de Janeiro",
+              "streetNumber": "885",
+              "level": "STREET",
+              "precision": "ROOFTOP",
+              "confidence": "VALID_STREET",
+              "stateAcronym": "RJ",
+              "source": "CORREIOS",
+              "h3": [
+                {
+                  "index": "87a8a062effffff",
+                  "resolution": 7
+                },
+                {
+                  "index": "88a8a062e3fffff",
+                  "resolution": 8
+                },
+                {
+                  "index": "89a8a062e2fffff",
+                  "resolution": 9
+                }
+              ],
+              "point": {
+                "lon": -43.35256,
+                "source": "GOOGLE",
+                "lat": -22.93285
+              },
+              "ibgeCityId": "",
+              "zone": "Zona Oeste",
+              "street": "Avenida Geremário Dantas",
+              "locationId": "BR>Rio de Janeiro>NULL>Rio de Janeiro>Zona Oeste>Pechincha",
+              "district": "",
+              "name": "",
+              "fullAddress": "Avenida Geremário Dantas Pechincha  Rio de Janeiro RJ",
+              "state": "Rio de Janeiro",
+              "poisList": [
+                "BS:Ponto Final: Pechincha :: Linha 2115",
+                "BS:Professora Camisão",
+                "BS:Ponto Final: Cidade de Deus",
+                "BS:Tirol",
+                "BS:Ponto Final: Covanca",
+                "TS:Ponto Final: Pechincha :: Linha 2115",
+                "TS:Provedora Lygia Moreira Alves de Brito",
+                "TS:José Roiz de Aragão",
+                "TS:Professora Camisão",
+                "TS:Ponto Final: Cidade de Deus",
+                "CS:Flor do Valqueire Confeitaria Pechincha",
+                "CS:Padaria Nova Belém",
+                "CS:TECNOMEDI FREGUESIA",
+                "CS:Kúffura",
+                "PH:Drogasmil Pechincha",
+                "PH:Venancio",
+                "PH:Mega Expressa"
+              ],
+              "neighborhood": "Pechincha",
+              "pois": [],
+              "valuableZones": []
+            },
+            "usableAreas": [
+              "50"
+            ],
+            "bedrooms": [
+              1
+            ],
+            "bathrooms": [
+              1
+            ]
+          }
+        },
+        {
+          "listing": {
+            "id": "2877736449",
+            "title": "Sala Comercial para Alugar – R$ 600 – 28m² – Centro – 300m do Metrô Carioca",
+            "description": "Excelente oportunidade para instalar seu escritório no Centro do Rio de Janeiro!<br>Sala comercial com 28m², localizada na Rua México, 119, em região estratégica e de fácil acesso, a apenas 300 metros da estação Carioca do metrô.<br>O imóvel é composto por:<br>Sala bem distribuída<br>1 banheiro privativo<br>Ideal para profissionais liberais, pequenos escritórios, consultórios ou atividades administrativas, oferecendo praticidade no dia a dia para você e seus clientes.<br>Localização privilegiada, próxima a bancos, restaurantes, cartórios, comércio variado, serviços e transporte público, em uma das regiões mais movimentadas do Centro.<br>Perfeita para quem busca um espaço funcional, econômico e bem localizado para trabalhar.<br>Agende sua visita! <br> Enviado por Gaetani & Ortigão Propriété ]]>",
+            "pricingInfos": [
+              {
+                "iptuPeriod": "MONTHLY",
+                "rentalInfo": {
+                  "period": "MONTHLY",
+                  "warranties": [],
+                  "monthlyRentalTotalPrice": "995"
+                },
+                "yearlyIptu": "0",
+                "price": "600",
+                "iptu": "0",
+                "businessType": "RENTAL",
+                "monthlyCondoFee": "395"
+              }
+            ],
+            "address": {
+              "country": "BR",
+              "zipCode": "20031145",
+              "geoJson": "",
+              "city": "Rio de Janeiro",
+              "streetNumber": "119",
+              "level": "STREET",
+              "precision": "ROOFTOP",
+              "confidence": "VALID_STREET",
+              "stateAcronym": "RJ",
+              "source": "CORREIOS",
+              "h3": [
+                {
+                  "index": "87a8a06a0ffffff",
+                  "resolution": 7
+                },
+                {
+                  "index": "88a8a06a09fffff",
+                  "resolution": 8
+                },
+                {
+                  "index": "89a8a06a08fffff",
+                  "resolution": 9
+                }
+              ],
+              "point": {
+                "lon": -43.176174,
+                "source": "GOOGLE",
+                "lat": -22.906942
+              },
+              "ibgeCityId": "",
+              "zone": "Zona Central",
+              "street": "Rua México",
+              "locationId": "BR>Rio de Janeiro>NULL>Rio de Janeiro>Zona Central>Centro",
+              "district": "",
+              "name": "",
+              "fullAddress": "Rua México Centro  Rio de Janeiro RJ",
+              "state": "Rio de Janeiro",
+              "poisList": [
+                "BS:Ponto Final: Castelo :: Linha 2015",
+                "BS:Ponto Final: Castelo :: Linha 315",
+                "BS:Terminal Menezes Côrtes",
+                "BS:Ponto Final: Castelo :: Linha 331",
+                "BS:Ponto Final: Castelo :: Linha 306",
+                "TS:Ponto Final: Castelo :: Linha 2015",
+                "TS:Ponto Final: Castelo :: Linha 315",
+                "TS:Terminal Menezes Côrtes",
+                "TS:Ponto Final: Castelo :: Linha 331",
+                "TS:Carioca / Centro",
+                "CS:Balas & Cia.",
+                "CS:Uno & Due",
+                "CS:Delícia Doces",
+                "CS:Spid",
+                "CS:Lojas Magal",
+                "PH:Farmácia Rio Stop Ltda.",
+                "PH:Drogaria cristal",
+                "PH:BemStar",
+                "PH:Farmalife",
+                "PH:São Paulo"
+              ],
+              "neighborhood": "Centro",
+              "pois": [],
+              "valuableZones": []
+            },
+            "usableAreas": [
+              "28"
+            ],
+            "bedrooms": [],
+            "bathrooms": [
+              1
+            ]
+          }
+        },
+        {
+          "listing": {
+            "id": "2427785821",
+            "title": "Apartamento de 68 metros quadrados no bairro Praça Seca com 2 quartos",
+            "description": "Apartamento padrão com 68,2 m², cozinha planejada já com fogão e depurador, sala 2 ambientes , 2 dormitórios sendo 1 suíte, banheiro social, box blindex, cozinha, varanda, 2 elevador, 1 vaga coberta, sol da manhã, piscina, Churrasqueira, salão de jogos, play ground, portaria 24 horas, localização privilegiada (Próximo ao comércio, bancos, transportes públicos { brt } Aceitamos deposito",
+            "pricingInfos": [
+              {
+                "iptuPeriod": "Period_NONE",
+                "rentalInfo": {
+                  "period": "MONTHLY",
+                  "warranties": [],
+                  "monthlyRentalTotalPrice": "1550"
+                },
+                "yearlyIptu": "70",
+                "price": "950",
+                "businessType": "RENTAL",
+                "monthlyCondoFee": "600"
+              }
+            ],
+            "address": {
+              "country": "BR",
+              "zipCode": "21321620",
+              "geoJson": "",
+              "city": "Rio de Janeiro",
+              "level": "STREET",
+              "precision": "GEOMETRIC_CENTER",
+              "confidence": "VALID_STREET",
+              "stateAcronym": "RJ",
+              "source": "CORREIOS",
+              "h3": [
+                {
+                  "index": "87a8a060cffffff",
+                  "resolution": 7
+                },
+                {
+                  "index": "88a8a060c1fffff",
+                  "resolution": 8
+                },
+                {
+                  "index": "89a8a060c17ffff",
+                  "resolution": 9
+                }
+              ],
+              "point": {
+                "aproximated": true,
+                "source": "GOOGLE",
+                "approximateLat": -22.9,
+                "approximateLon": -43.348,
+                "radius": 140
+              },
+              "ibgeCityId": "",
+              "zone": "Zona Oeste",
+              "street": "Rua Barão",
+              "locationId": "BR>Rio de Janeiro>NULL>Rio de Janeiro>Zona Oeste>Praca Seca",
+              "district": "",
+              "name": "",
+              "fullAddress": "Rua Barão Praça Seca  Rio de Janeiro RJ",
+              "state": "Rio de Janeiro",
+              "poisList": [
+                "BS:Praça Seca :: Linhas para o Castelo",
+                "BS:Ponto Final: Praça Seca :: Ônibus Executivo",
+                "BS:Ponto Final: Praça Seca :: Linha 371",
+                "BS:Rua Marangá 912",
+                "BS:Doutor Bernardino",
+                "TS:Praça Seca :: Linhas para o Castelo",
+                "TS:Ponto Final: Praça Seca :: Ônibus Executivo",
+                "TS:Ponto Final: Praça Seca :: Linha 371",
+                "TS:Rua Marangá 912",
+                "TS:Doutor Bernardino",
+                "CS:Gula Gula",
+                "CS:3 Marias",
+                "CS:Açougue Barão Ltda.",
+                "CS:Auto Posto Bittig",
+                "PH:Imediata"
+              ],
+              "neighborhood": "Praça Seca",
+              "pois": [],
+              "valuableZones": []
+            },
+            "usableAreas": [
+              "68"
+            ],
+            "bedrooms": [
+              2
+            ],
+            "bathrooms": [
+              2
+            ]
+          }
+        },
+        {
+          "listing": {
+            "id": "2857436089",
+            "title": "Imóvel para aluguel possui 30 metros quadrados em Centro - Rio de Janeiro - RJ",
+            "description": "Centro – A Imobiliária Mauá aluga um ótimo imóvel comercial, muito bem localizado, no coração da cidade, em frente à estação do VLT “Colombo” e próximo à estação de metrô Carioca. A região oferece infraestrutura completa para todas as necessidades, incluindo bancos, farmácias, restaurantes, lojas de variados serviços e farta condução para todos os pontos do Rio de Janeiro. O escritório possui posição frente, voltado para o sol da manhã e com vista direta para a rua. Com 30 m², o imóvel está disposto em um salão amplo, já dividido confortavelmente em 02 ambientes, semimobiliado com sofá, duas poltronas, uma mesa, e contando ainda com uma estante fixa em uma das salas e possui banheiro com armário. O piso em granito em todo o espaço, em ótimo estado de conservação. O prédio conta com 02 elevadores atendendo às 09 salas por andar, distribuídas em 12 andares, além de portaria com controle de acesso por biometria facial e catracas, monitoramento por câmeras de segurança e funcionando de segunda a sábado.<br>Gostou? Então não perca tempo! Entre em contato conosco e agende sua visita.<br>Observação: os valores de taxas de condomínio e encargos podem sofrer alterações sem aviso prévio.",
+            "pricingInfos": [
+              {
+                "iptuPeriod": "MONTHLY",
+                "rentalInfo": {
+                  "period": "MONTHLY",
+                  "warranties": [
+                    "GUARANTOR",
+                    "INSURANCE_GUARANTEE",
+                    "CAPITALIZATION_BONDS"
+                  ],
+                  "monthlyRentalTotalPrice": "797"
+                },
+                "yearlyIptu": "265",
+                "price": "400",
+                "iptu": "265",
+                "businessType": "RENTAL",
+                "monthlyCondoFee": "397"
+              }
+            ],
+            "address": {
+              "country": "BR",
+              "zipCode": "20050002",
+              "geoJson": "",
+              "city": "Rio de Janeiro",
+              "streetNumber": "98",
+              "level": "STREET",
+              "precision": "ROOFTOP",
+              "confidence": "VALID_STREET",
+              "stateAcronym": "RJ",
+              "source": "CORREIOS",
+              "h3": [
+                {
+                  "index": "87a8a06a0ffffff",
+                  "resolution": 7
+                },
+                {
+                  "index": "88a8a06a0bfffff",
+                  "resolution": 8
+                },
+                {
+                  "index": "89a8a06a017ffff",
+                  "resolution": 9
+                }
+              ],
+              "point": {
+                "lon": -43.17854,
+                "source": "GOOGLE",
+                "lat": -22.905343
+              },
+              "ibgeCityId": "",
+              "zone": "Zona Central",
+              "street": "Rua Sete de Setembro",
+              "locationId": "BR>Rio de Janeiro>NULL>Rio de Janeiro>Zona Central>Centro",
+              "district": "",
+              "name": "",
+              "fullAddress": "Rua Sete de Setembro Centro  Rio de Janeiro RJ",
+              "state": "Rio de Janeiro",
+              "poisList": [
+                "BS:BRS 3 Rio Branco (Assembleia)",
+                "BS:Ponto Final: Castelo :: Linha 315",
+                "BS:Ponto Final: Castelo :: Linha 331",
+                "BS:Ponto Final: Castelo :: Linha 306",
+                "BS:Castelo :: Linha 2110",
+                "TS:BRS 3 Rio Branco (Assembleia)",
+                "TS:Sete de Setembro",
+                "TS:Acesso Convento",
+                "TS:Estação de Metrô Carioca",
+                "TS:Convento de Santo Antônio",
+                "CS:Lojas Magal",
+                "CS:Manon",
+                "CS:TECNOMEDI CENTRO",
+                "CS:Toca do Biscoito",
+                "CS:Barletta",
+                "PH:Dermage Farmácia de Manipulação",
+                "PH:Drogaria Nações",
+                "PH:Farmácia Rio Stop Ltda.",
+                "PH:Farmalife",
+                "PH:São Paulo"
+              ],
+              "neighborhood": "Centro",
+              "pois": [],
+              "valuableZones": []
+            },
+            "usableAreas": [
+              "30"
+            ],
+            "bedrooms": [
+              0
+            ],
+            "bathrooms": [
+              1
+            ]
+          }
+        },
+        {
+          "listing": {
+            "id": "2878079698",
+            "title": "Sala Comercial no coração da Tijuca – A 5 Minutos do Metrô Saens Peña",
+            "description": "Eleve o patamar do seu atendimento nesta excelente sala comercial. Situada próxima à Praça Saens Peña, o imóvel oferece um ambiente arejado, iluminado e com vista externa. Perfeita para profissionais da saúde, advogados ou consultorias que buscam proximidade com o polo comercial e médico da região.<br><br>Localização estratégica em um dos pontos mais valorizados da Tijuca, cercada por amplo comércio, agências bancárias, clínicas e hospitais.<br>- Mobilidade: A apenas 5 minutos a pé da Estação Saens Peña.<br>- Infraestrutura do Prédio: Portaria 24h e total segurança.<br>- Diferencial: Possui vaga de garagem exclusiva.<br><br>Oportunidades como esta duram pouco! Garanta uma localização estratégica para sua empresa hoje mesmo.",
+            "pricingInfos": [
+              {
+                "iptuPeriod": "YEARLY",
+                "rentalInfo": {
+                  "period": "MONTHLY",
+                  "warranties": [],
+                  "monthlyRentalTotalPrice": "2020"
+                },
+                "yearlyIptu": "273",
+                "price": "1000",
+                "iptu": "273",
+                "businessType": "RENTAL",
+                "monthlyCondoFee": "1020"
+              }
+            ],
+            "address": {
+              "country": "BR",
+              "zipCode": "20520054",
+              "geoJson": "",
+              "city": "Rio de Janeiro",
+              "level": "STREET",
+              "precision": "ROOFTOP",
+              "confidence": "VALID_STREET",
+              "stateAcronym": "RJ",
+              "source": "CORREIOS",
+              "h3": [
+                {
+                  "index": "87a8a0616ffffff",
+                  "resolution": 7
+                },
+                {
+                  "index": "88a8a0616bfffff",
+                  "resolution": 8
+                },
+                {
+                  "index": "89a8a0616a7ffff",
+                  "resolution": 9
+                }
+              ],
+              "point": {
+                "aproximated": true,
+                "source": "GOOGLE",
+                "approximateLat": -22.923,
+                "approximateLon": -43.229,
+                "radius": 140
+              },
+              "ibgeCityId": "",
+              "zone": "Zona Norte",
+              "street": "Rua Conde de Bonfim",
+              "locationId": "BR>Rio de Janeiro>NULL>Rio de Janeiro>Zona Norte>Tijuca",
+              "district": "",
+              "name": "",
+              "fullAddress": "Rua Conde de Bonfim Tijuca  Rio de Janeiro RJ",
+              "state": "Rio de Janeiro",
+              "poisList": [
+                "BS:Saens Peña :: Integração Metrô",
+                "BS:Ponto Final: Saens Peña :: Linha 665",
+                "BS:Ponto Final: Saens Peña",
+                "BS:Ponto Final do 600 (Taquara)",
+                "BS:Ponto Final: Saens Peña :: Linha 639",
+                "TS:Heitor Beltrão",
+                "TS:Saens Peña :: Integração Metrô",
+                "TS:Major Ávila",
+                "TS:Carlos de Vasconcelos",
+                "TS:Saens Peña",
+                "CS:Empório Lamego",
+                "CS:Lojas Bandeirantes",
+                "CS:Flor da Tijuca",
+                "CS:TECNOMEDI TIJUCA",
+                "CS:Confeitaria Rita de Cássia",
+                "PH:Drogasmil",
+                "PH:Drograria Venâncio",
+                "PH:Drogaria Exata",
+                "PH:Drogaria Pedro Ernesto",
+                "PH:Drogaria Venancio"
+              ],
+              "neighborhood": "Tijuca",
+              "pois": [],
+              "valuableZones": []
+            },
+            "usableAreas": [
+              "30"
+            ],
+            "bedrooms": [
+              0
+            ],
+            "bathrooms": [
+              1
+            ]
+          }
+        },
+        {
+          "listing": {
+            "id": "2477117542",
+            "title": "Comercial/Industrial de 35 metros quadrados no bairro Centro",
+            "description": "35m² - Locação de salas comerciais no ED. MASSON - Rua Sete de Setembro 92 - Localizada entre as Av. Rio Branco e Rua Gonçalves Dias. <br>Próxima a bancos, centros comerciais e Fórum Central. <br>Andar alto, posição frente e fundos. <br>Prédio muito bem administrado, c/ 4 elevadores e com controle de acesso !! <br>Uso imediato.",
+            "pricingInfos": [
+              {
+                "iptuPeriod": "MONTHLY",
+                "rentalInfo": {
+                  "period": "MONTHLY",
+                  "warranties": [
+                    "GUARANTEE_LETTER",
+                    "CAPITALIZATION_BONDS",
+                    "GUARANTOR",
+                    "INSURANCE_GUARANTEE"
+                  ],
+                  "monthlyRentalTotalPrice": "1180"
+                },
+                "yearlyIptu": "280",
+                "price": "500",
+                "iptu": "280",
+                "businessType": "RENTAL",
+                "monthlyCondoFee": "680"
+              }
+            ],
+            "address": {
+              "country": "BR",
+              "zipCode": "20050002",
+              "geoJson": "",
+              "city": "Rio de Janeiro",
+              "streetNumber": "92",
+              "level": "STREET",
+              "precision": "ROOFTOP",
+              "confidence": "VALID_STREET",
+              "stateAcronym": "RJ",
+              "source": "CORREIOS",
+              "h3": [
+                {
+                  "index": "87a8a06a0ffffff",
+                  "resolution": 7
+                },
+                {
+                  "index": "88a8a06a01fffff",
+                  "resolution": 8
+                },
+                {
+                  "index": "89a8a06a017ffff",
+                  "resolution": 9
+                }
+              ],
+              "point": {
+                "lon": -43.178288,
+                "source": "GOOGLE",
+                "lat": -22.905138
+              },
+              "ibgeCityId": "",
+              "zone": "Zona Central",
+              "street": "Rua Sete de Setembro",
+              "locationId": "BR>Rio de Janeiro>NULL>Rio de Janeiro>Zona Central>Centro",
+              "district": "",
+              "name": "",
+              "fullAddress": "Rua Sete de Setembro Centro  Rio de Janeiro RJ",
+              "state": "Rio de Janeiro",
+              "poisList": [
+                "BS:BRS 3 Rio Branco (Assembleia)",
+                "BS:Ponto Final: Castelo :: Linha 315",
+                "BS:Ponto Final: Castelo :: Linha 331",
+                "BS:Ponto Final: Castelo :: Linha 306",
+                "BS:Castelo :: Linha 2110",
+                "TS:BRS 3 Rio Branco (Assembleia)",
+                "TS:Sete de Setembro",
+                "TS:Ponto Final: Castelo :: Linha 315",
+                "TS:Ponto Final: Castelo :: Linha 331",
+                "TS:Estação de Metrô Carioca",
+                "CS:Lojas Magal",
+                "CS:Manon",
+                "CS:TECNOMEDI CENTRO",
+                "CS:Toca do Biscoito",
+                "CS:Barletta",
+                "PH:Dermage Farmácia de Manipulação",
+                "PH:Drogaria Nações",
+                "PH:Farmácia Rio Stop Ltda.",
+                "PH:Farmalife",
+                "PH:São Paulo"
+              ],
+              "neighborhood": "Centro",
+              "pois": [],
+              "valuableZones": []
+            },
+            "usableAreas": [
+              "32"
+            ],
+            "bedrooms": [
+              0
+            ],
+            "bathrooms": [
+              1
+            ]
+          }
+        },
+        {
+          "listing": {
+            "id": "2846548516",
+            "title": "EXCELENTE BOX EM GALERIA NA RIO GRANDE JUNTO AO COMERCIO! LOCAL MOVIMENTADO!",
+            "description": "Traga seu negócio para o melhor lugar da Rio Grande! Excelente box com acesso por blindex.<br>Tem iluminação individualizada e tomadas.<br>Corredor com acesso para prédio residencial.<br>Junto a mercados, padarias, escolas e o mais variado comércio!<br>Via principal com grande fluxo de pedestres e veículos, com condução na porta! <br>A 1km da Transolímpica com ligação direta para as praias e shoppings da Barra e do Recreio dos Bandeirantes e a 10 min do Taquara Plaza Shopping e ao centro comercial da Taquara!<br><br>Não perca! Oportunidade única!<br><br>Pensando em vender ou alugar?<br>Traga seu imóvel!!!<br>Avaliamos sem compromisso!!!<br>Divulgação personalizada valorizando o seu maior bem!!<br>Intermediamos e administramos com a melhor taxa!!!<br>Entre em contato conosco e agende uma visita!!",
+            "pricingInfos": [
+              {
+                "iptuPeriod": "YEARLY",
+                "rentalInfo": {
+                  "period": "MONTHLY",
+                  "warranties": [
+                    "SECURITY_DEPOSIT"
+                  ],
+                  "monthlyRentalTotalPrice": "650"
+                },
+                "price": "650",
+                "businessType": "RENTAL",
+                "monthlyCondoFee": "0"
+              }
+            ],
+            "address": {
+              "country": "BR",
+              "zipCode": "22723006",
+              "geoJson": "",
+              "city": "Rio de Janeiro",
+              "streetNumber": "4057",
+              "level": "STREET",
+              "precision": "ROOFTOP",
+              "confidence": "VALID_STREET",
+              "stateAcronym": "RJ",
+              "source": "CORREIOS",
+              "h3": [
+                {
+                  "index": "87a8a075affffff",
+                  "resolution": 7
+                },
+                {
+                  "index": "88a8a075a7fffff",
+                  "resolution": 8
+                },
+                {
+                  "index": "89a8a075a6fffff",
+                  "resolution": 9
+                }
+              ],
+              "point": {
+                "lon": -43.406868,
+                "source": "GOOGLE",
+                "lat": -22.919176
+              },
+              "ibgeCityId": "",
+              "zone": "Zona Oeste",
+              "street": "Estrada do Rio Grande",
+              "locationId": "BR>Rio de Janeiro>NULL>Rio de Janeiro>Zona Oeste>Taquara",
+              "district": "",
+              "name": "",
+              "fullAddress": "Estrada do Rio Grande Taquara  Rio de Janeiro RJ",
+              "state": "Rio de Janeiro",
+              "poisList": [
+                "BS:Ponto Final: Largo da Capela",
+                "BS:Boiuna",
+                "TS:Ponto Final: Largo da Capela",
+                "TS:Boiuna",
+                "TS:Boiúna",
+                "TS:Outeiro Santo",
+                "PH:Drogarias Conceito",
+                "SU:Escola Municipal Denise Maria Torres",
+                "SU:Creche Municipal Tia Malu",
+                "SU:Centro Educacional Marcante Cunha",
+                "SU:Escola Bambino",
+                "SU:Escola Municipal Francis Hime"
+              ],
+              "neighborhood": "Taquara",
+              "pois": [],
+              "valuableZones": []
+            },
+            "usableAreas": [
+              "5"
+            ],
+            "bedrooms": [
+              0
+            ],
+            "bathrooms": [
+              0
+            ]
+          }
+        },
+        {
+          "listing": {
+            "id": "2818387914",
+            "title": "Imóvel para aluguel tem 76 metros quadrados em Centro - Rio de Janeiro - RJ",
+            "description": "O imóvel está localizado no bairro Centro possui 76 metros quadrados, excelente grupo, próximo edifício garagem Menezes Cortes, metrô estação carioca.",
+            "pricingInfos": [
+              {
+                "iptuPeriod": "MONTHLY",
+                "rentalInfo": {
+                  "period": "MONTHLY",
+                  "warranties": [
+                    "INSURANCE_GUARANTEE",
+                    "GUARANTOR"
+                  ],
+                  "monthlyRentalTotalPrice": "1728"
+                },
+                "yearlyIptu": "426",
+                "price": "200",
+                "iptu": "426",
+                "businessType": "RENTAL",
+                "monthlyCondoFee": "1528"
+              }
+            ],
+            "address": {
+              "country": "BR",
+              "zipCode": "20030080",
+              "geoJson": "",
+              "city": "Rio de Janeiro",
+              "level": "STREET",
+              "precision": "ROOFTOP",
+              "confidence": "VALID_STREET",
+              "stateAcronym": "RJ",
+              "source": "CORREIOS",
+              "h3": [
+                {
+                  "index": "87a8a06a0ffffff",
+                  "resolution": 7
+                },
+                {
+                  "index": "88a8a06a09fffff",
+                  "resolution": 8
+                },
+                {
+                  "index": "89a8a06a013ffff",
+                  "resolution": 9
+                }
+              ],
+              "point": {
+                "aproximated": true,
+                "source": "GOOGLE",
+                "approximateLat": -22.906,
+                "approximateLon": -43.174,
+                "radius": 140
+              },
+              "ibgeCityId": "",
+              "zone": "Zona Central",
+              "street": "Rua Debret",
+              "locationId": "BR>Rio de Janeiro>NULL>Rio de Janeiro>Zona Central>Centro",
+              "district": "",
+              "name": "",
+              "fullAddress": "Rua Debret Centro  Rio de Janeiro RJ",
+              "state": "Rio de Janeiro",
+              "poisList": [
+                "BS:Ponto Final: Castelo :: Linha 2015",
+                "BS:Ponto final 2343",
+                "BS:Debret",
+                "BS:Ponto final 2342",
+                "BS:Terminal Rodoviário Menezes Cortes :: Plat. B",
+                "TS:Ponto Final: Castelo :: Linha 2015",
+                "TS:Ponto final 2343",
+                "TS:Debret",
+                "TS:Ponto final 2342",
+                "TS:Terminal Rodoviário Menezes Cortes :: Plat. B",
+                "CS:Balas & Cia.",
+                "CS:Uno & Due",
+                "CS:Delícia Doces",
+                "CS:Curto Café",
+                "CS:Barletta",
+                "PH:Drogaria cristal",
+                "PH:BemStar",
+                "PH:Farmalife",
+                "PH:São Paulo",
+                "PH:Farmácia Rio Stop Ltda."
+              ],
+              "neighborhood": "Centro",
+              "pois": [],
+              "valuableZones": []
+            },
+            "usableAreas": [
+              "38"
+            ],
+            "bedrooms": [
+              0
+            ],
+            "bathrooms": [
+              1
+            ]
+          }
+        },
+        {
+          "listing": {
+            "id": "2556101323",
+            "title": "SALA COMERCIAL COM 46M² NA AV CHURCHILL NO CENTRO DO RIO",
+            "description": "Sala comercial com 46m² localizada na Avenida Churchill composta por um salão amplo, copa e banheiro. <br><br>Ótima localização, com fácil acesso a transporte público estando próximo ao Ministério Público, OAB, Receita Federal, TJ, aeroporto Santos Dumont e etc. <br><br>Agende sua visita!",
+            "pricingInfos": [
+              {
+                "iptuPeriod": "MONTHLY",
+                "rentalInfo": {
+                  "period": "MONTHLY",
+                  "warranties": [
+                    "CAPITALIZATION_BONDS",
+                    "GUARANTOR",
+                    "INSURANCE_GUARANTEE"
+                  ],
+                  "monthlyRentalTotalPrice": "1069"
+                },
+                "yearlyIptu": "223",
+                "price": "400",
+                "iptu": "223",
+                "businessType": "RENTAL",
+                "monthlyCondoFee": "669"
+              }
+            ],
+            "address": {
+              "country": "BR",
+              "zipCode": "20020050",
+              "geoJson": "",
+              "city": "Rio de Janeiro",
+              "streetNumber": "94",
+              "level": "STREET",
+              "precision": "ROOFTOP",
+              "confidence": "VALID_STREET",
+              "stateAcronym": "RJ",
+              "source": "CORREIOS",
+              "h3": [
+                {
+                  "index": "87a8a06a0ffffff",
+                  "resolution": 7
+                },
+                {
+                  "index": "88a8a06a0dfffff",
+                  "resolution": 8
+                },
+                {
+                  "index": "89a8a06a0d7ffff",
+                  "resolution": 9
+                }
+              ],
+              "point": {
+                "lon": -43.171015,
+                "source": "GOOGLE",
+                "lat": -22.909358
+              },
+              "ibgeCityId": "",
+              "zone": "Zona Central",
+              "street": "Avenida Churchill",
+              "locationId": "BR>Rio de Janeiro>NULL>Rio de Janeiro>Zona Central>Centro",
+              "district": "",
+              "name": "",
+              "fullAddress": "Avenida Churchill Centro  Rio de Janeiro RJ",
+              "state": "Rio de Janeiro",
+              "poisList": [
+                "BS:Terminal Churchill :: Plataforma Sul",
+                "BS:Terminal Churchill :: Plataforma Norte",
+                "BS:Ponto Regulador: Linhas Zona Norte",
+                "BS:Ponto Final do 378",
+                "BS:Ponto Final do 344 e 349",
+                "TS:Terminal Churchill :: Plataforma Sul",
+                "TS:Terminal Churchill :: Plataforma Norte",
+                "TS:Ponto Regulador: Linhas Zona Norte",
+                "TS:Ponto Final do 378",
+                "TS:Ponto Final do 344 e 349",
+                "CS:Uno & Due",
+                "CS:Delícia Doces",
+                "CS:Balas & Cia.",
+                "CS:Casas Pedro",
+                "CS:Curto Café",
+                "PH:Passeio",
+                "PH:BemStar",
+                "PH:Drogaria cristal",
+                "PH:São Paulo",
+                "PH:Farmalife"
+              ],
+              "neighborhood": "Centro",
+              "pois": [],
+              "valuableZones": []
+            },
+            "usableAreas": [
+              "46"
+            ],
+            "bedrooms": [
+              0
+            ],
+            "bathrooms": [
+              1
+            ]
+          }
+        },
+        {
+          "listing": {
+            "id": "2433222906",
+            "title": "Comercial/Industrial de 32 metros quadrados no bairro Centro",
+            "description": "Alugo sala em prédio comercial na Avenida Presidente Vargas, junto a estação de metrô Uruguaiana, com toda infra instrutura, recepção, ar condicionado, segurança 24 horas, condomínio e iptu por conta do proprietário, aluguel único 490.00",
+            "pricingInfos": [
+              {
+                "iptuPeriod": "Period_NONE",
+                "rentalInfo": {
+                  "period": "MONTHLY",
+                  "warranties": [],
+                  "monthlyRentalTotalPrice": "788"
+                },
+                "yearlyIptu": "0",
+                "price": "490",
+                "businessType": "RENTAL",
+                "monthlyCondoFee": "298"
+              }
+            ],
+            "address": {
+              "country": "BR",
+              "zipCode": "20071003",
+              "geoJson": "",
+              "city": "Rio de Janeiro",
+              "level": "STREET",
+              "precision": "ROOFTOP",
+              "confidence": "VALID_STREET",
+              "stateAcronym": "RJ",
+              "source": "CORREIOS",
+              "h3": [
+                {
+                  "index": "87a8a06a0ffffff",
+                  "resolution": 7
+                },
+                {
+                  "index": "88a8a06a0bfffff",
+                  "resolution": 8
+                },
+                {
+                  "index": "89a8a06a0abffff",
+                  "resolution": 9
+                }
+              ],
+              "point": {
+                "aproximated": true,
+                "source": "GOOGLE",
+                "approximateLat": -22.902,
+                "approximateLon": -43.18,
+                "radius": 140
+              },
+              "ibgeCityId": "",
+              "zone": "Zona Central",
+              "street": "Avenida Presidente Vargas",
+              "locationId": "BR>Rio de Janeiro>NULL>Rio de Janeiro>Zona Central>Centro",
+              "district": "",
+              "name": "",
+              "fullAddress": "Avenida Presidente Vargas Centro  Rio de Janeiro RJ",
+              "state": "Rio de Janeiro",
+              "poisList": [
+                "BS:Ponto Final: Candelária :: Linhas para Zona Norte",
+                "BS:BRS 4: Rio Branco",
+                "BS:Ponto Final: Candelária :: Linha 369",
+                "BS:BRS 5: Rio Branco",
+                "BS:Ponto Final: Candelária :: Linha 392",
+                "TS:Ponto Final: Candelária :: Linhas para Zona Norte",
+                "TS:BRS 4: Rio Branco",
+                "TS:Ponto Final: Candelária :: Linha 369",
+                "TS:BRS 5: Rio Branco",
+                "TS:Ponto Final: Candelária :: Linha 392",
+                "CS:Bella Rio",
+                "CS:Chic's",
+                "CS:Toca do Biscoito",
+                "CS:Kalunga",
+                "CS:TECNOMEDI CENTRO",
+                "PH:Dermage Farmácia de Manipulação",
+                "PH:Drogaria Nações",
+                "PH:Farmalife",
+                "PH:São Paulo",
+                "PH:Farmácia Rio Stop Ltda."
+              ],
+              "neighborhood": "Centro",
+              "pois": [],
+              "valuableZones": []
+            },
+            "usableAreas": [
+              "32"
+            ],
+            "bedrooms": [
+              0
+            ],
+            "bathrooms": [
+              1
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

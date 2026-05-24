@@ -150,7 +150,7 @@ async function scrapeML() {
             await page.goto(partialProp.url!, { waitUntil: 'domcontentloaded', timeout: 30000 });
             await page.waitForTimeout(2000);
 
-            const descData = await page.evaluate(() => {
+            const { description, images } = await page.evaluate(() => {
                 const scripts = Array.from(document.querySelectorAll('script[type="application/ld+json"]'));
                 let description = '';
                 for (const s of scripts) {
@@ -165,19 +165,32 @@ async function scrapeML() {
                     const descEl = document.querySelector('.ui-pdp-description__content');
                     if (descEl) description = descEl.textContent || '';
                 }
-                return description;
+
+                // Extrair imagens da galeria (máximo 10)
+                const imgEls = Array.from(document.querySelectorAll('.ui-pdp-gallery__column figure img.ui-pdp-image'));
+                const images: string[] = [];
+                for (const img of imgEls) {
+                    const src = img.getAttribute('src') || img.getAttribute('data-src');
+                    if (src && !images.includes(src)) {
+                        // O ML usa imagens pequenas nas thumbs. O link da foto original as vezes tá no data-zoom ou na propria thumb (substituir I.webp por O.webp)
+                        images.push(src.replace('I.webp', 'O.webp'));
+                        if (images.length >= 10) break;
+                    }
+                }
+
+                return { description, images };
             });
 
-            const description = descData || partialProp.title || '';
-            const descLower = description.toLowerCase();
+            const finalDescription = description || partialProp.title || '';
+            const descLower = finalDescription.toLowerCase();
 
             // 🛡️ DEEP FILTERING
-            if (isForSale(partialProp.title!, description)) {
+            if (isForSale(partialProp.title!, finalDescription)) {
                 console.log(`   🚫 Bloqueado: Semântica de venda na descrição profunda. (${partialProp.url})`);
                 continue;
             }
 
-            if (isCommercial(partialProp.title!, description)) {
+            if (isCommercial(partialProp.title!, finalDescription)) {
                 console.log(`   🚫 Bloqueado: Uso comercial detectado na descrição profunda. (${partialProp.url})`);
                 continue;
             }
@@ -190,14 +203,15 @@ async function scrapeML() {
                 price: partialProp.price!,
                 condominio: partialProp.condominio || 0,
                 url: partialProp.url!,
-                image: partialProp.image || '',
+                image: images.length > 0 ? images[0] : (partialProp.image || ''),
+                images: images,
                 rooms: partialProp.rooms || 0,
                 bathrooms: partialProp.bathrooms || 1,
                 area: partialProp.area || 0,
                 location: partialProp.location!,
                 neighborhood: partialProp.neighborhood!,
                 zone: partialProp.zone!,
-                description: description.substring(0, 500),
+                description: finalDescription.substring(0, 500),
                 source: partialProp.source!,
                 directOwner,
                 found_at: partialProp.found_at!

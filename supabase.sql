@@ -8,6 +8,7 @@ CREATE TABLE properties (
     condominio NUMERIC DEFAULT 0,
     url TEXT NOT NULL,
     image TEXT,
+    images JSONB DEFAULT '[]'::jsonb,
     rooms INTEGER DEFAULT 0,
     bathrooms INTEGER DEFAULT 0,
     area INTEGER DEFAULT 0,

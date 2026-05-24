@@ -4,7 +4,8 @@ export interface Property {
     price: number;
     condominio: number;
     url: string;
-    image: string;
+    image?: string;
+    images?: string[];
     rooms: number;
     bathrooms: number;
     area: number;

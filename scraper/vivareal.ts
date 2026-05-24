@@ -173,7 +173,7 @@ async function scrapeSource() {
             await page.goto(partialProp.url!, { waitUntil: 'domcontentloaded', timeout: 30000 });
             await page.waitForTimeout(2000);
 
-            const descData = await page.evaluate(() => {
+            const { description, images } = await page.evaluate(() => {
                 const scripts = Array.from(document.querySelectorAll('script[type="application/ld+json"]'));
                 let description = '';
                 for (const s of scripts) {
@@ -184,14 +184,26 @@ async function scrapeSource() {
                         }
                     } catch (e) {}
                 }
-                return description;
+
+                // Extrair imagens da galeria (VivaReal)
+                const imgEls = Array.from(document.querySelectorAll('.carousel__image, .swiper-slide img, img[alt*="Foto"]'));
+                const images: string[] = [];
+                for (const img of imgEls) {
+                    const src = img.getAttribute('src') || img.getAttribute('data-src');
+                    if (src && !src.includes('.svg') && !src.includes('data:image') && !images.includes(src)) {
+                        images.push(src);
+                        if (images.length >= 10) break;
+                    }
+                }
+
+                return { description, images };
             });
 
-            const description = descData || partialProp.title || '';
-            const descLower = description.toLowerCase();
+            const finalDescription = description || partialProp.title || '';
+            const descLower = finalDescription.toLowerCase();
 
-            if (isForSale(partialProp.title!, description)) continue;
-            if (isCommercial(partialProp.title!, description)) continue;
+            if (isForSale(partialProp.title!, finalDescription)) continue;
+            if (isCommercial(partialProp.title!, finalDescription)) continue;
 
             const directOwner = descLower.includes('direto com o proprietário') || descLower.includes('direto com proprietario');
 
@@ -201,14 +213,15 @@ async function scrapeSource() {
                 price: partialProp.price!,
                 condominio: partialProp.condominio || 0,
                 url: partialProp.url!,
-                image: partialProp.image || '',
+                image: images.length > 0 ? images[0] : (partialProp.image || ''),
+                images: images,
                 rooms: partialProp.rooms || 0,
                 bathrooms: partialProp.bathrooms || 1,
                 area: partialProp.area || 0,
                 location: partialProp.location!,
                 neighborhood: partialProp.neighborhood!,
                 zone: partialProp.zone!,
-                description: description.substring(0, 500),
+                description: finalDescription.substring(0, 500),
                 source: 'vivareal',
                 directOwner,
                 found_at: partialProp.found_at!

@@ -355,8 +355,8 @@ export function ClientPropertyBrowser({ initialZone, initialNeighborhood }: Clie
                 </div>
 
                 {filteredProperties.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center py-20 text-center bg-white rounded-3xl border border-gray-200 shadow-sm">
-                        <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-6">
+                    <div className="flex flex-col items-center justify-center py-20 text-center bg-card rounded-3xl border border-border shadow-sm">
+                        <div className="w-20 h-20 bg-muted rounded-full flex items-center justify-center mb-6">
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
@@ -447,7 +447,7 @@ export function ClientPropertyBrowser({ initialZone, initialNeighborhood }: Clie
             {/* ============= ZONE GUIDE (SEO CONTENT) ============= */}
             <section className="bg-card border-t border-border">
                 <div className="max-w-7xl mx-auto px-4 py-10">
-                    <h2 className="text-xl font-bold text-gray-900 mb-6">Guia de Aluguéis por Região do Rio de Janeiro</h2>
+                    <h2 className="text-xl font-bold text-foreground mb-6">Guia de Aluguéis por Região do Rio de Janeiro</h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {[
                             { zone: 'Zona Oeste', emoji: '🌴', desc: 'A maior região do Rio, inclui Campo Grande, Bangu, Santa Cruz. Aluguéis mais acessíveis e bairros em expansão. Ideal para famílias buscando espaço.' },
@@ -458,9 +458,9 @@ export function ClientPropertyBrowser({ initialZone, initialNeighborhood }: Clie
                             { zone: 'Niterói', emoji: '⛴️', desc: 'Icaraí, Ingá, Santa Rosa, Fonseca. Cidade com vista para o Rio, barcas e ônibus integrados. Opções de aluguel mais em conta.' },
                             { zone: 'Baixada Fluminense', emoji: '🚉', desc: 'Duque de Caxias, Nova Iguaçu, Nilópolis. Região metropolitana com os aluguéis mais baratos e acesso via trem e BRT.' },
                         ].map(item => (
-                            <article key={item.zone} className="bg-gray-50 rounded-xl p-5 border border-gray-100">
-                                <h3 className="text-sm font-bold text-gray-900 mb-2">{item.emoji} Aluguel na {item.zone}</h3>
-                                <p className="text-xs text-gray-600 leading-relaxed">{item.desc}</p>
+                            <article key={item.zone} className="bg-background rounded-xl p-5 border border-border">
+                                <h3 className="text-sm font-bold text-foreground mb-2">{item.emoji} Aluguel na {item.zone}</h3>
+                                <p className="text-xs text-muted-foreground leading-relaxed">{item.desc}</p>
                             </article>
                         ))}
                     </div>
@@ -470,7 +470,7 @@ export function ClientPropertyBrowser({ initialZone, initialNeighborhood }: Clie
             {/* ============= FAQ (SEO RICH SNIPPET) ============= */}
             <section className="bg-background border-t border-border">
                 <div className="max-w-7xl mx-auto px-4 py-10">
-                    <h2 className="text-xl font-bold text-gray-900 mb-6">Perguntas Frequentes</h2>
+                    <h2 className="text-xl font-bold text-foreground mb-6">Perguntas Frequentes</h2>
                     <div className="space-y-4">
                         {[
                             { q: 'Como funciona o House Searcher?', a: 'Somos um agregador que coleta automaticamente anúncios de aluguel de sites como OLX, ZAP Imóveis e VivaReal. A cada 6 horas, nosso robô busca imóveis até R$ 1.000 no Rio de Janeiro e região metropolitana.' },
@@ -478,14 +478,14 @@ export function ClientPropertyBrowser({ initialZone, initialNeighborhood }: Clie
                             { q: 'Quais sites são pesquisados?', a: 'Atualmente coletamos anúncios de OLX, ZAP Imóveis, VivaReal, Mercado Livre e Chaves na Mão.' },
                             { q: 'Com que frequência os anúncios são atualizados?', a: 'A cada 6 horas, automaticamente. Anúncios mais velhos que 7 dias são removidos pelo Supabase (pg_cron) para manter a base sempre fresca.' },
                         ].map((faq, i) => (
-                            <details key={i} className="bg-white rounded-xl border border-gray-200 overflow-hidden group">
-                                <summary className="px-5 py-4 cursor-pointer text-sm font-semibold text-gray-900 hover:bg-gray-50 transition-colors flex items-center justify-between">
+                            <details key={i} className="bg-card rounded-xl border border-border overflow-hidden group">
+                                <summary className="px-5 py-4 cursor-pointer text-sm font-semibold text-foreground hover:bg-muted transition-colors flex items-center justify-between">
                                     {faq.q}
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-gray-400 shrink-0 group-open:rotate-180 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-muted-foreground shrink-0 group-open:rotate-180 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                                     </svg>
                                 </summary>
-                                <p className="px-5 pb-4 text-xs text-gray-600 leading-relaxed">{faq.a}</p>
+                                <p className="px-5 pb-4 text-xs text-muted-foreground leading-relaxed">{faq.a}</p>
                             </details>
                         ))}
                     </div>

@@ -170,7 +170,7 @@ async function scrapeChavesNaMao() {
                 await page.goto(partialProp.url!, { waitUntil: 'domcontentloaded', timeout: 30000 });
                 await page.waitForTimeout(2000);
 
-                const description = await page.evaluate(() => {
+                const { description, images } = await page.evaluate(() => {
                     const scripts = Array.from(document.querySelectorAll('script[type="application/ld+json"]'));
                     let desc = '';
                     for (const s of scripts) {
@@ -183,18 +183,31 @@ async function scrapeChavesNaMao() {
                         // fallback to body text
                         desc = document.body.innerText;
                     }
-                    return desc;
+
+                    // Extrair imagens da galeria
+                    const imgEls = Array.from(document.querySelectorAll('img[src*="fotos"], img[alt*="Foto"]'));
+                    const images: string[] = [];
+                    for (const img of imgEls) {
+                        const src = img.getAttribute('src') || img.getAttribute('data-src');
+                        if (src && !src.includes('.svg') && !src.includes('data:image') && !images.includes(src)) {
+                            images.push(src);
+                            if (images.length >= 10) break;
+                        }
+                    }
+
+                    return { description: desc, images };
                 });
 
-                const descLower = description.toLowerCase();
+                const finalDescription = description || partialProp.title || '';
+                const descLower = finalDescription.toLowerCase();
 
                 // 🛡️ DEEP FILTERING
-                if (isForSale(partialProp.title!, description)) {
+                if (isForSale(partialProp.title!, finalDescription)) {
                     console.log(`   🚫 Bloqueado: Semântica de venda na descrição profunda. (${partialProp.url})`);
                     continue;
                 }
 
-                if (isCommercial(partialProp.title!, description)) {
+                if (isCommercial(partialProp.title!, finalDescription)) {
                     console.log(`   🚫 Bloqueado: Uso comercial detectado na descrição profunda. (${partialProp.url})`);
                     continue;
                 }
@@ -207,14 +220,15 @@ async function scrapeChavesNaMao() {
                     price: partialProp.price!,
                     condominio: partialProp.condominio || 0,
                     url: partialProp.url!,
-                    image: partialProp.image || '',
+                    image: images.length > 0 ? images[0] : (partialProp.image || ''),
+                    images: images,
                     rooms: partialProp.rooms || 0,
                     bathrooms: partialProp.bathrooms || 1,
                     area: partialProp.area || 0,
                     location: partialProp.location!,
                     neighborhood: partialProp.neighborhood!,
                     zone: partialProp.zone!,
-                    description: description.substring(0, 500),
+                    description: finalDescription.substring(0, 500),
                     source: partialProp.source!,
                     directOwner,
                     found_at: partialProp.found_at!
