@@ -8,7 +8,7 @@ import { isCommercial, isForSale } from '../src/utils/normalize';
 
 chromium.use(stealth());
 
-const MAX_PAGES = 20;
+const MAX_PAGES = 30;
 const BASE_URL = 'https://www.chavesnamao.com.br/imoveis-para-alugar/rj-rio-de-janeiro/?valormax=1000';
 
 function classifyZone(text: string): string {
@@ -148,6 +148,7 @@ async function scrapeChavesNaMao() {
         }
     }
 
+    await browser.close();
     console.log(`\n   ✅ Fase 1 finalizada. Iniciando análise profunda... ${discoveredCards.size} anúncios INÉDITOS para Deep Scraping.`);
 
     // ========================================

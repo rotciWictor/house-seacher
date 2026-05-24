@@ -7,7 +7,7 @@ import type { Property } from './index';
 
 chromium.use(stealth());
 
-const MAX_PAGES = 20;
+const MAX_PAGES = 30;
 
 function classifyZone(text: string): string {
     const lower = text.toLowerCase();
