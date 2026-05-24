@@ -4,6 +4,16 @@ Todas as mudanças relevantes do projeto House Searcher estão documentadas nest
 
 ---
 
+## [3.6.0] — 2026-05-24
+
+### ✨ Adicionado
+- **Escala de Descoberta (MAX_PAGES = 30)**: Ampliado o limite de varredura superficial de 20 para 30 páginas em todos os robôs (ZAP, VivaReal, Mercado Livre, Chaves na Mão) para maximizar o número de candidatos interceptados na Fase 1.
+
+### 🔄 Modificado
+- **Transparência Absoluta de Logs**: Melhoria na UX do terminal. Substituída a mensagem confusa "Discovery concluído" por "Fase 1 finalizada. Iniciando análise profunda de X anúncios..." para deixar claro que o robô ainda trabalhará silenciosamente por muito tempo.
+
+### 🐛 Corrigido
+- **Vazamento de Memória (Memory Leak) no Chaves na Mão**: Corrigido um erro fatal onde o robô do Chaves na Mão não fechava a instância invisível do Chromium (`await browser.close()`) após a Fase 1. Isso mantinha o Node.js rodando em loop infinito e estolava as Actions do GitHub até o limite de 60 minutos.
 ## [3.5.0] — 2026-05-23
 
 ### ✨ Adicionado
