@@ -20,6 +20,7 @@ const customIcon = new L.Icon({
 interface MapViewProps {
   properties: Property[];
   onPropertyClick: (property: Property) => void;
+  hoveredPropertyId?: string | null;
 }
 
 // A component to automatically fit bounds to markers
@@ -28,11 +29,6 @@ function MapBounds({ properties }: { properties: Property[] }) {
 
   useEffect(() => {
     if (properties.length === 0) return;
-    
-    // Create a bounding box from property coordinates
-    // Note: Since we don't have exact lat/lng from scrapers, we'll need to use a geocoder.
-    // For now, we center on Rio de Janeiro.
-    // In the future, the geocoding logic will pass exact lat/lng.
   }, [map, properties]);
 
   return null;
@@ -64,7 +60,15 @@ const createCustomClusterIcon = (cluster: any) => {
   });
 };
 
-export default function MapView({ properties, onPropertyClick }: MapViewProps) {
+const createHoveredIcon = () => {
+  return L.divIcon({
+    html: `<div class="bg-indigo-600 rounded-full w-4 h-4 shadow-[0_0_15px_rgba(79,70,229,0.8)] border-2 border-white animate-pulse"></div>`,
+    className: 'custom-hover-marker',
+    iconSize: L.point(16, 16, true),
+  });
+};
+
+export default function MapView({ properties, onPropertyClick, hoveredPropertyId }: MapViewProps) {
   const defaultCenter: [number, number] = [-22.9068, -43.1729]; // Rio Center
 
   return (
@@ -92,7 +96,12 @@ export default function MapView({ properties, onPropertyClick }: MapViewProps) {
             const lng = jitter(baseCoord[1]);
 
             return (
-              <Marker key={property.id} position={[lat, lng]} icon={customIcon}>
+              <Marker 
+                key={property.id} 
+                position={[lat, lng]} 
+                icon={property.id === hoveredPropertyId ? createHoveredIcon() : customIcon}
+                zIndexOffset={property.id === hoveredPropertyId ? 1000 : 0}
+              >
                 <Popup className="custom-popup">
                   <div 
                       className="w-48 cursor-pointer flex flex-col gap-2"

@@ -1,3 +1,21 @@
+export function calculateRiskScore(text: string, rules: Array<{ pattern: RegExp | string, weight: number }>): number {
+    let score = 0;
+    const lowerText = text.toLowerCase();
+
+    for (const rule of rules) {
+        if (typeof rule.pattern === 'string') {
+            if (lowerText.includes(rule.pattern.toLowerCase())) {
+                score += rule.weight;
+            }
+        } else if (rule.pattern instanceof RegExp) {
+            if (rule.pattern.test(lowerText)) {
+                score += rule.weight;
+            }
+        }
+    }
+    return score;
+}
+
 export function isCommercial(title: string, description: string): boolean {
     const text = (title + ' ' + description).toLowerCase();
     const lowerTitle = title.toLowerCase().trim();
@@ -7,9 +25,8 @@ export function isCommercial(title: string, description: string): boolean {
         return true;
     }
     
-    // 2. Regras para "Sala" (muito comum vazar)
+    // 2. Regras para "Sala" no título
     if (/\bsala(s)?\b/.test(lowerTitle)) {
-        // Se tem "sala" mas não tem "quarto", "kitnet", "casa", etc., É COMERCIAL
         if (!/\b(quarto|kitnet|quitinete|casa|apto|apartamento|studio)\b/.test(lowerTitle)) {
             return true;
         }
@@ -18,41 +35,50 @@ export function isCommercial(title: string, description: string): boolean {
         }
     }
 
-    // 3. Regras para Categorias soltas no título (Terrenos e Prédios)
-    if (/\b(conjunto|prédio|predio)\b/.test(lowerTitle)) {
-        return true;
-    }
-
-    // 4. Detecção na descrição (Varredura profunda)
-    const commercialKeywords = [
-        'sala comercial', 'galpão', 'consultório', 'laje corporativa',
-        'ponto comercial', 'box comercial', 'terreno comercial', 'escritório',
-        'prédio comercial', 'predio comercial', 'ideal para o seu negócio',
-        'ideal para seu negócio', 'vaga de garagem', 'alugo vaga', 'aluga-se vaga',
-        'passo o ponto', 'sobreloja', 'franquia', 'polo gastronômico', 'polo gastronomico',
-        'ponto logístico', 'ponto logistico', 'ideal para clínicas', 'ideal para clinicas',
-        'excelente para comércio', 'excelente para comercio', 'próprio para restaurante',
-        'imóvel comercial', 'imovel comercial', 'loja comercial', 'espaço comercial',
-        'galpão logístico', 'galpao logistico', 'ideal para empresa', 'ótimo para empresa'
+    // 3. Regras de pontuação para a descrição (Score)
+    const commercialRules = [
+        { pattern: 'sala comercial', weight: 100 },
+        { pattern: 'galpão', weight: 100 },
+        { pattern: 'consultório', weight: 100 },
+        { pattern: 'laje corporativa', weight: 100 },
+        { pattern: 'ponto comercial', weight: 100 },
+        { pattern: 'box comercial', weight: 100 },
+        { pattern: 'terreno comercial', weight: 100 },
+        { pattern: 'escritório', weight: 80 },
+        { pattern: 'prédio comercial', weight: 100 },
+        { pattern: 'predio comercial', weight: 100 },
+        { pattern: 'vaga de garagem', weight: 40 },
+        { pattern: 'alugo vaga', weight: 80 },
+        { pattern: 'aluga-se vaga', weight: 80 },
+        { pattern: 'passo o ponto', weight: 100 },
+        { pattern: 'sobreloja', weight: 100 },
+        { pattern: 'franquia', weight: 100 },
+        { pattern: 'polo gastronômico', weight: 60 },
+        { pattern: 'polo gastronomico', weight: 60 },
+        { pattern: 'ponto logístico', weight: 100 },
+        { pattern: 'ponto logistico', weight: 100 },
+        { pattern: 'próprio para restaurante', weight: 100 },
+        { pattern: 'imóvel comercial', weight: 100 },
+        { pattern: 'imovel comercial', weight: 100 },
+        { pattern: 'loja comercial', weight: 100 },
+        { pattern: 'espaço comercial', weight: 80 },
+        { pattern: 'galpão logístico', weight: 100 },
+        { pattern: 'galpao logistico', weight: 100 },
+        { pattern: /ideal para\s+(?:qualquer\s+)?(?:tipo de\s+)?(?:com[eé]rcio|neg[oó]cio|empresa|cl[ií]nica|loja|escrit[oó]rio)/i, weight: 100 },
+        { pattern: /excelente para\s+(?:com[eé]rcio|neg[oó]cio|empresa|cl[ií]nica|loja|escrit[oó]rio)/i, weight: 100 },
+        { pattern: /pr[oó]prio para\s+(?:com[eé]rcio|neg[oó]cio|empresa|cl[ií]nica|loja|escrit[oó]rio|restaurante|bar|lanchonete)/i, weight: 100 },
+        { pattern: 'ideal para seu negócio', weight: 100 },
+        { pattern: 'ideal para o seu negócio', weight: 100 },
+        { pattern: 'ideal para clínicas', weight: 100 },
+        { pattern: 'ideal para clinicas', weight: 100 },
+        { pattern: 'ideal para empresa', weight: 80 },
+        { pattern: 'ótimo para empresa', weight: 80 }
     ];
 
-    // Se a descrição contém uma palavra chave comercial forte, assumimos que é lixo
-    for (const kw of commercialKeywords) {
-        if (text.includes(kw)) {
-            return true;
-        }
-    }
-
-    // 5. Regex avançado na descrição para padrões comerciais
-    if (/ideal para\s+(?:qualquer\s+)?(?:tipo de\s+)?(?:com[eé]rcio|neg[oó]cio|empresa|cl[ií]nica|loja|escrit[oó]rio)/i.test(text)) {
-        return true;
-    }
-    if (/excelente para\s+(?:com[eé]rcio|neg[oó]cio|empresa|cl[ií]nica|loja|escrit[oó]rio)/i.test(text)) {
-        return true;
-    }
-    if (/pr[oó]prio para\s+(?:com[eé]rcio|neg[oó]cio|empresa|cl[ií]nica|loja|escrit[oó]rio|restaurante|bar|lanchonete)/i.test(text)) {
-        return true;
-    }
+    const score = calculateRiskScore(text, commercialRules);
+    
+    // Se a pontuação passar de 60, consideramos comercial.
+    if (score >= 60) return true;
     
     return false;
 }
@@ -60,10 +86,8 @@ export function isCommercial(title: string, description: string): boolean {
 export function isForSale(title: string, description: string): boolean {
     const text = (title + ' ' + description).toLowerCase();
     
-    // Filtro agressivo para "venda"
     if (/\b(passo ponto|vendo|vende-se|venda)\b/.test(title.toLowerCase())) return true;
     
-    // Na descrição, "venda" pode ser "padaria a venda na esquina", mas "passo ponto" e "vendo" são matadores.
     if (text.includes('passo ponto') || text.includes('vendo apartamento') || text.includes('vendo casa') || text.includes('vendo urgência')) {
         return true;
     }
@@ -74,21 +98,31 @@ export function isForSale(title: string, description: string): boolean {
 export function isSeasonal(title: string, description: string): boolean {
     const text = (title + ' ' + description).toLowerCase();
     
-    // Palavras fortes que indicam aluguel por temporada ou curto prazo
-    const seasonalKeywords = [
-        'temporada', 'diária', 'diaria', 'réveillon', 'reveillon', 'carnaval',
-        'airbnb', 'hospedagem', 'pacote de', 'por dia', 'fim de ano',
-        'hostel', 'pousada', 'hotel'
-    ];
-
-    // Se o título indicar explicitamente diária ou temporada
     if (/\b(?:dia|diária|diaria|temporada)\b/i.test(title)) return true;
 
-    for (const kw of seasonalKeywords) {
-        if (text.includes(kw)) {
-            return true;
-        }
-    }
+    const seasonalRules = [
+        { pattern: 'temporada', weight: 100 },
+        { pattern: 'diária', weight: 100 },
+        { pattern: 'diaria', weight: 100 },
+        { pattern: 'réveillon', weight: 80 },
+        { pattern: 'reveillon', weight: 80 },
+        { pattern: 'carnaval', weight: 80 },
+        { pattern: 'airbnb', weight: 100 },
+        { pattern: 'hospedagem', weight: 60 },
+        { pattern: 'hostel', weight: 100 },
+        { pattern: 'pousada', weight: 100 },
+        { pattern: 'hotel', weight: 100 },
+        { pattern: /pacote de \d+ dias/i, weight: 100 },
+        { pattern: /por dia/i, weight: 80 },
+        { pattern: 'fim de ano', weight: 50 },
+        { pattern: /aluguel por tempo determinado/i, weight: 60 },
+        { pattern: /curta duração/i, weight: 80 },
+    ];
+
+    const score = calculateRiskScore(text, seasonalRules);
+    
+    // Se a pontuação passar de 60, consideramos temporada.
+    if (score >= 60) return true;
 
     return false;
 }

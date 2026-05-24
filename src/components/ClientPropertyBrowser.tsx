@@ -34,6 +34,7 @@ export function ClientPropertyBrowser({ initialZone, initialNeighborhood }: Clie
     
     const [viewMode, setViewMode] = useState<'grid' | 'map'>('grid');
     const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
+    const [hoveredPropertyId, setHoveredPropertyId] = useState<string | null>(null);
     const { theme, setTheme } = useTheme();
     
     // Filters
@@ -369,11 +370,36 @@ export function ClientPropertyBrowser({ initialZone, initialNeighborhood }: Clie
                 ) : (
                     <>
                     {viewMode === 'map' ? (
-                        <div className="h-[600px] mb-8 w-full relative z-0">
-                            <MapView 
-                                properties={filteredProperties} 
-                                onPropertyClick={(p) => setSelectedProperty(p)} 
-                            />
+                        <div className="flex flex-col lg:flex-row gap-6 h-auto lg:h-[800px]">
+                            {/* Lista (Esquerda) */}
+                            <div className="w-full lg:w-1/2 flex flex-col gap-5 overflow-y-auto custom-scrollbar pr-2 h-[600px] lg:h-full order-2 lg:order-1">
+                                {paginatedProperties.map((property) => (
+                                    <div 
+                                        key={property.id} 
+                                        onClick={() => setSelectedProperty(property)} 
+                                        onMouseEnter={() => setHoveredPropertyId(property.id)}
+                                        onMouseLeave={() => setHoveredPropertyId(null)}
+                                        className={`cursor-pointer transition-transform duration-300 ${hoveredPropertyId === property.id ? 'scale-[1.02] ring-2 ring-primary rounded-2xl' : 'hover:scale-[1.02]'}`}
+                                    >
+                                        <PropertyCard 
+                                            property={property} 
+                                            isFavorite={favorites.has(property.id)} 
+                                            onToggleFavorite={toggleFavorite} 
+                                        />
+                                    </div>
+                                ))}
+                            </div>
+                            
+                            {/* Mapa (Direita) */}
+                            <div className="w-full lg:w-1/2 h-[400px] lg:h-full relative z-0 order-1 lg:order-2">
+                                <div className="sticky top-4 w-full h-full">
+                                    <MapView 
+                                        properties={filteredProperties} 
+                                        onPropertyClick={(p) => setSelectedProperty(p)} 
+                                        hoveredPropertyId={hoveredPropertyId}
+                                    />
+                                </div>
+                            </div>
                         </div>
                     ) : (
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
