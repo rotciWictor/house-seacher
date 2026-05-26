@@ -1,3 +1,12 @@
+## [0.6.1](https://github.com/rotciWictor/house-seacher/compare/v0.6.0...v0.6.1) (2026-05-26)
+
+
+### Bug Fixes
+
+* resolve relative imports in scripts folder ([4169bbd](https://github.com/rotciWictor/house-seacher/commit/4169bbdd2f5a16869b9aab4fa5b20cfcf5dd4d6c))
+
+
+
 # [0.6.0](https://github.com/rotciWictor/house-seacher/compare/v0.5.1...v0.6.0) (2026-05-26)
 
 
@@ -31,15 +40,6 @@
 ### Features
 
 * smart landmark and street extraction via regex for better geocoding ([e4cb18f](https://github.com/rotciWictor/house-seacher/commit/e4cb18f6a26d35b3f0b3a576da0ccbf7d4a62634))
-
-
-
-## [0.3.6](https://github.com/rotciWictor/house-seacher/compare/v0.3.5...v0.3.6) (2026-05-26)
-
-
-### Bug Fixes
-
-* add wait for internet loop in run_mercadolivre.bat ([01698a2](https://github.com/rotciWictor/house-seacher/commit/01698a2fbba0a1e239d5b547c96652338d03aa09))
 
 
 
