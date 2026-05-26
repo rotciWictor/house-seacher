@@ -1,3 +1,12 @@
+## [0.3.3](https://github.com/rotciWictor/house-seacher/compare/v0.3.2...v0.3.3) (2026-05-26)
+
+
+### Bug Fixes
+
+* use real email in Nominatim User-Agent ([2be8f0d](https://github.com/rotciWictor/house-seacher/commit/2be8f0d64877ee226b78b071a4c812bac2d59c7e))
+
+
+
 ## [0.3.2](https://github.com/rotciWictor/house-seacher/compare/v0.3.1...v0.3.2) (2026-05-26)
 
 
@@ -44,24 +53,6 @@
 * increase max pages to 20 for all scrapers ([ad74b42](https://github.com/rotciWictor/house-seacher/commit/ad74b42278f3191e34141e9663963d08f9187ced))
 * increase max pages to 30 and fix chavesnamao browser leak ([bf0f251](https://github.com/rotciWictor/house-seacher/commit/bf0f251243c60221f0f1dea9d779f20e2e5c44a2))
 * robust DOM extraction strategy with auto-scroll for all scrapers ([f2bbf99](https://github.com/rotciWictor/house-seacher/commit/f2bbf99d96928602e8500b86b232fa8ed3089cc3))
-
-
-
-# [3.5.0](https://github.com/rotciWictor/house-seacher/compare/v3.4.0...v3.5.0) (2026-05-23)
-
-
-### Bug Fixes
-
-* **ci:** env vars mapped to secrets ([44dfde4](https://github.com/rotciWictor/house-seacher/commit/44dfde48d1812139eae4e0d4dba0e8fb8452c5df))
-* **scraper:** bloqueia salas comerciais que vazavam para a ui de kitnets ([d79cc7d](https://github.com/rotciWictor/house-seacher/commit/d79cc7dc93db8a6cf1a113c6a520a351a3bbd24c))
-* **seo:** forca geracao dinamica do sitemap.ts ([97bc34f](https://github.com/rotciWictor/house-seacher/commit/97bc34f7d20b77dcc25954c6f69403a5f14e389d))
-
-
-### Features
-
-* Deep Scraper v2 para todos os sites e ajuste no Github Actions ([c41aaff](https://github.com/rotciWictor/house-seacher/commit/c41aaff30d4967f683a7e4886a294538905b5b92))
-* **seo:** implementa sitemap massivo e pseo programatico com isr fallback ([b39ae7b](https://github.com/rotciWictor/house-seacher/commit/b39ae7b52c8c5481a35c798bbb4cad65d7a65d5d))
-* **seo:** injeta json-ld semantico com referencias ao wikidata ([fcd09df](https://github.com/rotciWictor/house-seacher/commit/fcd09df035c93b8571b9aa869d1783b3b6c06da1))
 
 
 
