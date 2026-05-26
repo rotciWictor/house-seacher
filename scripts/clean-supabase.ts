@@ -1,5 +1,5 @@
-import { supabase } from './src/lib/supabase';
-import { normalizeNeighborhood, reclassifyZone } from './src/utils/normalize';
+import { supabase } from '../src/lib/supabase';
+import { normalizeNeighborhood, reclassifyZone } from '../src/utils/normalize';
 
 async function clean() {
     console.log('Fetching all properties...');

@@ -1,5 +1,5 @@
-import { supabase } from './src/lib/supabase';
-import { isCommercial, isForSale } from './src/utils/normalize';
+import { supabase } from '../src/lib/supabase';
+import { isCommercial, isForSale } from '../src/utils/normalize';
 
 async function purge() {
     console.log('Fetching all properties from Supabase...');
