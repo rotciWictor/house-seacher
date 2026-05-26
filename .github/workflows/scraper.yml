@@ -12,7 +12,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        scraper: [index.ts, zap.ts, vivareal.ts, mercadolivre.ts, chavesnamao.ts]
+        scraper: [index.ts, zap.ts, vivareal.ts, chavesnamao.ts]
     env:
       NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
       NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}

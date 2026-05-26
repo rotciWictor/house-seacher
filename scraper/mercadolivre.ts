@@ -65,6 +65,9 @@ async function scrapeML() {
         const cards = $('.ui-search-layout__item');
         if (cards.length === 0) {
             console.log(`\n   ⏹️ Sem resultados na página ${p}. Parando vitrine.`);
+            console.log(`\n--- HTML DUMP PREFIX ---`);
+            console.log(html.substring(0, 500));
+            console.log(`--- END HTML DUMP ---`);
             break;
         }
 
