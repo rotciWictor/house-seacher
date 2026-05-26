@@ -1,3 +1,12 @@
+## [0.3.2](https://github.com/rotciWictor/house-seacher/compare/v0.3.1...v0.3.2) (2026-05-26)
+
+
+### Bug Fixes
+
+* rewrite ML scraper to bypass Anubis bot protection with Googlebot UA and Cheerio ([2c8de25](https://github.com/rotciWictor/house-seacher/commit/2c8de253f8771cffa731f553e2b30d8ad80ce2ba))
+
+
+
 ## [0.3.1](https://github.com/rotciWictor/house-seacher/compare/v0.3.0...v0.3.1) (2026-05-26)
 
 
@@ -53,16 +62,6 @@
 * Deep Scraper v2 para todos os sites e ajuste no Github Actions ([c41aaff](https://github.com/rotciWictor/house-seacher/commit/c41aaff30d4967f683a7e4886a294538905b5b92))
 * **seo:** implementa sitemap massivo e pseo programatico com isr fallback ([b39ae7b](https://github.com/rotciWictor/house-seacher/commit/b39ae7b52c8c5481a35c798bbb4cad65d7a65d5d))
 * **seo:** injeta json-ld semantico com referencias ao wikidata ([fcd09df](https://github.com/rotciWictor/house-seacher/commit/fcd09df035c93b8571b9aa869d1783b3b6c06da1))
-
-
-
-# [3.4.0](https://github.com/rotciWictor/house-seacher/compare/v3.3.1...v3.4.0) (2026-05-22)
-
-
-### Features
-
-* implement fuzzy matching and defensive cleaning pipeline ([e547c15](https://github.com/rotciWictor/house-seacher/commit/e547c15bf34af37643b077385bec8937cf746591))
-* implementa 'segunda vista no lixo' para resgatar bairros destruídos via título/descrição ([ed09186](https://github.com/rotciWictor/house-seacher/commit/ed09186756f9f302bca5484fc7cf0e9bc9d4018f))
 
 
 
