@@ -1,3 +1,12 @@
+# [0.3.0](https://github.com/rotciWictor/house-seacher/compare/v0.2.0...v0.3.0) (2026-05-26)
+
+
+### Features
+
+* implement real geocoding engine with Nominatim API and cache ([b118af2](https://github.com/rotciWictor/house-seacher/commit/b118af22a6a1c3ba9718da97a419d8bd72ccd1da))
+
+
+
 # [0.2.0](https://github.com/rotciWictor/house-seacher/compare/v3.5.0...v0.2.0) (2026-05-26)
 
 
@@ -54,23 +63,6 @@
 ### Bug Fixes
 
 * corrige colisão de classificação do bairro Centro com cidades da Baixada e Niterói ([7a9353b](https://github.com/rotciWictor/house-seacher/commit/7a9353b7a8d24670b46e3b9c8d5d63a769d2bfa0))
-
-
-
-# [3.3.0](https://github.com/rotciWictor/house-seacher/compare/v3.2.0...v3.3.0) (2026-05-22)
-
-
-### Bug Fixes
-
-* improve commercial properties filter and fix kitnet rooms extraction ([0c02db0](https://github.com/rotciWictor/house-seacher/commit/0c02db07b3a8324fc7a7dea88cd707d7ef5ad266))
-* resolve syntax error in fetchProperties ([d0e5ae5](https://github.com/rotciWictor/house-seacher/commit/d0e5ae5c833fd27b837cbf78f170e9082063e1f9))
-
-
-### Features
-
-* **filter:** add isSeasonal to block short-term rentals and airbnbs ([8a5efab](https://github.com/rotciWictor/house-seacher/commit/8a5efab78d7ce5c79fed5c9f18cbec95da77e20f))
-* **seo:** implement dynamic routing and extract client property browser ([9a73095](https://github.com/rotciWictor/house-seacher/commit/9a7309527d44193ce005ead3d293d09adccc469b))
-* **ui:** add dedicated Kitnet filter and fix 3+ rooms logic ([7b6223b](https://github.com/rotciWictor/house-seacher/commit/7b6223bb4625cce9d81fcb060bf6824822300624))
 
 
 
