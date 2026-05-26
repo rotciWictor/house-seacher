@@ -1,14 +1,12 @@
-import { chromium } from 'playwright-extra';
-import stealth from 'puppeteer-extra-plugin-stealth';
+import * as cheerio from 'cheerio';
 import { supabase } from '../src/lib/supabase';
 import type { Property } from './index';
 import { saveProperties } from './saveProperties';
 import { isCommercial, isForSale } from '../src/utils/normalize';
 
-chromium.use(stealth());
-
-const MAX_PAGES = 30;
-const BASE_URL = 'https://imoveis.mercadolivre.com.br/aluguel/rio-de-janeiro/rio-de-janeiro/_PriceRange_0-1000';
+const MAX_PAGES = 10; // Mercado Livre has ~48 results per page, 10 pages = ~480 items
+const BASE_URL = 'https://imoveis.mercadolivre.com.br/aluguel/apartamentos/rio-de-janeiro/rio-de-janeiro/_PriceRange_0-1000';
+const GOOGLEBOT_UA = 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)';
 
 function classifyZone(text: string): string {
     const lower = text.toLowerCase();
@@ -26,115 +24,104 @@ function classifyZone(text: string): string {
     return 'Geral';
 }
 
+async function fetchWithGooglebot(url: string): Promise<string | null> {
+    try {
+        const response = await fetch(url, {
+            headers: {
+                'User-Agent': GOOGLEBOT_UA,
+                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+                'Accept-Language': 'pt-BR,pt;q=0.9'
+            }
+        });
+        if (!response.ok) return null;
+        return await response.text();
+    } catch (e) {
+        return null;
+    }
+}
+
 async function scrapeML() {
-    console.log(`\n🔍 Iniciando Deep Scraper (v2) para Mercado Livre...`);
+    console.log(`\n🔍 Iniciando Deep Scraper (v3 - Cheerio) para Mercado Livre...`);
 
     const { data: existingData } = await supabase.from('properties').select('id').eq('source', 'mercadolivre');
     const existingIds = new Set(existingData?.map(p => p.id) || []);
     console.log(`🗄️ Base atual tem ${existingIds.size} imóveis do Mercado Livre salvos.`);
 
-    const browser = await chromium.launch({ headless: true });
-    const context = await browser.newContext();
-    const page = await context.newPage();
-
     let currentUrl = BASE_URL;
-
-    // ========================================
-    // FASE 1: DISCOVERY (Crawling Superficial)
-    // ========================================
-    console.log(`\n📡 Fase 1: Discovery (Buscando novos anúncios no Mercado Livre)...`);
     const discoveredCards = new Map<string, Partial<Property>>();
 
+    console.log(`\n📡 Fase 1: Discovery (Buscando anúncios no Mercado Livre)...`);
+    
     for (let p = 1; p <= MAX_PAGES; p++) {
         process.stdout.write(`   Pesquisando Vitrine [${p}/${MAX_PAGES}]...\r`);
+        
+        const html = await fetchWithGooglebot(currentUrl);
+        if (!html) {
+            console.log(`\n   ❌ Erro ao baixar a página ${p}.`);
+            break;
+        }
 
-        try {
-            await page.goto(currentUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
-            await page.waitForSelector('.ui-search-layout__item', { timeout: 10000 }).catch(() => {});
+        const $ = cheerio.load(html);
+        const cards = $('.ui-search-layout__item');
+        if (cards.length === 0) {
+            console.log(`\n   ⏹️ Sem resultados na página ${p}. Parando vitrine.`);
+            break;
+        }
 
-            // Auto-scroll robusto para lazy loading
-            let previousHeight = 0;
-            for (let i = 0; i < 10; i++) {
-                await page.evaluate(() => window.scrollBy(0, 800));
-                await page.waitForTimeout(500);
-                const currentHeight = await page.evaluate(() => document.body.scrollHeight);
-                if (currentHeight === previousHeight) break;
-                previousHeight = currentHeight;
+        cards.each((_, el) => {
+            const card = $(el);
+            const linkEl = card.find('a.poly-component__title');
+            const url = linkEl.attr('href') || '';
+            if (!url || !url.includes('mercadolivre.com.br/MLB')) return;
+
+            const idMatch = url.match(/MLB-?(\d+)/i);
+            if (!idMatch) return;
+            const id = `ml-${idMatch[1]}`;
+            
+            if (existingIds.has(id)) return;
+
+            const title = linkEl.text().trim() || 'Imóvel ML';
+            const priceText = card.find('.andes-money-amount__fraction').first().text();
+            const price = parseInt(priceText.replace(/\./g, ''), 10) || 0;
+            if (price <= 0 || price > 1000) return;
+
+            let area = 0;
+            let rooms = 0;
+            card.find('.poly-attributes_list__item').each((_, attr) => {
+                const text = $(attr).text().toLowerCase();
+                if (text.includes('m²')) area = parseInt(text.replace(/[^\d]/g, ''), 10) || 0;
+                if (text.includes('quarto')) rooms = parseInt(text.replace(/[^\d]/g, ''), 10) || 0;
+            });
+            if (rooms === 0 && /(kitnet|quitinete|studio|loft|flat|conjugado)/i.test(title)) {
+                rooms = 0;
+            } else if (rooms === 0) {
+                rooms = 1; // Default
             }
 
-            const cards = await page.$$('.ui-search-layout__item');
-            if (cards.length === 0) {
-                 console.log(`\n   ⏹️ Sem resultados na página ${p}. Parando vitrine.`);
-                 break;
-            }
+            const location = card.find('.poly-component__location').text().trim() || 'Rio de Janeiro';
+            const zone = classifyZone(location);
 
-            for (const card of cards) {
-                try {
-                    const linkEl = await card.$('a.poly-component__title');
-                    if (!linkEl) continue;
-                    
-                    const url = await linkEl.getAttribute('href') || '';
-                    if (!url || !url.includes('mercadolivre.com.br/MLB')) continue;
+            const imgEl = card.find('img.poly-component__picture');
+            const image = imgEl.attr('data-src') || imgEl.attr('src') || '';
 
-                    const idMatch = url.match(/MLB-?(\d+)/i);
-                    if (!idMatch) continue;
-                    const id = `ml-${idMatch[1]}`;
-                    
-                    if (existingIds.has(id)) continue;
+            discoveredCards.set(id, {
+                id, title, price, condominio: 0, url: url.split('#')[0],
+                image, rooms, bathrooms: 1, area, location, neighborhood: location, zone,
+                source: 'mercadolivre', found_at: new Date().toISOString()
+            });
+        });
 
-                    const titleEl = await card.$('.poly-component__title');
-                    const title = titleEl ? await titleEl.innerText() : 'Imóvel ML';
-
-                    const priceEl = await card.$('.andes-money-amount__fraction');
-                    const priceText = priceEl ? await priceEl.innerText() : '0';
-                    const price = parseInt(priceText.replace(/\./g, ''), 10);
-                    if (price <= 0 || price > 1000) continue;
-
-                    const attrEls = await card.$$('.poly-attributes_list__item');
-                    let area = 0;
-                    let rooms = 0;
-                    for (const attr of attrEls) {
-                        const text = await attr.innerText();
-                        if (text.includes('m²')) area = parseInt(text.replace(/[^\d]/g, ''), 10);
-                        if (text.includes('quarto')) rooms = parseInt(text.replace(/[^\d]/g, ''), 10);
-                    }
-                    if (rooms === 0 && /(kitnet|quitinete|studio|loft|flat|conjugado)/i.test(title)) {
-                        rooms = 0;
-                    } else if (rooms === 0) {
-                        rooms = 1;
-                    }
-
-                    const locEl = await card.$('.poly-component__location');
-                    const location = locEl ? await locEl.innerText() : 'Rio de Janeiro';
-                    const zone = classifyZone(location);
-
-                    const imgEl = await card.$('img.poly-component__picture');
-                    const image = imgEl ? (await imgEl.getAttribute('src') || await imgEl.getAttribute('data-src') || '') : '';
-
-                    discoveredCards.set(id, {
-                        id, title, price, condominio: 0, url: url.split('#')[0],
-                        image, rooms, bathrooms: 1, area, location, neighborhood: location, zone,
-                        source: 'mercadolivre', found_at: new Date().toISOString()
-                    });
-                } catch (e) { }
-            }
-
-            const nextBtn = await page.$('a.andes-pagination__link[title="Seguinte"]');
-            if (nextBtn) {
-                const nextUrl = await nextBtn.getAttribute('href');
-                if (nextUrl) {
-                    currentUrl = nextUrl;
-                    await page.waitForTimeout(2000);
-                } else break;
-            } else break;
-
-        } catch (e: any) {
-            console.log(`\n   ❌ Erro na vitrine ${p}: ${e.message}`);
+        const nextBtn = $('a.andes-pagination__link[title="Seguinte"]');
+        const nextUrl = nextBtn.attr('href');
+        if (nextUrl) {
+            currentUrl = nextUrl;
+            await new Promise(r => setTimeout(r, 1000)); // Be gentle
+        } else {
             break;
         }
     }
 
-    console.log(`\n   ✅ Fase 1 finalizada. Iniciando análise profunda... ${discoveredCards.size} anúncios INÉDITOS para Deep Scraping.`);
+    console.log(`\n   ✅ Fase 1 finalizada. Iniciando análise profunda de ${discoveredCards.size} anúncios...`);
 
     // ========================================
     // FASE 2: DEEP SCRAPING
@@ -145,40 +132,38 @@ async function scrapeML() {
 
     for (const partialProp of cardsToScrape) {
         processed++;
+        process.stdout.write(`   ⬇️ [${processed}/${cardsToScrape.length}] Entrando no anúncio...\r`);
+        
         try {
-            process.stdout.write(`   ⬇️ [${processed}/${cardsToScrape.length}] Entrando no anúncio...\r`);
-            await page.goto(partialProp.url!, { waitUntil: 'domcontentloaded', timeout: 30000 });
-            await page.waitForTimeout(2000);
+            const html = await fetchWithGooglebot(partialProp.url!);
+            if (!html) continue;
 
-            const { description, images } = await page.evaluate(() => {
-                const scripts = Array.from(document.querySelectorAll('script[type="application/ld+json"]'));
-                let description = '';
-                for (const s of scripts) {
-                    try {
-                        const j = JSON.parse(s.textContent || '{}');
-                        if (j['@type'] === 'Product' || j['@type'] === 'Apartment' || j['@type'] === 'House' || j.description) {
-                            description = j.description || description;
-                        }
-                    } catch (e) {}
-                }
-                if (!description) {
-                    const descEl = document.querySelector('.ui-pdp-description__content');
-                    if (descEl) description = descEl.textContent || '';
-                }
-
-                // Extrair imagens da galeria (máximo 10)
-                const imgEls = Array.from(document.querySelectorAll('.ui-pdp-gallery__column figure img.ui-pdp-image'));
-                const images: string[] = [];
-                for (const img of imgEls) {
-                    const src = img.getAttribute('src') || img.getAttribute('data-src');
-                    if (src && !images.includes(src)) {
-                        // O ML usa imagens pequenas nas thumbs. O link da foto original as vezes tá no data-zoom ou na propria thumb (substituir I.webp por O.webp)
-                        images.push(src.replace('I.webp', 'O.webp'));
-                        if (images.length >= 10) break;
+            const $ = cheerio.load(html);
+            let description = '';
+            
+            // Tenta pegar do script JSON-LD (mais estruturado)
+            $('script[type="application/ld+json"]').each((_, script) => {
+                try {
+                    const j = JSON.parse($(script).text());
+                    if (j['@type'] === 'Product' || j['@type'] === 'Apartment' || j['@type'] === 'House' || j.description) {
+                        if (j.description) description = j.description;
                     }
-                }
+                } catch (e) {}
+            });
 
-                return { description, images };
+            // Fallback para o HTML da descrição
+            if (!description) {
+                description = $('.ui-pdp-description__content').text().trim();
+            }
+
+            // Extrair galeria de imagens
+            const images: string[] = [];
+            $('.ui-pdp-gallery__column figure img.ui-pdp-image').each((_, img) => {
+                const src = $(img).attr('data-src') || $(img).attr('src');
+                if (src && !images.includes(src)) {
+                    images.push(src.replace('I.webp', 'O.webp')); // Full resolution trick
+                    if (images.length >= 10) return false; // Break Cheerio each loop
+                }
             });
 
             const finalDescription = description || partialProp.title || '';
@@ -186,12 +171,10 @@ async function scrapeML() {
 
             // 🛡️ DEEP FILTERING
             if (isForSale(partialProp.title!, finalDescription)) {
-                console.log(`   🚫 Bloqueado: Semântica de venda na descrição profunda. (${partialProp.url})`);
+                // Skip silently to reduce console noise
                 continue;
             }
-
             if (isCommercial(partialProp.title!, finalDescription)) {
-                console.log(`   🚫 Bloqueado: Uso comercial detectado na descrição profunda. (${partialProp.url})`);
                 continue;
             }
 
@@ -219,19 +202,19 @@ async function scrapeML() {
 
             newPropertiesForSupabase.push(property);
             existingIds.add(property.id);
-            console.log(`   ✅ Deep Scraped: ${property.title.substring(0, 40)} (R$ ${property.price})`);
-
-        } catch (e: any) {
-             console.log(`   ❌ Erro durante o deep scrape do anúncio: ${e.message}`);
-        }
+            
+            // Be gentle with the API
+            await new Promise(r => setTimeout(r, 800));
+        } catch (e) { }
     }
 
     if (newPropertiesForSupabase.length > 0) {
         await saveProperties(newPropertiesForSupabase, 'Mercado Livre');
+    } else {
+        console.log(`\n   Nenhum imóvel novo e válido encontrado após os filtros.`);
     }
 
-    console.log(`\n🏁 Concluído! O Deep Scraper ML injetou ${newPropertiesForSupabase.length} anúncios purificados no banco.`);
-    await browser.close();
+    console.log(`\n🏁 Concluído! O Deep Scraper ML (Cheerio) injetou ${newPropertiesForSupabase.length} anúncios purificados no banco.`);
 }
 
 scrapeML().catch(console.error);
