@@ -4,6 +4,23 @@ Todas as mudanças relevantes do projeto House Searcher estão documentadas nest
 
 ---
 
+## [3.7.0] — 2026-05-26
+
+### ✨ Adicionado
+- **UI Estilo QuintoAndar (Split-Screen)**: Reformulação do layout integrando um mapa interativo em tela dividida, oferecendo uma experiência de busca imersiva.
+- **Score de Risco**: Nova métrica para avaliar a segurança da localização dos imóveis diretamente na interface.
+- **Galeria de Fotos e PropertyModal**: Novo modal detalhado contendo uma galeria rica para navegação entre as fotos do imóvel.
+- **Map Clustering**: Agrupamento visual de anúncios no mapa, melhorando a performance e legibilidade em regiões densas.
+- **Documentação de Scrapers**: Adição de documentação arquitetural aprofundada para os robôs extratores.
+
+### 🎨 UI & UX
+- **Dark Mode**: Integração e correções do modo escuro em toda a aplicação.
+
+### 🐛 Corrigido
+- **Filtros Endurecidos (Anti-Comerciais)**: Refinamento rigoroso das expressões regulares (regex) para impedir o vazamento de imóveis comerciais na plataforma.
+
+---
+
 ## [3.6.0] — 2026-05-24
 
 ### ✨ Adicionado
