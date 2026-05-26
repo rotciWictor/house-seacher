@@ -1,5 +1,6 @@
 import { supabase } from '../src/lib/supabase';
 import { isCommercial, isForSale, recoverNeighborhood, reclassifyZone } from '../src/utils/normalize';
+import { geocodeLocation } from '../src/utils/geocoding';
 
 export async function saveProperties(newProperties: any[], sourceName: string) {
     console.log(`\n💾 Salvando ${newProperties.length} imóveis de ${sourceName}...`);
@@ -25,12 +26,23 @@ export async function saveProperties(newProperties: any[], sourceName: string) {
         };
     });
 
-    // Remove directOwner from Supabase payload
-    const supabasePayload = validProperties.map(p => {
+    // Remove directOwner from Supabase payload e adiciona geocoding
+    const supabasePayload = [];
+    console.log(`   🌍 Geolocalizando ${validProperties.length} imóveis residenciais...`);
+    for (const p of validProperties) {
         const copy = { ...p };
         delete copy.directOwner;
-        return copy;
-    });
+        
+        // Tentamos geolocalizar pela location completa, com fallback para o bairro normalizado
+        const geo = await geocodeLocation(copy.location, copy.neighborhood);
+        if (geo) {
+            copy.lat = geo.lat;
+            copy.lng = geo.lng;
+            copy.precision = geo.precision;
+        }
+
+        supabasePayload.push(copy);
+    }
 
     // 2. Salvar no Supabase
     if (supabasePayload.length > 0) {

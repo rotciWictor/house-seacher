@@ -16,6 +16,9 @@ export interface Property {
     source: string;
     directOwner: boolean;
     found_at: string;
+    lat?: number;
+    lng?: number;
+    precision?: 'street' | 'neighborhood';
 }
 
 export const SOURCE_COLORS: Record<string, string> = {

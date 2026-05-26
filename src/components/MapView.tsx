@@ -68,6 +68,18 @@ const createHoveredIcon = () => {
   });
 };
 
+// Ícone para imóveis com localização APROXIMADA (apenas bairro)
+const approximateIcon = new L.Icon({
+  iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+  iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+  shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+  iconSize: [20, 33],
+  iconAnchor: [10, 33],
+  popupAnchor: [1, -28],
+  shadowSize: [33, 33],
+  className: 'opacity-50'
+});
+
 export default function MapView({ properties, onPropertyClick, hoveredPropertyId }: MapViewProps) {
   const defaultCenter: [number, number] = [-22.9068, -43.1729]; // Rio Center
 
@@ -91,15 +103,40 @@ export default function MapView({ properties, onPropertyClick, hoveredPropertyId
           maxClusterRadius={60}
         >
           {properties.map(property => {
-            const baseCoord = zoneCoordinates[property.zone] || defaultCenter;
-            const lat = jitter(baseCoord[0]);
-            const lng = jitter(baseCoord[1]);
+            // 1. Determinar coordenadas: Real (do geocoding) vs Fallback (da tabela mockada de zonas)
+            let lat: number;
+            let lng: number;
+            let isApproximate: boolean;
+
+            if (property.lat && property.lng) {
+              // Coordenadas reais vindas do geocoding
+              const spreadAmount = property.precision === 'street' ? 0.002 : 0.015;
+              lat = jitter(property.lat, spreadAmount);
+              lng = jitter(property.lng, spreadAmount);
+              isApproximate = property.precision === 'neighborhood';
+            } else {
+              // Fallback: tabela mockada de zonas (imóveis antigos sem geocoding)
+              const baseCoord = zoneCoordinates[property.zone] || defaultCenter;
+              lat = jitter(baseCoord[0]);
+              lng = jitter(baseCoord[1]);
+              isApproximate = true;
+            }
+
+            // 2. Determinar ícone: Hovered > Approximate > Normal
+            let icon;
+            if (property.id === hoveredPropertyId) {
+              icon = createHoveredIcon();
+            } else if (isApproximate) {
+              icon = approximateIcon;
+            } else {
+              icon = customIcon;
+            }
 
             return (
               <Marker 
                 key={property.id} 
                 position={[lat, lng]} 
-                icon={property.id === hoveredPropertyId ? createHoveredIcon() : customIcon}
+                icon={icon}
                 zIndexOffset={property.id === hoveredPropertyId ? 1000 : 0}
               >
                 <Popup className="custom-popup">
@@ -107,6 +144,11 @@ export default function MapView({ properties, onPropertyClick, hoveredPropertyId
                       className="w-48 cursor-pointer flex flex-col gap-2"
                       onClick={() => onPropertyClick(property)}
                   >
+                    {isApproximate && (
+                      <div className="bg-amber-100 text-amber-800 text-[10px] font-semibold px-2 py-1 rounded-md text-center">
+                        📍 Localização aproximada
+                      </div>
+                    )}
                     {property.image && (
                       <img 
                         src={property.image} 
