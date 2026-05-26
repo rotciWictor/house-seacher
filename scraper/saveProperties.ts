@@ -33,8 +33,8 @@ export async function saveProperties(newProperties: any[], sourceName: string) {
         const copy = { ...p };
         delete copy.directOwner;
         
-        // Extrair dicas de ruas ou pontos de referência do título/descrição (Agora via IA + Regex)
-        const landmarkHint = await extractLocationHint(p.title, p.description) || undefined;
+        // Extrair dicas de ruas ou pontos de referência do título/descrição/localização (Agora via IA + Regex)
+        const landmarkHint = await extractLocationHint(p.title, p.description, p.location) || undefined;
         
         // Tentamos geolocalizar pela location completa, com fallback para o bairro normalizado
         const geo = await geocodeLocation(copy.location, copy.neighborhood, landmarkHint);

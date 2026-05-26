@@ -257,8 +257,8 @@ export function recoverNeighborhood(neighborhood: string, title: string, descrip
 
 import { extractEntityNLP } from './nlpEngine';
 
-export async function extractLocationHint(title: string, description: string): Promise<string | null> {
-    const text = (title + ' ' + description).toLowerCase().replace(/\n/g, ' ');
+export async function extractLocationHint(title: string, description: string, locationStr: string = ''): Promise<string | null> {
+    const text = (title + ' ' + description + ' ' + locationStr).toLowerCase().replace(/\n/g, ' ');
 
     // 0. Tenta usar a Inteligência Artificial (NLP.js) primeiro!
     const aiLandmark = await extractEntityNLP(text);
