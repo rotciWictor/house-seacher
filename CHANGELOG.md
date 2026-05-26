@@ -1,3 +1,12 @@
+# [0.6.0](https://github.com/rotciWictor/house-seacher/compare/v0.5.1...v0.6.0) (2026-05-26)
+
+
+### Features
+
+* implement geocoding jitter, Libpostal NLP, and fix scraper types ([f5586d3](https://github.com/rotciWictor/house-seacher/commit/f5586d3a05c5b298ec99f2ec858990aff17870a3))
+
+
+
 ## [0.5.1](https://github.com/rotciWictor/house-seacher/compare/v0.5.0...v0.5.1) (2026-05-26)
 
 
@@ -31,10 +40,6 @@
 ### Bug Fixes
 
 * add wait for internet loop in run_mercadolivre.bat ([01698a2](https://github.com/rotciWictor/house-seacher/commit/01698a2fbba0a1e239d5b547c96652338d03aa09))
-
-
-
-## [0.3.5](https://github.com/rotciWictor/house-seacher/compare/v0.3.4...v0.3.5) (2026-05-26)
 
 
 
