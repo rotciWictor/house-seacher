@@ -254,3 +254,39 @@ export function recoverNeighborhood(neighborhood: string, title: string, descrip
 
     return 'Desconhecido';
 }
+
+export function extractLocationHint(title: string, description: string): string | null {
+    const text = (title + ' ' + description).toLowerCase().replace(/\n/g, ' ');
+
+    // 1. Extração de Ruas e Avenidas (alta precisão para mapas)
+    // Tenta capturar "na rua X", "av Y", "estrada Z"
+    const streetMatch = text.match(/(?:na\s+)?(rua|avenida|av|estrada)\s+([a-z0-9\s\u00C0-\u00FF]+?)(?:,|\.|-|\n| próximo| no bairro| no | a |$)/i);
+    if (streetMatch && streetMatch[2].trim().length > 3) {
+        const streetName = streetMatch[2].trim();
+        // Ignora falsos positivos comuns
+        if (!streetName.includes('principal') && !streetName.includes('asfaltada') && !streetName.includes('tranquila')) {
+            return `${streetMatch[1]} ${streetName}`.trim();
+        }
+    }
+
+    // 2. Extração de Pontos de Referência (Shoppings, Estações, etc)
+    const landmarkMatch = text.match(/(?:próximo|proximo|perto|ao lado|em frente|min|minutos)\s+(?:ao|do|da|de|a)\s+([^,.\n\-]+)/i);
+    if (landmarkMatch) {
+        let landmark = landmarkMatch[1].trim();
+        
+        // Ignora dicas genéricas inúteis para o mapa
+        const blacklist = ['comércio', 'comercio', 'tudo', 'condução', 'conducao', 'ponto de ônibus', 'ponto de onibus', 'mercado', 'padaria', 'farmácia', 'farmacia', 'escola', 'praia', 'estação', 'brt', 'metrô', 'trem', 'centro', 'supermercado', 'shopping'];
+        
+        // Se a dica extraída for muito curta, ou estiver na blacklist (apenas a palavra genérica)
+        if (landmark.length > 3 && !blacklist.includes(landmark)) {
+            // Limpa palavras extras que atrapalham o geocoding (ex: "Park Shopping a 5 min" -> "Park Shopping")
+            landmark = landmark.replace(/(?:a \d+\s*(?:min|minutos|km|metros).*)/i, '').trim();
+            if (landmark.length > 3) {
+                return landmark;
+            }
+        }
+    }
+
+    return null;
+}
+

@@ -1,5 +1,5 @@
 import { supabase } from '../src/lib/supabase';
-import { isCommercial, isForSale, recoverNeighborhood, reclassifyZone } from '../src/utils/normalize';
+import { isCommercial, isForSale, recoverNeighborhood, reclassifyZone, extractLocationHint } from '../src/utils/normalize';
 import { geocodeLocation } from '../src/utils/geocoding';
 
 export async function saveProperties(newProperties: any[], sourceName: string) {
@@ -33,8 +33,11 @@ export async function saveProperties(newProperties: any[], sourceName: string) {
         const copy = { ...p };
         delete copy.directOwner;
         
+        // Extrair dicas de ruas ou pontos de referência do título/descrição
+        const landmarkHint = extractLocationHint(p.title, p.description) || undefined;
+        
         // Tentamos geolocalizar pela location completa, com fallback para o bairro normalizado
-        const geo = await geocodeLocation(copy.location, copy.neighborhood);
+        const geo = await geocodeLocation(copy.location, copy.neighborhood, landmarkHint);
         if (geo) {
             copy.lat = geo.lat;
             copy.lng = geo.lng;
