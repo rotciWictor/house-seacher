@@ -255,8 +255,16 @@ export function recoverNeighborhood(neighborhood: string, title: string, descrip
     return 'Desconhecido';
 }
 
-export function extractLocationHint(title: string, description: string): string | null {
+import { extractEntityNLP } from './nlpEngine';
+
+export async function extractLocationHint(title: string, description: string): Promise<string | null> {
     const text = (title + ' ' + description).toLowerCase().replace(/\n/g, ' ');
+
+    // 0. Tenta usar a Inteligência Artificial (NLP.js) primeiro!
+    const aiLandmark = await extractEntityNLP(text);
+    if (aiLandmark) {
+        return aiLandmark;
+    }
 
     // 1. Extração de Ruas e Avenidas (alta precisão para mapas)
     // Tenta capturar "na rua X", "av Y", "estrada Z"
@@ -269,7 +277,7 @@ export function extractLocationHint(title: string, description: string): string 
         }
     }
 
-    // 2. Extração de Pontos de Referência (Shoppings, Estações, etc)
+    // 2. Extração de Pontos de Referência Desconhecidos (Regex Fallback)
     const landmarkMatch = text.match(/(?:próximo|proximo|perto|ao lado|em frente|min|minutos)\s+(?:ao|do|da|de|a)\s+([^,.\n\-]+)/i);
     if (landmarkMatch) {
         let landmark = landmarkMatch[1].trim();

@@ -9,6 +9,9 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@nlpjs/core": "^5.0.0-alpha.5",
+    "@nlpjs/lang-pt": "^5.0.0-alpha.5",
+    "@nlpjs/ner": "^5.0.0-alpha.5",
     "@supabase/supabase-js": "^2.106.1",
     "cheerio": "^1.2.0",
     "class-variance-authority": "^0.7.1",

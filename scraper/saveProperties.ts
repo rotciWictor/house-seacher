@@ -33,8 +33,8 @@ export async function saveProperties(newProperties: any[], sourceName: string) {
         const copy = { ...p };
         delete copy.directOwner;
         
-        // Extrair dicas de ruas ou pontos de referência do título/descrição
-        const landmarkHint = extractLocationHint(p.title, p.description) || undefined;
+        // Extrair dicas de ruas ou pontos de referência do título/descrição (Agora via IA + Regex)
+        const landmarkHint = await extractLocationHint(p.title, p.description) || undefined;
         
         // Tentamos geolocalizar pela location completa, com fallback para o bairro normalizado
         const geo = await geocodeLocation(copy.location, copy.neighborhood, landmarkHint);
@@ -42,6 +42,18 @@ export async function saveProperties(newProperties: any[], sourceName: string) {
             copy.lat = geo.lat;
             copy.lng = geo.lng;
             copy.precision = geo.precision;
+            
+            // Auto-aprendizado: Se o landmarkHint funcionou e é de alta precisão (landmark), salva no Supabase
+            if (landmarkHint && geo.precision === 'landmark') {
+                try {
+                    await supabase.from('learned_landmarks').insert({
+                        name: landmarkHint,
+                        entity_type: 'landmark'
+                    });
+                } catch (e) {
+                    // Ignora erro de duplicidade se já existir
+                }
+            }
         }
 
         supabasePayload.push(copy);
