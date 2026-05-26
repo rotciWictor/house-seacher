@@ -8,7 +8,7 @@ import { isCommercial, isForSale } from '../src/utils/normalize';
 chromium.use(stealth());
 
 const MAX_PAGES = 30;
-const BASE_URL = 'https://lista.mercadolivre.com.br/imoveis/aluguel/rio-de-janeiro/rio-de-janeiro/_PriceRange_0-1000_NoIndex_True';
+const BASE_URL = 'https://imoveis.mercadolivre.com.br/aluguel/rio-de-janeiro/rio-de-janeiro/_PriceRange_0-1000';
 
 function classifyZone(text: string): string {
     const lower = text.toLowerCase();
@@ -74,7 +74,7 @@ async function scrapeML() {
                     if (!linkEl) continue;
                     
                     const url = await linkEl.getAttribute('href') || '';
-                    if (!url || !url.includes('imovel.mercadolivre.com.br')) continue;
+                    if (!url || !url.includes('mercadolivre.com.br/MLB')) continue;
 
                     const idMatch = url.match(/MLB-?(\d+)/i);
                     if (!idMatch) continue;
