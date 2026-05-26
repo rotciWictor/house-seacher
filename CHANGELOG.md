@@ -1,3 +1,12 @@
+# [0.5.0](https://github.com/rotciWictor/house-seacher/compare/v0.4.0...v0.5.0) (2026-05-26)
+
+
+### Features
+
+* add NLP.js for landmark extraction and auto-learning ([4da6f84](https://github.com/rotciWictor/house-seacher/commit/4da6f8417d46cd46eb41907aef00ca5b3453422a))
+
+
+
 # [0.4.0](https://github.com/rotciWictor/house-seacher/compare/v0.3.6...v0.4.0) (2026-05-26)
 
 
@@ -26,15 +35,6 @@
 ### Bug Fixes
 
 * restore scraper configs ([646e7dd](https://github.com/rotciWictor/house-seacher/commit/646e7ddaa7342324d4546307fdcb7cfbb134d933))
-
-
-
-## [0.3.3](https://github.com/rotciWictor/house-seacher/compare/v0.3.2...v0.3.3) (2026-05-26)
-
-
-### Bug Fixes
-
-* use real email in Nominatim User-Agent ([2be8f0d](https://github.com/rotciWictor/house-seacher/commit/2be8f0d64877ee226b78b071a4c812bac2d59c7e))
 
 
 
