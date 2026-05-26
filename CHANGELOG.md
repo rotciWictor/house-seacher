@@ -1,3 +1,12 @@
+## [0.3.1](https://github.com/rotciWictor/house-seacher/compare/v0.3.0...v0.3.1) (2026-05-26)
+
+
+### Bug Fixes
+
+* correct Mercado Livre scraper URL and link filter ([e40ccde](https://github.com/rotciWictor/house-seacher/commit/e40ccde6667d1247c05c48508a56368d52e3c14e))
+
+
+
 # [0.3.0](https://github.com/rotciWictor/house-seacher/compare/v0.2.0...v0.3.0) (2026-05-26)
 
 
@@ -54,15 +63,6 @@
 
 * implement fuzzy matching and defensive cleaning pipeline ([e547c15](https://github.com/rotciWictor/house-seacher/commit/e547c15bf34af37643b077385bec8937cf746591))
 * implementa 'segunda vista no lixo' para resgatar bairros destruídos via título/descrição ([ed09186](https://github.com/rotciWictor/house-seacher/commit/ed09186756f9f302bca5484fc7cf0e9bc9d4018f))
-
-
-
-## [3.3.1](https://github.com/rotciWictor/house-seacher/compare/v3.3.0...v3.3.1) (2026-05-22)
-
-
-### Bug Fixes
-
-* corrige colisão de classificação do bairro Centro com cidades da Baixada e Niterói ([7a9353b](https://github.com/rotciWictor/house-seacher/commit/7a9353b7a8d24670b46e3b9c8d5d63a769d2bfa0))
 
 
 
