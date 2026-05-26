@@ -1,3 +1,7 @@
+## [0.3.5](https://github.com/rotciWictor/house-seacher/compare/v0.3.4...v0.3.5) (2026-05-26)
+
+
+
 ## [0.3.4](https://github.com/rotciWictor/house-seacher/compare/v0.3.3...v0.3.4) (2026-05-26)
 
 
@@ -31,15 +35,6 @@
 ### Bug Fixes
 
 * correct Mercado Livre scraper URL and link filter ([e40ccde](https://github.com/rotciWictor/house-seacher/commit/e40ccde6667d1247c05c48508a56368d52e3c14e))
-
-
-
-# [0.3.0](https://github.com/rotciWictor/house-seacher/compare/v0.2.0...v0.3.0) (2026-05-26)
-
-
-### Features
-
-* implement real geocoding engine with Nominatim API and cache ([b118af2](https://github.com/rotciWictor/house-seacher/commit/b118af22a6a1c3ba9718da97a419d8bd72ccd1da))
 
 
 
