@@ -1,0 +1,34 @@
+name: Automated Changelog
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  changelog:
+    name: Generate Changelog
+    runs-on: ubuntu-latest
+    
+    # É obrigatório dar permissão de escrita para o robô poder "commitar" de volta no repositório
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v3
+        with:
+          # fetch-depth: 0 é necessário para que a action enxergue todo o histórico de commits
+          fetch-depth: 0
+          
+      - name: Geração Automática do Changelog
+        uses: TriPSs/conventional-changelog-action@v5
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          output-file: "CHANGELOG.md"
+          
+          # Se o commit que disparou a Action for do próprio robô, ele ignora para não criar um loop infinito
+          skip-on-empty: 'false'
+          git-message: 'docs: update changelog [skip ci]'
+          git-user-name: 'House Searcher Bot'
+          git-user-email: 'bot@housesearcher.local'
