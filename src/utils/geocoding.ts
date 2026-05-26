@@ -61,7 +61,7 @@ export async function geocodeLocation(location: string, neighborhoodFallback: st
         
         const response = await fetch(url, {
             headers: {
-                'User-Agent': 'HouseSearcherBot/1.0 (housesearcher@example.com)'
+                'User-Agent': 'HouseSearcherBot/1.0 (contato@vcampos.dev)'
             }
         });
 
