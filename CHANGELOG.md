@@ -1,3 +1,12 @@
+## [0.5.1](https://github.com/rotciWictor/house-seacher/compare/v0.5.0...v0.5.1) (2026-05-26)
+
+
+### Bug Fixes
+
+* include location string in NLP entity extraction to catch hidden streets from ZAP ([fa27a66](https://github.com/rotciWictor/house-seacher/commit/fa27a66ad159b75baa977e97c2ab68e71debf9dc))
+
+
+
 # [0.5.0](https://github.com/rotciWictor/house-seacher/compare/v0.4.0...v0.5.0) (2026-05-26)
 
 
@@ -26,15 +35,6 @@
 
 
 ## [0.3.5](https://github.com/rotciWictor/house-seacher/compare/v0.3.4...v0.3.5) (2026-05-26)
-
-
-
-## [0.3.4](https://github.com/rotciWictor/house-seacher/compare/v0.3.3...v0.3.4) (2026-05-26)
-
-
-### Bug Fixes
-
-* restore scraper configs ([646e7dd](https://github.com/rotciWictor/house-seacher/commit/646e7ddaa7342324d4546307fdcb7cfbb134d933))
 
 
 
