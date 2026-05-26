@@ -46,7 +46,7 @@ function parseCard(card: { href: string; text: string; image: string }, source: 
     const area = areaMatch ? parseInt(areaMatch[1]) : 0;
 
     // Title / Type
-    const typeMatch = card.text.match(/(Apartamento|Casa|Kitnet|Sobrado|Sala|Conjunto|Studio|Loft|Flat|Quitinete|Ponto comercial|Galpão|Prédio)[^\n]*/i);
+    const typeMatch = card.text.match(/(Apartamento|Casa|Kitnet|Sobrado|Sala|Conjunto|Studio|Loft|Flat|Quitinete|Ponto comercial|Galpão|Prédio|Garagem|Lote|Terreno)[^\n]*/i);
     const title = typeMatch ? typeMatch[0].substring(0, 80).trim() : `Imóvel em ${idMatch[1]}`;
 
     // Rooms

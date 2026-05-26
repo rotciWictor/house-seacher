@@ -9,6 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@minutrade/br-address-parser": "^1.1.1",
     "@nlpjs/core": "^5.0.0-alpha.5",
     "@nlpjs/lang-pt": "^5.0.0-alpha.5",
     "@nlpjs/ner": "^5.0.0-alpha.5",

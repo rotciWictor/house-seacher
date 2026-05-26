@@ -1,6 +1,7 @@
 import { supabase } from '../src/lib/supabase';
 import { isCommercial, isForSale, recoverNeighborhood, reclassifyZone, extractLocationHint } from '../src/utils/normalize';
 import { geocodeLocation } from '../src/utils/geocoding';
+import { cleanAddress } from '../src/utils/nlpEngine';
 
 export async function saveProperties(newProperties: any[], sourceName: string) {
     console.log(`\n💾 Salvando ${newProperties.length} imóveis de ${sourceName}...`);
@@ -36,12 +37,25 @@ export async function saveProperties(newProperties: any[], sourceName: string) {
         // Extrair dicas de ruas ou pontos de referência do título/descrição/localização (Agora via IA + Regex)
         const landmarkHint = await extractLocationHint(p.title, p.description, p.location) || undefined;
         
+        // Limpar lixo do endereço (Libpostal ou Regex)
+        const cleanedLocation = await cleanAddress(copy.location);
+        copy.location = cleanedLocation; // Atualiza com a string limpa!
+
         // Tentamos geolocalizar pela location completa, com fallback para o bairro normalizado
-        const geo = await geocodeLocation(copy.location, copy.neighborhood, landmarkHint);
+        const geo = await geocodeLocation(cleanedLocation, copy.neighborhood, landmarkHint);
         if (geo) {
             copy.lat = geo.lat;
             copy.lng = geo.lng;
             copy.precision = geo.precision;
+            
+            // Spiderfy Fix (Jitter Espacial)
+            // Se o portal não forneceu rua, espalhamos o pino em ~150m num raio aleatório
+            if (geo.precision === 'neighborhood' || geo.precision === 'city') {
+                const latJitter = (Math.random() - 0.5) * 0.0027; // +/- 150m
+                const lngJitter = (Math.random() - 0.5) * 0.0027;
+                copy.lat += latJitter;
+                copy.lng += lngJitter;
+            }
             
             // Auto-aprendizado: Se o landmarkHint funcionou e é de alta precisão (landmark), salva no Supabase
             if (landmarkHint && geo.precision === 'landmark') {

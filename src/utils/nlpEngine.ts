@@ -80,3 +80,62 @@ export async function extractEntityNLP(text: string): Promise<string | null> {
     }
     return null;
 }
+
+export async function cleanAddress(address: string): Promise<string> {
+    // 1. Tenta o Libpostal (GitHub Actions / Local Docker)
+    try {
+        const response = await fetch(`http://localhost:8080/parse`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ query: address })
+        });
+        
+        if (response.ok) {
+            const parsed = await response.json();
+            // parsed: [{label: "road", value: "r. das hortencias"}, {label: "house_number", value: "41"}, ...]
+            let road = '', number = '', suburb = '', city = '';
+            for (const item of parsed) {
+                if (item.label === 'road') road = item.value;
+                if (item.label === 'house_number') number = item.value;
+                if (item.label === 'suburb' || item.label === 'city_district') suburb = item.value;
+                if (item.label === 'city') city = item.value;
+            }
+            
+            const parts = [];
+            if (road) parts.push(number ? `${road}, ${number}` : road);
+            if (suburb) parts.push(suburb);
+            if (city) parts.push(city);
+            
+            if (parts.length > 0) {
+                // Capitalize first letters just to be pretty
+                return parts.join(', ').replace(/\b\w/g, l => l.toUpperCase());
+            }
+        }
+    } catch (e) {
+        // Libpostal offline (provavelmente rodando local sem Docker). Fallback silencioso.
+    }
+
+    // 2. Fallback Heurístico (Regex)
+    let clean = address;
+    clean = clean.replace(/\b\d{5}\s*-\s*\d{5}-\d{3}\b/g, ''); // CEP Range
+    clean = clean.replace(/\b\d{5}-\d{3}\b/g, ''); // CEP normal
+    clean = clean.replace(/\b\d{5}\b/g, ''); // CEP incompleto
+    clean = clean.replace(/\b\d+\s*(quartos?|banheiros?|vagas?|m²|m2)\b/gi, '');
+    clean = clean.replace(/para alugar com\b/gi, '');
+    clean = clean.replace(/(Apartamento|Casa|Terreno|Im[óo]vel|Me|preendimentos?|Empreendimentos?)/gi, '');
+    clean = clean.replace(/\bBrazil\b/gi, '');
+    clean = clean.replace(/\bLtda\b.*?(\b|$)/gi, '');
+    clean = clean.replace(/\bRio de Janeiro Zona Oeste\b/gi, 'Rio de Janeiro'); 
+    clean = clean.replace(/\bRJ\b/gi, '');
+    
+    clean = clean.replace(/emIrajá/gi, 'Irajá');
+    clean = clean.replace(/emCentro/gi, 'Centro');
+    clean = clean.replace(/[-]/g, ','); 
+    clean = clean.replace(/,\s*,/g, ','); 
+    clean = clean.replace(/\s+/g, ' ');
+    clean = clean.replace(/^[\s,]+|[\s,]+$/g, ''); 
+    
+    // Dedup
+    const parts = clean.split(',').map(p => p.trim()).filter(Boolean);
+    return Array.from(new Set(parts)).join(', ');
+}

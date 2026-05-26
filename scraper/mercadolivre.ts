@@ -154,9 +154,35 @@ async function scrapeML() {
                 } catch (e) {}
             });
 
+            // Extrair endereço exato e descrição do PRELOADED_STATE
+            let exactAddress = '';
+            $('script').each((_, script) => {
+                const text = $(script).text();
+                if (text.includes('window.__PRELOADED_STATE__')) {
+                    try {
+                        const jsonStr = text.split('window.__PRELOADED_STATE__ = ')[1]?.split(/;(?:$|\n)/)[0]?.trim();
+                        if (jsonStr) {
+                            const state = JSON.parse(jsonStr);
+                            const addrLine = state?.initialState?.components?.location?.addressLine || 
+                                             state?.initialState?.components?.map?.location?.addressLine;
+                            if (addrLine) exactAddress = addrLine;
+                            if (!description && state?.initialState?.components?.description?.content) {
+                                description = state.initialState.components.description.content;
+                            }
+                        }
+                    } catch (e) {}
+                }
+            });
+
             // Fallback para o HTML da descrição
             if (!description) {
                 description = $('.ui-pdp-description__content').text().trim();
+            }
+            
+            // Substituir o partialProp.location se encontramos o endereço exato!
+            if (exactAddress && exactAddress.length > 5) {
+                console.log(`\n      📍 Endereço Exato Encontrado no JSON: ${exactAddress}`);
+                partialProp.location = `${exactAddress}, ${partialProp.neighborhood}`;
             }
 
             // Extrair galeria de imagens
