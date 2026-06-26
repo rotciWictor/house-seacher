@@ -29,6 +29,16 @@ function MapBounds({ properties }: { properties: Property[] }) {
 
   useEffect(() => {
     if (properties.length === 0) return;
+    
+    // Calcula os limites (bounds) de todos os imóveis para centralizar o mapa
+    const validCoords = properties
+      .filter(p => p.lat && p.lng)
+      .map(p => [p.lat, p.lng] as [number, number]);
+      
+    if (validCoords.length > 0) {
+      const bounds = L.latLngBounds(validCoords);
+      map.fitBounds(bounds, { padding: [50, 50], maxZoom: 14 });
+    }
   }, [map, properties]);
 
   return null;
