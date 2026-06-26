@@ -15,9 +15,9 @@ jobs:
         scraper: [index.ts, zap.ts, vivareal.ts, chavesnamao.ts]
     services:
       libpostal:
-        image: johnstark/libpostal-rest:latest
+        image: pelias/libpostal-service:master
         ports:
-          - 8080:8080
+          - 4400:4400
     env:
       NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
       NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}

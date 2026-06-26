@@ -84,11 +84,7 @@ export async function extractEntityNLP(text: string): Promise<string | null> {
 export async function cleanAddress(address: string): Promise<string> {
     // 1. Tenta o Libpostal (GitHub Actions / Local Docker)
     try {
-        const response = await fetch(`http://localhost:8080/parse`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ query: address })
-        });
+        const response = await fetch(`http://localhost:4400/parse?address=${encodeURIComponent(address)}`);
         
         if (response.ok) {
             const parsed = await response.json();
