@@ -1,3 +1,12 @@
+## [0.6.4](https://github.com/rotciWictor/house-seacher/compare/v0.6.3...v0.6.4) (2026-06-26)
+
+
+### Bug Fixes
+
+* restore map bounding box auto-zoom ([83d2ddb](https://github.com/rotciWictor/house-seacher/commit/83d2ddbe8b90a96efcdb8e269007399db0dba4a8))
+
+
+
 ## [0.6.3](https://github.com/rotciWictor/house-seacher/compare/v0.6.2...v0.6.3) (2026-06-26)
 
 
@@ -31,15 +40,6 @@
 ### Features
 
 * implement geocoding jitter, Libpostal NLP, and fix scraper types ([f5586d3](https://github.com/rotciWictor/house-seacher/commit/f5586d3a05c5b298ec99f2ec858990aff17870a3))
-
-
-
-## [0.5.1](https://github.com/rotciWictor/house-seacher/compare/v0.5.0...v0.5.1) (2026-05-26)
-
-
-### Bug Fixes
-
-* include location string in NLP entity extraction to catch hidden streets from ZAP ([fa27a66](https://github.com/rotciWictor/house-seacher/commit/fa27a66ad159b75baa977e97c2ab68e71debf9dc))
 
 
 
