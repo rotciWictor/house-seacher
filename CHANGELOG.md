@@ -1,3 +1,12 @@
+## [0.6.2](https://github.com/rotciWictor/house-seacher/compare/v0.6.1...v0.6.2) (2026-06-26)
+
+
+### Bug Fixes
+
+* swap broken libpostal docker image for pelias/libpostal-service ([d6a7007](https://github.com/rotciWictor/house-seacher/commit/d6a7007e520432db33d6ed1100b71e4918061105))
+
+
+
 ## [0.6.1](https://github.com/rotciWictor/house-seacher/compare/v0.6.0...v0.6.1) (2026-05-26)
 
 
@@ -31,15 +40,6 @@
 ### Features
 
 * add NLP.js for landmark extraction and auto-learning ([4da6f84](https://github.com/rotciWictor/house-seacher/commit/4da6f8417d46cd46eb41907aef00ca5b3453422a))
-
-
-
-# [0.4.0](https://github.com/rotciWictor/house-seacher/compare/v0.3.6...v0.4.0) (2026-05-26)
-
-
-### Features
-
-* smart landmark and street extraction via regex for better geocoding ([e4cb18f](https://github.com/rotciWictor/house-seacher/commit/e4cb18f6a26d35b3f0b3a576da0ccbf7d4a62634))
 
 
 
