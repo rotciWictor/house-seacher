@@ -36,7 +36,7 @@ jobs:
           cd scraper && npm install
 
       - name: Install Playwright Browsers
-        run: npx playwright install chromium --with-deps
+        run: cd scraper && npx playwright install chromium --with-deps
 
       - name: Run Scraper (${{ matrix.scraper }})
         run: |
